@@ -1,0 +1,220 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{2C9E7C14-1ED2-440D-ABF4-DB6052010180}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>LineNodes</RootNamespace>
+    <AssemblyName>PLMonitor</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+    <WcfConfigValidationEnabled>True</WcfConfigValidationEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="DCIRDBAccess">
+      <HintPath>..\DCIRDBAccess\bin\Release\DCIRDBAccess.dll</HintPath>
+    </Reference>
+    <Reference Include="DevAccess, Version=1.0.0.3, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Release\DevAccess.dll</HintPath>
+    </Reference>
+    <Reference Include="DevInterface, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Release\DevInterface.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\CommonPLctl\bin\Release\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="A线Model\NodeCCDCheck.cs" />
+    <Compile Include="A线Model\NodeDianjiao.cs" />
+    <Compile Include="A线Model\NodeManualStation.cs" />
+    <Compile Include="A线Model\NodePalletBind.cs" />
+    <Compile Include="A线Model\NodeScrewLock.cs" />
+    <Compile Include="A线Model\NodeUpDownMachine.cs" />
+    <Compile Include="A线Model\NodeUV.cs" />
+    <Compile Include="B线Model\NodeLaserClean.cs" />
+    <Compile Include="B线Model\NodeTailRobot.cs" />
+    <Compile Include="B线Model\NodeWeld.cs" />
+    <Compile Include="C线Model\NodePackFasten.cs" />
+    <Compile Include="C线Model\NodePackLabel.cs" />
+    <Compile Include="C线Model\NodePackOutput.cs" />
+    <Compile Include="C线Model\NodePackWeld.cs" />
+    <Compile Include="C线Model\NodeSwitchBind.cs" />
+    <Compile Include="IView\ILineMonitorView.cs" />
+    <Compile Include="Model\CtlLineModel.cs" />
+    <Compile Include="Model\ViewThemColor.cs" />
+    <Compile Include="Presenter\LineMonitorPresenter.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="View\ClosingWaitDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\ClosingWaitDlg.designer.cs">
+      <DependentUpon>ClosingWaitDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\MyPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="View\NodeMonitorView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\NodeMonitorView.Designer.cs">
+      <DependentUpon>NodeMonitorView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\PopupTipinfoDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\PopupTipinfoDlg.Designer.cs">
+      <DependentUpon>PopupTipinfoDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\UserControlCtlNode.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="View\UserControlCtlNode.Designer.cs">
+      <DependentUpon>UserControlCtlNode.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\UserControlLine.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="View\UserControlLine.Designer.cs">
+      <DependentUpon>UserControlLine.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\WelcomeForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\WelcomeForm.Designer.cs">
+      <DependentUpon>WelcomeForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="WcfSvc\INodeMonitorSvc.cs" />
+    <Compile Include="WcfSvc\NodeMonitorSvc.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FTDataAccess\DBAccess.csproj">
+      <Project>{7031e95a-cbb5-44ae-aa9a-80211309981f}</Project>
+      <Name>DBAccess</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ModuleAttachInterface\ModuleCrossPnP.csproj">
+      <Project>{8ebcda91-8a16-46fa-84bd-784982f9eac8}</Project>
+      <Name>ModuleCrossPnP</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MTDBAccess\MTDBAccess.csproj">
+      <Project>{bbf54e56-b32d-4423-992b-0e0325fc1e6d}</Project>
+      <Name>MTDBAccess</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PLProcessModel\PLProcessModel.csproj">
+      <Project>{178d26df-c682-42d8-aeab-c816111b69c6}</Project>
+      <Name>PLProcessModel</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\日志模块\LogInterface\LogInterface.csproj">
+      <Project>{f929e2c2-43ed-4d7e-8426-356b0ec3c540}</Project>
+      <Name>LogInterface</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="PLConfig.xml">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="DevConfigFTYJ.xml">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="待解决问题.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\ClosingWaitDlg.resx">
+      <DependentUpon>ClosingWaitDlg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\NodeMonitorView.resx">
+      <DependentUpon>NodeMonitorView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\PopupTipinfoDlg.resx">
+      <DependentUpon>PopupTipinfoDlg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\UserControlCtlNode.resx">
+      <DependentUpon>UserControlCtlNode.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\UserControlLine.resx">
+      <DependentUpon>UserControlLine.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\WelcomeForm.resx">
+      <DependentUpon>WelcomeForm.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

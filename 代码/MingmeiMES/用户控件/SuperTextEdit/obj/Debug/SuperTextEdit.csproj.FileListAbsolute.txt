@@ -1,0 +1,9 @@
+E:\NpWork\Demo\SuperControl\SuperTextEdit\bin\Debug\SuperTextEdit.dll
+E:\NpWork\Demo\SuperControl\SuperTextEdit\bin\Debug\SuperTextEdit.pdb
+E:\NpWork\Demo\SuperControl\SuperTextEdit\obj\Debug\SuperTextEdit.csproj.GenerateResource.Cache
+E:\NpWork\Demo\SuperControl\SuperTextEdit\obj\Debug\SuperTextEdit.dll
+E:\NpWork\Demo\SuperControl\SuperTextEdit\obj\Debug\SuperTextEdit.pdb
+E:\NpWork\Demo\SuperControl\SuperTextEdit\obj\Debug\SuperTextEdit.SuperTextEdit.resources
+E:\NpWork\Demo\SuperControl\SuperTextEdit\bin\Debug\GDICommon.dll
+E:\NpWork\Demo\SuperControl\SuperTextEdit\bin\Debug\GDICommon.pdb
+E:\NpWork\Demo\SuperControl\SuperTextEdit\obj\Debug\SuperTextEdit.csprojResolveAssemblyReference.cache

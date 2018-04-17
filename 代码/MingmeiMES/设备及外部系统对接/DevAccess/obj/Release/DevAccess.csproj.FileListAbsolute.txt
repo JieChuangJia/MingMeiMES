@@ -1,0 +1,12 @@
+E:\Workspace\zz\设备接口\设备及外部系统对接\DevAccess\obj\Release\DevAccess.csprojResolveAssemblyReference.cache
+E:\Workspace\zz\设备接口\设备及外部系统对接\DevAccess\bin\Release\DevAccess.dll.config
+E:\Workspace\zz\设备接口\设备及外部系统对接\DevAccess\bin\Release\DevAccess.dll
+E:\Workspace\zz\设备接口\设备及外部系统对接\DevAccess\bin\Release\DevAccess.XmlSerializers.dll
+E:\Workspace\zz\设备接口\设备及外部系统对接\DevAccess\bin\Release\DevAccess.pdb
+E:\Workspace\zz\设备接口\设备及外部系统对接\DevAccess\bin\Release\DevInterface.dll
+E:\Workspace\zz\设备接口\设备及外部系统对接\DevAccess\bin\Release\DevInterface.pdb
+E:\Workspace\zz\设备接口\设备及外部系统对接\DevAccess\obj\Release\DevAccess.dll
+E:\Workspace\zz\设备接口\设备及外部系统对接\DevAccess\obj\Release\DevAccess.pdb
+E:\Workspace\zz\设备接口\设备及外部系统对接\DevAccess\obj\Release\DevAccess.XmlSerializers.dll
+E:\Workspace\zz\设备接口\设备及外部系统对接\DevAccess\bin\Release\Oracle.DataAccess.dll
+E:\Workspace\zz\设备接口\设备及外部系统对接\DevAccess\bin\Release\Oracle.ManagedDataAccess.dll

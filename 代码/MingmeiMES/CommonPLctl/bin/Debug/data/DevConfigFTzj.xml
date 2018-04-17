@@ -1,0 +1,104 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ProcessCfg>
+  <CtlNodes dllName="LineName">
+    <NodeFactory className="LineNodes.NodeFactory" CreatorMethod="GenerateNodes"></NodeFactory>
+    <Node className="LineNodes.ProductInput" id="1001">
+      <DataMember1>D1001</DataMember1>
+      <DataMember2>D2001</DataMember2>
+      
+    </Node>
+    <Node className="LineNodes.NodeAirlossCheck" id="2001">
+      <DataMember1>D1001</DataMember1>
+      <DataMember2>D2001</DataMember2>
+    </Node>
+    <Node className="LineNodes.NodeFireTryingA" id="3001">
+      <DataMember1>D1010</DataMember1>
+      <DataMember2>D1020</DataMember2>
+    </Node>
+    <Node className="LineNodes.NodeFireTryingB" id="4001">
+      <DataMember1>D1010</DataMember1>
+      <DataMember2>D1020</DataMember2>
+    </Node>
+    <Node className="LineNodes.NodeProductSwitch" id="5001">
+      <DataMember1>D1010</DataMember1>
+      <DataMember2>D1020</DataMember2>
+    </Node>
+    <Node className="LineNodes.NodePack" id="6001">
+      <DataMember1>D1010</DataMember1>
+      <DataMember2>D1020</DataMember2>
+    </Node>
+    <Node className="LineNodes.NodeRobotPallet" id="7001">
+      <DataMember1>D1010</DataMember1>
+      <DataMember2>D1020</DataMember2>
+    </Node>
+  </CtlNodes>
+  
+  <!--通信设备配置-->
+  <CommDevCfg>
+    <!--思谷RFID配置-->
+    <SgRfidCfg>
+      <ComPort>
+        <Port id="1">COM8</Port>
+        <Port id="2">COM9</Port>
+        <Port id="3">COM10</Port>
+        <Port id="4">COM11</Port>
+        <Port id="5">COM12</Port>
+        <Port id="6">COM13</Port>
+        <Port id="7">COM14</Port>
+        <Port id="8">COM15</Port>
+      </ComPort>
+      <PortLoad>
+        <RFID id="1" PortID="1"></RFID>
+        <RFID id="2" PortID="1"></RFID>
+        <RFID id="3" PortID="1"></RFID>
+        <RFID id="4" PortID ="2"></RFID>
+        <RFID id="5" PortID ="2"></RFID>
+        <RFID id="6" PortID ="2"></RFID>
+        <RFID id="7" PortID ="3"></RFID>
+        <RFID id="8" PortID ="3"></RFID>
+
+        <RFID id="9" PortID ="3">老化库1入口RFID</RFID>
+        <RFID id="16" PortID ="4">老化库1出口RFID</RFID>
+
+        <RFID id="17" PortID ="4">测试线1RFID</RFID>
+        <RFID id="18" PortID ="4">测试线2RFID</RFID>
+        <RFID id="19" PortID ="5">测试线3RFID</RFID>
+        <RFID id="20" PortID ="5">测试线4RFID</RFID>
+        <RFID id="21" PortID ="5">测试线5RFID</RFID>
+        <RFID id="22" PortID ="6">测试线6RFID</RFID>
+        <RFID id="23" PortID ="6">测试线7RFID</RFID>
+        <RFID id="24" PortID ="6">测试线8RFID</RFID>
+        <!--<RFID id="24" PortID ="7">测试线9RFID</RFID>
+        <RFID id="25" PortID ="7">测试线10RFID</RFID>
+        <RFID id="26" PortID ="7">测试线11RFID</RFID>-->
+      </PortLoad>
+   
+    </SgRfidCfg>
+  </CommDevCfg>
+  
+  <!--节点-通信设备接口分配-->
+  <NodeCommdevAlloc>
+     <NodeRfidCfg>
+      <NodeRfid nodeid="2001" rfid="1">1号装配线RFID</NodeRfid>
+      <DeviceRfid nodeid="2002" rfid="2">2号装配线RFID</DeviceRfid>
+      <DeviceRfid nodeid="2003" rfid="3">3号装配线RFID</DeviceRfid>
+      <DeviceRfid nodeid="2004" rfid="4">4号装配线RFID</DeviceRfid>
+      <DeviceRfid nodeid="2005" rfid="5">5号装配线RFID</DeviceRfid>
+    </NodeRfidCfg>
+  </NodeCommdevAlloc>
+  <!--操作系统任务线程分配-->
+  <ThreadAlloc>
+    <Thread id="1" loopInterval="100">
+      <NodeContainer>
+        <NodeID>1001</NodeID>
+        <NodeID>1002</NodeID>
+      </NodeContainer>
+    </Thread>
+    <Thread id="2" loopInterval="200">
+      <NodeContainer>
+        <NodeID>2001</NodeID>
+        <NodeID>2002</NodeID>
+      </NodeContainer>
+    </Thread>
+  </ThreadAlloc>
+</ProcessCfg>

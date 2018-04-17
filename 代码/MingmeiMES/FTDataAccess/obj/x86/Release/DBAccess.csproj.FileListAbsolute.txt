@@ -1,0 +1,13 @@
+E:\workspace\zz\项目12\代码\MingmeiMES\FTDataAccess\bin\Release\DBAccess.dll
+E:\workspace\zz\项目12\代码\MingmeiMES\FTDataAccess\bin\Release\DBAccess.pdb
+E:\workspace\zz\项目12\代码\MingmeiMES\FTDataAccess\obj\x86\Release\DBAccess.dll
+E:\workspace\zz\项目12\代码\MingmeiMES\FTDataAccess\obj\x86\Release\DBAccess.pdb
+E:\NpWork\others\明美\代码\MingmeiMES\FTDataAccess\bin\Release\DBAccess.dll
+E:\NpWork\others\明美\代码\MingmeiMES\FTDataAccess\bin\Release\DBAccess.pdb
+E:\NpWork\others\明美\代码\MingmeiMES\FTDataAccess\obj\x86\Release\DBAccess.dll
+E:\NpWork\others\明美\代码\MingmeiMES\FTDataAccess\obj\x86\Release\DBAccess.pdb
+E:\NpWork\others\明美\代码\MingmeiMES\FTDataAccess\obj\x86\Release\DBAccess.csprojResolveAssemblyReference.cache
+E:\tongyan\项目\明美MES\MingmeiMES20180305\MingmeiMES\FTDataAccess\bin\Release\DBAccess.dll
+E:\tongyan\项目\明美MES\MingmeiMES20180305\MingmeiMES\FTDataAccess\bin\Release\DBAccess.pdb
+E:\tongyan\项目\明美MES\MingmeiMES20180305\MingmeiMES\FTDataAccess\obj\x86\Release\DBAccess.dll
+E:\tongyan\项目\明美MES\MingmeiMES20180305\MingmeiMES\FTDataAccess\obj\x86\Release\DBAccess.pdb

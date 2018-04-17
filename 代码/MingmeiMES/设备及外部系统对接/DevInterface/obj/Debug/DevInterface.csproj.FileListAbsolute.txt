@@ -1,0 +1,4 @@
+E:\Workspace\zz\设备接口\设备及外部系统对接\DevInterface\bin\Debug\DevInterface.dll
+E:\Workspace\zz\设备接口\设备及外部系统对接\DevInterface\bin\Debug\DevInterface.pdb
+E:\Workspace\zz\设备接口\设备及外部系统对接\DevInterface\obj\Debug\DevInterface.dll
+E:\Workspace\zz\设备接口\设备及外部系统对接\DevInterface\obj\Debug\DevInterface.pdb

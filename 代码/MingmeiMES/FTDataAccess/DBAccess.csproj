@@ -1,0 +1,141 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{7031E95A-CBB5-44AE-AA9A-80211309981F}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>FTDataAccess</RootNamespace>
+    <AssemblyName>DBAccess</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Bll\BatteryModuleBll.cs" />
+    <Compile Include="Bll\BatteryPackBll.cs" />
+    <Compile Include="Bll\CDevWarnRecordBll.cs" />
+    <Compile Include="Bll\ControlTaskBll.cs" />
+    <Compile Include="Bll\DetectCodeDefBll.cs" />
+    <Compile Include="Bll\DevWarnrcdViewBll.cs" />
+    <Compile Include="Bll\DevWarnRecordBll.cs" />
+    <Compile Include="Bll\GasConfigBll.cs" />
+    <Compile Include="Bll\LOCAL_MES_STEP_INFOBll.cs" />
+    <Compile Include="Bll\LOCAL_MES_STEP_INFO_DETAIL.cs" />
+    <Compile Include="Bll\ModPsRecordBll.cs" />
+    <Compile Include="Bll\OnlineProductsBll.cs" />
+    <Compile Include="Bll\PLDeviceBll.cs" />
+    <Compile Include="Bll\PLNodesBll.cs" />
+    <Compile Include="Bll\ProduceRecordBll.cs" />
+    <Compile Include="Bll\ProductHeightDefBll.cs" />
+    <Compile Include="Bll\ProductPacsizeDefBll.cs" />
+    <Compile Include="Bll\ProductSizeCfgBll.cs" />
+    <Compile Include="Bll\SysLogBll.cs" />
+    <Compile Include="Bll\User_ListBLL.cs" />
+    <Compile Include="Bll\User_RoleBLL.cs" />
+    <Compile Include="Bll\workerResBll.cs" />
+    <Compile Include="Dal\BatteryModuleDal.cs" />
+    <Compile Include="Dal\BatteryPackDal.cs" />
+    <Compile Include="Dal\ControlTaskDal.cs" />
+    <Compile Include="Dal\DetectCodeDefDal.cs" />
+    <Compile Include="Dal\DevWarnrcdViewDal.cs" />
+    <Compile Include="Dal\DevWarnRecordDal.cs" />
+    <Compile Include="Dal\GasConfigDal.cs" />
+    <Compile Include="Dal\LOCAL_MES_STEP_INFODal.cs" />
+    <Compile Include="Dal\LOCAL_MES_STEP_INFO_DETAIL.cs" />
+    <Compile Include="Dal\ModPsRecordDal.cs" />
+    <Compile Include="Dal\OnlineProductsDal.cs" />
+    <Compile Include="Dal\PLDeviceDal.cs" />
+    <Compile Include="Dal\PLNodesDal.cs" />
+    <Compile Include="Dal\ProduceRecordDal.cs" />
+    <Compile Include="Dal\ProductHeightDefDal.cs" />
+    <Compile Include="Dal\ProductPacsizeDefDal.cs" />
+    <Compile Include="Dal\ProductSizeCfgDal.cs" />
+    <Compile Include="Dal\SysLogDal.cs" />
+    <Compile Include="Dal\User_ListDAL.cs" />
+    <Compile Include="Dal\User_RoleDAL.cs" />
+    <Compile Include="Dal\workerResDal.cs" />
+    <Compile Include="DBUtility\DbHelperSQL.cs" />
+    <Compile Include="DBUtility\PubConstant.cs" />
+    <Compile Include="Model\BatteryModuleModel.cs" />
+    <Compile Include="Model\BatteryPackModel.cs" />
+    <Compile Include="Model\ControlTaskModel.cs" />
+    <Compile Include="Model\DetectCodeDefModel.cs" />
+    <Compile Include="Model\DevWarnrcdViewModel.cs" />
+    <Compile Include="Model\DevWarnRecordModel.cs" />
+    <Compile Include="Model\GasConfigModel.cs" />
+    <Compile Include="Model\LOCAL_MES_STEP_INFOModel.cs" />
+    <Compile Include="Model\LOCAL_MES_STEP_INFO_DETAILModel.cs" />
+    <Compile Include="Model\ModPsRecordModel.cs" />
+    <Compile Include="Model\OnlineProductsModel.cs" />
+    <Compile Include="Model\PLDeviceModel.cs" />
+    <Compile Include="Model\PLNodesModel.cs" />
+    <Compile Include="Model\ProduceRecordModel.cs" />
+    <Compile Include="Model\ProductHeightDefModel.cs" />
+    <Compile Include="Model\ProductPacsizeDefModel.cs" />
+    <Compile Include="Model\ProductSizeCfgModel.cs" />
+    <Compile Include="Model\SysLogModel.cs" />
+    <Compile Include="Model\User_ListModel.cs" />
+    <Compile Include="Model\User_RoleModel.cs" />
+    <Compile Include="Model\workerResModel.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <None Include="DBUtility\vssver2.scc" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

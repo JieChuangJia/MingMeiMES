@@ -1,0 +1,9 @@
+E:\NpWork\Demo\SuperControl\WarningRoll\bin\Debug\WarningRoll.dll
+E:\NpWork\Demo\SuperControl\WarningRoll\bin\Debug\WarningRoll.pdb
+E:\NpWork\Demo\SuperControl\WarningRoll\obj\Debug\WarningRoll.dll
+E:\NpWork\Demo\SuperControl\WarningRoll\obj\Debug\WarningRoll.pdb
+E:\NpWork\Demo\SuperControl\WarningRoll\bin\Debug\GDICommon.dll
+E:\NpWork\Demo\SuperControl\WarningRoll\bin\Debug\GDICommon.pdb
+E:\NpWork\Demo\SuperControl\WarningRoll\obj\Debug\WarningRoll.csprojResolveAssemblyReference.cache
+E:\NpWork\Demo\SuperControl\WarningRoll\obj\Debug\WarningRoll.WarningRoll.resources
+E:\NpWork\Demo\SuperControl\WarningRoll\obj\Debug\WarningRoll.csproj.GenerateResource.Cache

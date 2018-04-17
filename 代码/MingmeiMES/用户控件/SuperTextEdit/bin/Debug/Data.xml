@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8" ?> 
+<Root>
+  <Item name ="D1200" type ="DINT" style="EDITOR" desc="A档运行速度">
+    12
+  </Item>
+  <Item name ="D1201" type ="DINT" style="EDITOR" desc="测试2">
+    13
+  </Item>
+</Root>

@@ -1,0 +1,14 @@
+E:\workspace\zz\设备接口\设备及外部系统对接\DevInterface\bin\Release\DevInterface.dll
+E:\workspace\zz\设备接口\设备及外部系统对接\DevInterface\bin\Release\DevInterface.pdb
+E:\workspace\zz\设备接口\设备及外部系统对接\DevInterface\obj\x86\Release\DevInterface.dll
+E:\workspace\zz\设备接口\设备及外部系统对接\DevInterface\obj\x86\Release\DevInterface.pdb
+E:\NpWork\others\明美\代码\MingmeiMES\设备及外部系统对接\DevInterface\bin\Release\DevInterface.dll
+E:\NpWork\others\明美\代码\MingmeiMES\设备及外部系统对接\DevInterface\bin\Release\DevInterface.pdb
+E:\NpWork\others\明美\代码\MingmeiMES\设备及外部系统对接\DevInterface\obj\x86\Release\DevInterface.dll
+E:\NpWork\others\明美\代码\MingmeiMES\设备及外部系统对接\DevInterface\obj\x86\Release\DevInterface.pdb
+E:\NpWork\others\明美\代码\MingmeiMES\设备及外部系统对接\DevInterface\obj\x86\Release\DevInterface.csprojResolveAssemblyReference.cache
+E:\tongyan\项目\明美MES\MingmeiMES20180305\MingmeiMES\设备及外部系统对接\DevInterface\bin\Release\DevInterface.dll
+E:\tongyan\项目\明美MES\MingmeiMES20180305\MingmeiMES\设备及外部系统对接\DevInterface\bin\Release\DevInterface.pdb
+E:\tongyan\项目\明美MES\MingmeiMES20180305\MingmeiMES\设备及外部系统对接\DevInterface\obj\x86\Release\DevInterface.csprojResolveAssemblyReference.cache
+E:\tongyan\项目\明美MES\MingmeiMES20180305\MingmeiMES\设备及外部系统对接\DevInterface\obj\x86\Release\DevInterface.dll
+E:\tongyan\项目\明美MES\MingmeiMES20180305\MingmeiMES\设备及外部系统对接\DevInterface\obj\x86\Release\DevInterface.pdb

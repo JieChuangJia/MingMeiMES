@@ -1,0 +1,9 @@
+E:\NpWork\others\明美\资料\给NP\代码\MingmeiMES\用户控件\SuperTextEdit\bin\Release\SuperTextEdit.dll
+E:\NpWork\others\明美\资料\给NP\代码\MingmeiMES\用户控件\SuperTextEdit\bin\Release\SuperTextEdit.pdb
+E:\NpWork\others\明美\资料\给NP\代码\MingmeiMES\用户控件\SuperTextEdit\bin\Release\GDICommon.dll
+E:\NpWork\others\明美\资料\给NP\代码\MingmeiMES\用户控件\SuperTextEdit\bin\Release\GDICommon.pdb
+E:\NpWork\others\明美\资料\给NP\代码\MingmeiMES\用户控件\SuperTextEdit\obj\Release\SuperTextEdit.SuperTextEdit.resources
+E:\NpWork\others\明美\资料\给NP\代码\MingmeiMES\用户控件\SuperTextEdit\obj\Release\SuperTextEdit.csproj.GenerateResource.Cache
+E:\NpWork\others\明美\资料\给NP\代码\MingmeiMES\用户控件\SuperTextEdit\obj\Release\SuperTextEdit.dll
+E:\NpWork\others\明美\资料\给NP\代码\MingmeiMES\用户控件\SuperTextEdit\obj\Release\SuperTextEdit.pdb
+E:\NpWork\others\明美\资料\给NP\代码\MingmeiMES\用户控件\SuperTextEdit\obj\Release\SuperTextEdit.csprojResolveAssemblyReference.cache

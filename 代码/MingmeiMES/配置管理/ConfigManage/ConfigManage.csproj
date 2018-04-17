@@ -1,0 +1,241 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{856AF4D3-DEC4-4650-B010-B0030CDDA560}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ConfigManage</RootNamespace>
+    <AssemblyName>ConfigManage</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="DevAccess, Version=1.0.0.3, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\PLProcessModel\bin\Release\DevAccess.dll</HintPath>
+    </Reference>
+    <Reference Include="DevInterface, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\PLProcessModel\bin\Release\DevInterface.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WarningRoll">
+      <HintPath>..\..\用户控件\WarningRoll\obj\Release\WarningRoll.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Dialog\ProductCfgDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialog\ProductCfgDlg.Designer.cs">
+      <DependentUpon>ProductCfgDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialog\ProductSizeDicDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialog\ProductSizeDicDlg.Designer.cs">
+      <DependentUpon>ProductSizeDicDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="IView\IProductDataSheetView.cs" />
+    <Compile Include="Model\SysCfgsettingModel.cs" />
+    <Compile Include="Presenter\ProductDataPresenter.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="View\ConfiManageView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\ConfiManageView.Designer.cs">
+      <DependentUpon>ConfiManageView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\DetectCodeCfgView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\DetectCodeCfgView.Designer.cs">
+      <DependentUpon>DetectCodeCfgView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\MesOfflineView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\MesOfflineView.Designer.cs">
+      <DependentUpon>MesOfflineView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\ParamSetView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\ParamSetView.Designer.cs">
+      <DependentUpon>ParamSetView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\PLCSettingView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\PLCSettingView.Designer.cs">
+      <DependentUpon>PLCSettingView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\ProductDatasheetView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\ProductDatasheetView.Designer.cs">
+      <DependentUpon>ProductDatasheetView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\SysDefineView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\SysDefineView.Designer.cs">
+      <DependentUpon>SysDefineView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\SysSettingView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\SysSettingView.Designer.cs">
+      <DependentUpon>SysSettingView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\UserManageView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\UserManageView.Designer.cs">
+      <DependentUpon>UserManageView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\WorkerResView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\WorkerResView.Designer.cs">
+      <DependentUpon>WorkerResView.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\设备接口\设备及外部系统对接\DevAccess\DevAccess.csproj">
+      <Project>{c5f63c04-3b10-4fa9-96ca-226c4d405583}</Project>
+      <Name>DevAccess</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\设备接口\设备及外部系统对接\DevInterface\DevInterface.csproj">
+      <Project>{ae429508-4cb7-499e-88f0-c939496e7bea}</Project>
+      <Name>DevInterface</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\FTDataAccess\DBAccess.csproj">
+      <Project>{7031e95a-cbb5-44ae-aa9a-80211309981f}</Project>
+      <Name>DBAccess</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ModuleAttachInterface\ModuleCrossPnP.csproj">
+      <Project>{8ebcda91-8a16-46fa-84bd-784982f9eac8}</Project>
+      <Name>ModuleCrossPnP</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\PLProcessModel\PLProcessModel.csproj">
+      <Project>{178d26df-c682-42d8-aeab-c816111b69c6}</Project>
+      <Name>PLProcessModel</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\日志模块\LogInterface\LogInterface.csproj">
+      <Project>{f929e2c2-43ed-4d7e-8426-356b0ec3c540}</Project>
+      <Name>LogInterface</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\用户控件\GDICommon\GDICommon.csproj">
+      <Project>{79c23904-66ca-4595-89c1-24f14a168ae9}</Project>
+      <Name>GDICommon</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\用户控件\SuperTextEdit\SuperTextEdit.csproj">
+      <Project>{959120c3-fa54-4264-a45e-c4058150216a}</Project>
+      <Name>SuperTextEdit</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Dialog\ProductCfgDlg.resx">
+      <DependentUpon>ProductCfgDlg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialog\ProductSizeDicDlg.resx">
+      <DependentUpon>ProductSizeDicDlg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\ConfiManageView.resx">
+      <DependentUpon>ConfiManageView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\DetectCodeCfgView.resx">
+      <DependentUpon>DetectCodeCfgView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\MesOfflineView.resx">
+      <DependentUpon>MesOfflineView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\ParamSetView.resx">
+      <DependentUpon>ParamSetView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\PLCSettingView.resx">
+      <DependentUpon>PLCSettingView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\ProductDatasheetView.resx">
+      <DependentUpon>ProductDatasheetView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\SysDefineView.resx">
+      <DependentUpon>SysDefineView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\SysSettingView.resx">
+      <DependentUpon>SysSettingView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\UserManageView.resx">
+      <DependentUpon>UserManageView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\WorkerResView.resx">
+      <DependentUpon>WorkerResView.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

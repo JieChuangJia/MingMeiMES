@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/LineNodes" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/LineNodes" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:complexType name="ArrayOfMonitorSvcNodeStatus">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="MonitorSvcNodeStatus" nillable="true" type="tns:MonitorSvcNodeStatus" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfMonitorSvcNodeStatus" nillable="true" type="tns:ArrayOfMonitorSvcNodeStatus" />
+  <xs:complexType name="MonitorSvcNodeStatus">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="NodeName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="ProductBarcode" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="ProductName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="StatDescribe" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Status" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="MonitorSvcNodeStatus" nillable="true" type="tns:MonitorSvcNodeStatus" />
+</xs:schema>

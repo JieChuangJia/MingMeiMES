@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/PLProcessModel" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/PLProcessModel" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:complexType name="ArrayOfCtlNodeStatus">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="CtlNodeStatus" nillable="true" type="tns:CtlNodeStatus" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfCtlNodeStatus" nillable="true" type="tns:ArrayOfCtlNodeStatus" />
+  <xs:complexType name="CtlNodeStatus">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="NodeName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="ProductBarcode" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="ProductExist" type="xs:boolean" />
+      <xs:element minOccurs="0" name="StatDescribe" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Status" type="tns:EnumNodeStatus" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="CtlNodeStatus" nillable="true" type="tns:CtlNodeStatus" />
+  <xs:simpleType name="EnumNodeStatus">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="设备故障" />
+      <xs:enumeration value="设备空闲" />
+      <xs:enumeration value="设备使用中" />
+      <xs:enumeration value="工位有板" />
+      <xs:enumeration value="无法识别" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="EnumNodeStatus" nillable="true" type="tns:EnumNodeStatus" />
+</xs:schema>

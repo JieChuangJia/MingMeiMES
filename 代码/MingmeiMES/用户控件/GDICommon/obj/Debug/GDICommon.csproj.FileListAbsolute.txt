@@ -1,0 +1,10 @@
+E:\NpWork\Demo\SuperControl\Common\bin\Debug\GDICommon.dll
+E:\NpWork\Demo\SuperControl\Common\bin\Debug\GDICommon.pdb
+E:\NpWork\Demo\SuperControl\Common\obj\Debug\GDICommon.csprojResolveAssemblyReference.cache
+E:\NpWork\Demo\SuperControl\Common\obj\Debug\GDICommon.dll
+E:\NpWork\Demo\SuperControl\Common\obj\Debug\GDICommon.pdb
+E:\NpWork\Demo\SuperControl\GDICommon\bin\Debug\GDICommon.dll
+E:\NpWork\Demo\SuperControl\GDICommon\bin\Debug\GDICommon.pdb
+E:\NpWork\Demo\SuperControl\GDICommon\obj\Debug\GDICommon.csprojResolveAssemblyReference.cache
+E:\NpWork\Demo\SuperControl\GDICommon\obj\Debug\GDICommon.dll
+E:\NpWork\Demo\SuperControl\GDICommon\obj\Debug\GDICommon.pdb

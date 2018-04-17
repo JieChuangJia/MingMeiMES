@@ -1,0 +1,5 @@
+E:\tongyan\项目\明美MES\MingmeiMES20180305\MingmeiMES\DCIRDBAccess\bin\Release\DCIRDBAccess.dll
+E:\tongyan\项目\明美MES\MingmeiMES20180305\MingmeiMES\DCIRDBAccess\bin\Release\DCIRDBAccess.pdb
+E:\tongyan\项目\明美MES\MingmeiMES20180305\MingmeiMES\DCIRDBAccess\obj\Release\DCIRDBAccess.csprojResolveAssemblyReference.cache
+E:\tongyan\项目\明美MES\MingmeiMES20180305\MingmeiMES\DCIRDBAccess\obj\Release\DCIRDBAccess.dll
+E:\tongyan\项目\明美MES\MingmeiMES20180305\MingmeiMES\DCIRDBAccess\obj\Release\DCIRDBAccess.pdb

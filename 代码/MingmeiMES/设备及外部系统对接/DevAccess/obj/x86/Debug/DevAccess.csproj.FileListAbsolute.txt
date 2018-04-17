@@ -1,0 +1,13 @@
+E:\workspace\zz\设备接口\设备及外部系统对接\DevAccess\bin\x86\Debug\DevAccess.dll.config
+E:\workspace\zz\设备接口\设备及外部系统对接\DevAccess\bin\x86\Debug\DevAccess.dll
+E:\workspace\zz\设备接口\设备及外部系统对接\DevAccess\bin\x86\Debug\DevAccess.pdb
+E:\workspace\zz\设备接口\设备及外部系统对接\DevAccess\bin\x86\Debug\DevInterface.dll
+E:\workspace\zz\设备接口\设备及外部系统对接\DevAccess\bin\x86\Debug\Oracle.DataAccess.dll
+E:\workspace\zz\设备接口\设备及外部系统对接\DevAccess\bin\x86\Debug\Oracle.ManagedDataAccess.dll
+E:\workspace\zz\设备接口\设备及外部系统对接\DevAccess\bin\x86\Debug\UHFReader06CSharp.dll
+E:\workspace\zz\设备接口\设备及外部系统对接\DevAccess\bin\x86\Debug\DevInterface.pdb
+E:\workspace\zz\设备接口\设备及外部系统对接\DevAccess\obj\x86\Debug\DevAccess.csprojResolveAssemblyReference.cache
+E:\workspace\zz\设备接口\设备及外部系统对接\DevAccess\obj\x86\Debug\Interop.OPCAutomation.dll
+E:\workspace\zz\设备接口\设备及外部系统对接\DevAccess\obj\x86\Debug\DevAccess.csproj.ResolveComReference.cache
+E:\workspace\zz\设备接口\设备及外部系统对接\DevAccess\obj\x86\Debug\DevAccess.dll
+E:\workspace\zz\设备接口\设备及外部系统对接\DevAccess\obj\x86\Debug\DevAccess.pdb
