@@ -9,6 +9,10 @@ namespace LineNodes
 {
     public class NodeUpDownMachine:CtlNodeBaseModel
     {
+        private short[] barcodeDb1 = new short[5]; //打码交互db1
+        private short[] barcodeDb2 = new short[5]; //打码交互db2
+        private string M_SN = "";
+        private int barcodeTaskPhase = 0;
         string machionIP = "192.168.0.1";
         public override bool BuildCfg(System.Xml.Linq.XElement xe, ref string reStr)
         {
@@ -31,6 +35,10 @@ namespace LineNodes
             if (!nodeEnabled)
             {
                 return true;
+            }
+            if (this.nodeID == "OPA010")
+            {
+                return ExeBusinessPLC3(ref reStr);
             }
             if (!ExeBusinessAB(ref reStr))
             {
@@ -63,35 +71,172 @@ namespace LineNodes
                 default:
                     break;
             }
-            if (this.nodeName == "OPA010")
-            {
-                ExeBusinessPLC2(ref reStr);
-            }
+           
             return true;
         }
 
         private bool ExeBusinessPLC2(ref string reStr)
         {
-            RequireModCode(ref reStr);
+            if(!RequireModCode(ref reStr))
+            {
+                return false;
+            }
             ScanCodeIsSuccess(ref reStr);
+            return true;
+        }
+        private bool ExeBusinessPLC3(ref string reStr)
+        {
+            if(!plcRW2.ReadMultiDB("D9000", 2, ref barcodeDb2))
+            {
+                Console.WriteLine("{0}打码交互，读DB2数据区失败",nodeName);
+                return false;
+            }
+            if(barcodeDb2[0] == 1)
+            {
+                barcodeTaskPhase = 1;
+                M_SN = "";
+                barcodeDb1[0] = 1;
+                barcodeDb1[1] = 1;
+            }
+           
+            switch(barcodeTaskPhase)
+            {
+                case 1:
+                    {
+                        Console.WriteLine("{0}开始从MES申请模组码", nodeName);
+                        
+                        if (!ModuleCodeRequire(ref M_SN, ref reStr))
+                        {
+                            LogRecorder.AddDebugLog(nodeName, "ModuleCodeRequire FALSE" + "," + reStr);
+                            barcodeDb1[0] = 3;
+                            break;
+                        }
+                        if(!plcRW2.WriteDB("D9000", 0))
+                        {
+                            Console.WriteLine("复位D9000 失败");
+                            plcRW2.CloseConnect();
+                            plcRW2.ConnectPLC(ref reStr);
+                            break;
+                        }
+                        LogRecorder.AddDebugLog(nodeName, "从MES申请到模组码:" + M_SN);
+                        barcodeTaskPhase++;
+                        break;
+                    }
+                case 2:
+                    {
+                        barcodeDb1[1] = 1;
+                        //写条码到文件
+                        string modCodeFile = "";
+                        modCodeFile = string.Format(@"\\{0}\打标文件\加工文件\打码内容.txt", machionIP);
+                        if (!System.IO.File.Exists(modCodeFile))
+                        {
+                            LogRecorder.AddDebugLog(nodeName, string.Format("打码内容文件：{0}不存在", modCodeFile));
+                            break;
+                        }
+                        System.IO.StreamWriter writter = new System.IO.StreamWriter(modCodeFile, false);
+                        StringBuilder strBuild = new StringBuilder();
+                        strBuild.AppendLine(M_SN);
+                        writter.Write(strBuild.ToString());
+                        writter.Flush();
+                        writter.Close();
+                        barcodeDb1[0] = 2;
+                        LogRecorder.AddDebugLog(nodeName, "模组条码写到打码内容文本中");
+                        barcodeTaskPhase++;
+                        break;
+                    }
+                case 3:
+                    {
+                        //等待扫码结果
+                        string checkResult = "";
+                        if(barcodeDb2[1] == 1)
+                        {
+                            checkResult = "OK:";
+                        }
+                        else if (barcodeDb2[1] == 2)
+                        {
+                            checkResult = "NG:";
+                        }
+                        else
+                        {
+                            break;
+                        }
+                        barcodeDb1[0] = 1; //复位
+                        string modCodeFile = "";
+                        modCodeFile = string.Format(@"\\{0}\打标文件\加工文件\打码内容.txt", machionIP);
+                        if (!System.IO.File.Exists(modCodeFile))
+                        {
+                            LogRecorder.AddDebugLog(nodeName, string.Format("打码内容文件：{0}不存在", modCodeFile));
+                            break;
+                        }
+                        System.IO.StreamReader reader = new System.IO.StreamReader(modCodeFile, Encoding.Default);
+                        string modCode = reader.ReadLine();
+                        //上传Mes
+                        int M_FLAG = 3;
+                        string M_WORKSTATION_SN = "Y00200101";
+                        string M_DEVICE_SN = "";
+                        string M_SN = modCode;
+                        string M_UNION_SN = "";
+                        string M_CONTAINER_SN = "";
+                        string M_LEVEL = "";
+                        string M_ITEMVALUE = "扫码结果:" + checkResult;
+                        RootObject rObj = new RootObject();
+                        rObj = WShelper.DevDataUpload(M_FLAG, M_DEVICE_SN, M_WORKSTATION_SN, M_SN, M_UNION_SN, M_CONTAINER_SN, M_LEVEL, M_ITEMVALUE);
+                        LogRecorder.AddDebugLog(nodeName, rObj.RES);
+                      
+                        //清空文件
+                        System.IO.StreamWriter writter = new System.IO.StreamWriter(modCodeFile, false);
+                        StringBuilder strBuild = new StringBuilder();
+                        strBuild.AppendLine("");
+                        writter.Write(strBuild.ToString());
+                        writter.Flush();
+                        writter.Close();
+                        LogRecorder.AddDebugLog(nodeName, "打码内容文件清空");
+                        barcodeDb1[1] = 2;
+                        if (barcodeDb2[1]==2)
+                        {
+                            barcodeTaskPhase = 2;
+                        }
+                        else
+                        {
+                            barcodeTaskPhase=0;
+                        }
+                        break;
+                    }
+                default:
+                    break;
+            }
+
+            if(!plcRW2.WriteMultiDB("D9100", 2, barcodeDb1))
+            {
+                Console.WriteLine("{0}打码交互，写DB1数据区失败", nodeName);
+                return false;
+            }
             return true;
         }
 
         private bool RequireModCode(ref string reStr)
         {
             int val = 0;
+          
             if (!plcRW2.ReadDB("D9000", ref val))
             {
+                 Console.WriteLine(nodeName+"读设备PLC失败,PLC地址："+(plcRW2 as DevAccess.OmlPlcRW).PLCIP);
                 plcRW2.CloseConnect();
                 plcRW2.ConnectPLC(ref reStr);
                 return false;
             }
             if (val != 1)
             {
-                LogRecorder.AddDebugLog(nodeName, "D9000 = 0");
+               // LogRecorder.AddDebugLog(nodeName, "D9000 = 0");
                 return false;
             }
-            LogRecorder.AddDebugLog(nodeName, "D9000 = 1");
+            if(!plcRW2.WriteDB("D9101",1))
+            {
+                Console.WriteLine(nodeName + "复位D9101失败" );
+                return false;
+            }
+          //  LogRecorder.AddDebugLog(nodeName, "D9000 = 1");
+            Console.WriteLine("{0}开始从MES申请模组码", nodeName);
             string M_SN = "";
             if (!ModuleCodeRequire(ref M_SN, ref reStr))
             {
@@ -104,7 +249,7 @@ namespace LineNodes
                 }
                 return false;
             }
-            LogRecorder.AddDebugLog(nodeName, "M_SN:" + M_SN);
+            LogRecorder.AddDebugLog(nodeName, "从MES申请到模组码:" + M_SN);
             //写条码到文件
             string modCodeFile = "";
             modCodeFile = string.Format(@"\\{0}\打标文件\加工文件\打码内容.txt", machionIP);
@@ -119,7 +264,12 @@ namespace LineNodes
             writter.Write(strBuild.ToString());
             writter.Flush();
             writter.Close();
-            if (plcRW2.WriteDB("D9100", 2))
+            if(!plcRW2.WriteDB("D9000", 0))
+            {
+                reStr = "复位D9000 失败";
+                return false;
+            }
+            if (!plcRW2.WriteDB("D9100", 2))
             {
                 plcRW2.CloseConnect();
                 plcRW2.ConnectPLC(ref reStr);
@@ -143,17 +293,17 @@ namespace LineNodes
             string checkResult = "";
             if (val == 1)
             {
-                checkResult = "OK";
+                checkResult = "OK:";
             }
             else if(val == 2)
             {
-                checkResult = "NG";
+                checkResult = "NG:";
             }
             else
             {
                 return false;
             }
-            LogRecorder.AddDebugLog(nodeName, "D9001 = " + val.ToString());
+           // LogRecorder.AddDebugLog(nodeName, "D9001 = " + val.ToString());
            
             //读模组条码文件
             string modCodeFile = "";
@@ -167,7 +317,7 @@ namespace LineNodes
             string modCode = reader.ReadLine();
              //上传Mes
             int M_FLAG = 3;
-            string M_WORKSTATION_SN = "Y00100101";
+            string M_WORKSTATION_SN = "Y00200101";
             string M_DEVICE_SN = "";
             string M_SN = modCode;
             string M_UNION_SN = "";
@@ -177,8 +327,15 @@ namespace LineNodes
             RootObject rObj = new RootObject();
             rObj = WShelper.DevDataUpload(M_FLAG, M_DEVICE_SN, M_WORKSTATION_SN, M_SN, M_UNION_SN, M_CONTAINER_SN, M_LEVEL, M_ITEMVALUE);
             LogRecorder.AddDebugLog(nodeName, rObj.RES);
-            if (rObj.RES.Contains("NG"))
+            //if (rObj.RES.Contains("NG"))
+            //{
+            //    return false;
+            //}
+            logRecorder.AddDebugLog(nodeName, string.Format("打码结果{0}上传MES", checkResult));
+            if (plcRW2.WriteDB("D9101", 2))
             {
+                plcRW2.CloseConnect();
+                plcRW2.ConnectPLC(ref reStr);
                 return false;
             }
             //清空文件
@@ -188,14 +345,15 @@ namespace LineNodes
             writter.Write(strBuild.ToString());
             writter.Flush();
             writter.Close();
-            LogRecorder.AddDebugLog(nodeName, "打码内容文件清空");    
+            LogRecorder.AddDebugLog(nodeName, "打码内容文件清空");
+           
             if (plcRW2.WriteDB("D9100", 1))
             {
                 plcRW2.CloseConnect();
                 plcRW2.ConnectPLC(ref reStr);
                 return false;
             }
-            LogRecorder.AddDebugLog(nodeName, "D9100 = 1");    
+           // LogRecorder.AddDebugLog(nodeName, "D9100 = 1");    
             return true;
         }
         /// 模组条码请求
@@ -203,13 +361,13 @@ namespace LineNodes
         /// <returns></returns>
         private bool ModuleCodeRequire(ref string M_SN,ref string reStr)
         {
-            string M_WORKSTATION_SN = "Y00100101";
+            string M_WORKSTATION_SN = "Y00200101";
             RootObject rObj = new RootObject();
             rObj = WShelper.BarCodeRequest(M_WORKSTATION_SN);
             if (rObj.RES.Contains("OK"))
             {
                 M_SN = rObj.M_COMENT[0].M_SN;
-                reStr = this.nodeName + "模组条码请求成功!";
+                reStr = this.nodeName + "模组条码请求成功";
                 return true;
             }
             else

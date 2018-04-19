@@ -11,3 +11,7 @@ E:\tongyan\项目\明美MES\MingmeiMES20180305\MingmeiMES\FTDataAccess\bin\Relea
 E:\tongyan\项目\明美MES\MingmeiMES20180305\MingmeiMES\FTDataAccess\bin\Release\DBAccess.pdb
 E:\tongyan\项目\明美MES\MingmeiMES20180305\MingmeiMES\FTDataAccess\obj\x86\Release\DBAccess.dll
 E:\tongyan\项目\明美MES\MingmeiMES20180305\MingmeiMES\FTDataAccess\obj\x86\Release\DBAccess.pdb
+E:\workspace\项目\明美项目\Git_mingmei\MingMeiMES\代码\MingmeiMES\FTDataAccess\bin\Release\DBAccess.dll
+E:\workspace\项目\明美项目\Git_mingmei\MingMeiMES\代码\MingmeiMES\FTDataAccess\bin\Release\DBAccess.pdb
+E:\workspace\项目\明美项目\Git_mingmei\MingMeiMES\代码\MingmeiMES\FTDataAccess\obj\x86\Release\DBAccess.dll
+E:\workspace\项目\明美项目\Git_mingmei\MingMeiMES\代码\MingmeiMES\FTDataAccess\obj\x86\Release\DBAccess.pdb

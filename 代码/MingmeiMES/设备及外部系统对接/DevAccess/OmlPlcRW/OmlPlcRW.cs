@@ -21,10 +21,10 @@ namespace DevAccess
     {
         public string PlcRole { get; set; }
         private   object lockObj = new object();
-        private EnumPLCType PlcType { get; set; }
-        private string PLCIP { get; set; }
-        private int PLCPort { get; set; }
-        private string PCIP { get; set; }
+        public EnumPLCType PlcType { get; set; }
+        public string PLCIP { get; set; }
+        public int PLCPort { get; set; }
+       public string PCIP { get; set; }
        
         private Int64 plcStatCounter = 0;
         private ISocket mySocket { get; set; }

@@ -91,12 +91,6 @@
     <Reference Include="DCIRDBAccess">
       <HintPath>..\DCIRDBAccess\bin\Release\DCIRDBAccess.dll</HintPath>
     </Reference>
-    <Reference Include="DevAccess">
-      <HintPath>..\LineNodes1\bin\Release\DevAccess.dll</HintPath>
-    </Reference>
-    <Reference Include="DevInterface">
-      <HintPath>..\LineNodes1\bin\Release\DevInterface.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
@@ -214,6 +208,14 @@
     <ProjectReference Include="..\日志模块\ProductRecordView\ProductRecordView.csproj">
       <Project>{7324889c-e198-4959-903a-4d183c356cb3}</Project>
       <Name>ProductRecordView</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\设备及外部系统对接\DevAccess\DevAccess.csproj">
+      <Project>{c5f63c04-3b10-4fa9-96ca-226c4d405583}</Project>
+      <Name>DevAccess</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\设备及外部系统对接\DevInterface\DevInterface.csproj">
+      <Project>{ae429508-4cb7-499e-88f0-c939496e7bea}</Project>
+      <Name>DevInterface</Name>
     </ProjectReference>
     <ProjectReference Include="..\配置管理\ConfigManage\ConfigManage.csproj">
       <Project>{856af4d3-dec4-4650-b010-b0030cdda560}</Project>

@@ -28,3 +28,15 @@ E:\tongyan\项目\明美MES\MingmeiMES20180305\MingmeiMES\设备及外部系统�
 E:\tongyan\项目\明美MES\MingmeiMES20180305\MingmeiMES\设备及外部系统对接\DevAccess\obj\x86\Release\DevAccess.csproj.ResolveComReference.cache
 E:\tongyan\项目\明美MES\MingmeiMES20180305\MingmeiMES\设备及外部系统对接\DevAccess\obj\x86\Release\DevAccess.dll
 E:\tongyan\项目\明美MES\MingmeiMES20180305\MingmeiMES\设备及外部系统对接\DevAccess\obj\x86\Release\DevAccess.pdb
+E:\workspace\项目\明美项目\Git_mingmei\MingMeiMES\代码\MingmeiMES\设备及外部系统对接\DevAccess\bin\Release\DevAccess.dll.config
+E:\workspace\项目\明美项目\Git_mingmei\MingMeiMES\代码\MingmeiMES\设备及外部系统对接\DevAccess\bin\Release\DevAccess.dll
+E:\workspace\项目\明美项目\Git_mingmei\MingMeiMES\代码\MingmeiMES\设备及外部系统对接\DevAccess\bin\Release\DevAccess.pdb
+E:\workspace\项目\明美项目\Git_mingmei\MingMeiMES\代码\MingmeiMES\设备及外部系统对接\DevAccess\bin\Release\DevInterface.dll
+E:\workspace\项目\明美项目\Git_mingmei\MingMeiMES\代码\MingmeiMES\设备及外部系统对接\DevAccess\bin\Release\Oracle.DataAccess.dll
+E:\workspace\项目\明美项目\Git_mingmei\MingMeiMES\代码\MingmeiMES\设备及外部系统对接\DevAccess\bin\Release\Oracle.ManagedDataAccess.dll
+E:\workspace\项目\明美项目\Git_mingmei\MingMeiMES\代码\MingmeiMES\设备及外部系统对接\DevAccess\bin\Release\DevInterface.pdb
+E:\workspace\项目\明美项目\Git_mingmei\MingMeiMES\代码\MingmeiMES\设备及外部系统对接\DevAccess\obj\x86\Release\DevAccess.csprojResolveAssemblyReference.cache
+E:\workspace\项目\明美项目\Git_mingmei\MingMeiMES\代码\MingmeiMES\设备及外部系统对接\DevAccess\obj\x86\Release\Interop.OPCAutomation.dll
+E:\workspace\项目\明美项目\Git_mingmei\MingMeiMES\代码\MingmeiMES\设备及外部系统对接\DevAccess\obj\x86\Release\DevAccess.csproj.ResolveComReference.cache
+E:\workspace\项目\明美项目\Git_mingmei\MingMeiMES\代码\MingmeiMES\设备及外部系统对接\DevAccess\obj\x86\Release\DevAccess.dll
+E:\workspace\项目\明美项目\Git_mingmei\MingMeiMES\代码\MingmeiMES\设备及外部系统对接\DevAccess\obj\x86\Release\DevAccess.pdb

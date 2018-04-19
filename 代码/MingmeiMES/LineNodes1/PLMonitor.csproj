@@ -57,14 +57,6 @@
     <Reference Include="DCIRDBAccess">
       <HintPath>..\DCIRDBAccess\bin\Release\DCIRDBAccess.dll</HintPath>
     </Reference>
-    <Reference Include="DevAccess, Version=1.0.0.3, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\Release\DevAccess.dll</HintPath>
-    </Reference>
-    <Reference Include="DevInterface, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\Release\DevInterface.dll</HintPath>
-    </Reference>
     <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\CommonPLctl\bin\Release\Newtonsoft.Json.dll</HintPath>
@@ -170,13 +162,17 @@
       <Project>{f929e2c2-43ed-4d7e-8426-356b0ec3c540}</Project>
       <Name>LogInterface</Name>
     </ProjectReference>
+    <ProjectReference Include="..\设备及外部系统对接\DevAccess\DevAccess.csproj">
+      <Project>{c5f63c04-3b10-4fa9-96ca-226c4d405583}</Project>
+      <Name>DevAccess</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\设备及外部系统对接\DevInterface\DevInterface.csproj">
+      <Project>{ae429508-4cb7-499e-88f0-c939496e7bea}</Project>
+      <Name>DevInterface</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="PLConfig.xml">
-      <SubType>Designer</SubType>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="DevConfigFTYJ.xml">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
