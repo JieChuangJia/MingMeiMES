@@ -255,7 +255,8 @@ namespace LineNodes
                             string M_ITEMVALUE = GetItemVal(dt);
                             //上传数据
                             RootObject rObj = new RootObject();
-                            rObj = WShelper.DevDataUpload(M_FLAG, M_DEVICE_SN, M_WORKSTATION_SN, M_SN, M_UNION_SN, M_CONTAINER_SN, M_LEVEL, M_ITEMVALUE);
+                            string strJson = "";
+                            rObj = WShelper.DevDataUpload(M_FLAG, M_DEVICE_SN, M_WORKSTATION_SN, M_SN, M_UNION_SN, M_CONTAINER_SN, M_LEVEL, M_ITEMVALUE,ref strJson);
                             currentTaskDescribe = rObj.RES + "," + M_FLAG + "," + M_WORKSTATION_SN + "," + M_ITEMVALUE + this.nodeName + rObj.CONTROL_TYPE;
                             Console.WriteLine(rObj.RES);
                             Console.WriteLine(M_ITEMVALUE);

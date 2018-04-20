@@ -14,6 +14,5 @@ E:\tongyan\项目\明美MES\MingmeiMES20180305\MingmeiMES\设备及外部系统�
 E:\tongyan\项目\明美MES\MingmeiMES20180305\MingmeiMES\设备及外部系统对接\DevInterface\obj\x86\Release\DevInterface.pdb
 E:\workspace\项目\明美项目\Git_mingmei\MingMeiMES\代码\MingmeiMES\设备及外部系统对接\DevInterface\bin\Release\DevInterface.dll
 E:\workspace\项目\明美项目\Git_mingmei\MingMeiMES\代码\MingmeiMES\设备及外部系统对接\DevInterface\bin\Release\DevInterface.pdb
-E:\workspace\项目\明美项目\Git_mingmei\MingMeiMES\代码\MingmeiMES\设备及外部系统对接\DevInterface\obj\x86\Release\DevInterface.csprojResolveAssemblyReference.cache
 E:\workspace\项目\明美项目\Git_mingmei\MingMeiMES\代码\MingmeiMES\设备及外部系统对接\DevInterface\obj\x86\Release\DevInterface.dll
 E:\workspace\项目\明美项目\Git_mingmei\MingMeiMES\代码\MingmeiMES\设备及外部系统对接\DevInterface\obj\x86\Release\DevInterface.pdb

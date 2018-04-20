@@ -1002,21 +1002,7 @@ namespace PLProcessModel
             {
                 return false;
             }
-            if (this.currentTask != null)
-            {
-                //查询未执行完任务，清掉
-                if (!ctlTaskBll.ClearTask(string.Format("DeviceID='{0}'", this.nodeID)))
-                {
-                    logRecorder.AddDebugLog(nodeName, "清理任务失败");
-                    return false;
-                }
-                this.currentTask = null;
-                this.currentStat.Status = EnumNodeStatus.设备空闲;
-                this.currentStat.ProductBarcode = "";
-                this.currentStat.StatDescribe = "设备空闲";
-                checkFinished = false;
-                currentTaskDescribe = "等待有板信号";
-            }
+           
             currentTaskPhase = 0;
             db1ValsToSnd[channel - 1] = 1;
             db1ValsToSnd[2+channel-1] = 1;
@@ -1035,6 +1021,26 @@ namespace PLProcessModel
             this.currentStat.Status = EnumNodeStatus.设备空闲;
             this.currentStat.StatDescribe = "工位空闲";
             currentTaskDescribe = "";
+            if (this.currentTask != null)
+            {
+                //查询未执行完任务，清掉
+                this.currentTask = null;
+                this.currentStat.Status = EnumNodeStatus.设备空闲;
+                this.currentStat.ProductBarcode = "";
+                this.currentStat.StatDescribe = "设备空闲";
+                checkFinished = false;
+                currentTaskDescribe = "等待有板信号";
+                if (this.nodeID == "OPA011" || this.nodeID == "OPA012")
+                {
+                    return true;
+                }
+                if (!ctlTaskBll.ClearTask(string.Format("DeviceID='{0}'", this.nodeID)))
+                {
+                    logRecorder.AddDebugLog(nodeName, "清理任务失败");
+                    return false;
+                }
+                
+            }
             //if (channel == 1)
             //{
             //    this.rfidUIDA = "";
@@ -1047,6 +1053,7 @@ namespace PLProcessModel
         }
         protected bool ChannelBegin(int channel)
         {
+            
             if(channel<1)
             {
                 return false;
@@ -1059,7 +1066,10 @@ namespace PLProcessModel
                 this.currentStat.Status = EnumNodeStatus.设备使用中;
 
                 this.currentStat.StatDescribe = "工作中";
-
+                if(this.nodeID=="OPA011" || this.nodeID=="OPA012")
+                {
+                    return true;
+                }
                 ControlTaskModel task = new ControlTaskModel();
                 task.TaskID = System.Guid.NewGuid().ToString("N");
                 task.TaskParam = string.Empty;
@@ -1076,6 +1086,10 @@ namespace PLProcessModel
         }
         protected virtual void ExeRfidBusinessAB()
         {
+            if (this.nodeID == "OPA011" || this.nodeID == "OPA012") //点胶1,2工位不需要读rfid
+            {
+                return;
+            }
             if(this.rfidRWList == null || this.rfidRWList.Count()<1)
             {
                 return;

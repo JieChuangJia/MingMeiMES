@@ -25,3 +25,12 @@ E:\tongyan\项目\明美MES\MingmeiMES20180305\MingmeiMES\用户控件\WarningRo
 E:\tongyan\项目\明美MES\MingmeiMES20180305\MingmeiMES\用户控件\WarningRoll\obj\x86\Release\WarningRoll.csproj.GenerateResource.Cache
 E:\tongyan\项目\明美MES\MingmeiMES20180305\MingmeiMES\用户控件\WarningRoll\obj\x86\Release\WarningRoll.dll
 E:\tongyan\项目\明美MES\MingmeiMES20180305\MingmeiMES\用户控件\WarningRoll\obj\x86\Release\WarningRoll.pdb
+E:\workspace\项目\明美项目\Git_mingmei\MingMeiMES\代码\MingmeiMES\用户控件\WarningRoll\bin\Release\WarningRoll.dll
+E:\workspace\项目\明美项目\Git_mingmei\MingMeiMES\代码\MingmeiMES\用户控件\WarningRoll\bin\Release\WarningRoll.pdb
+E:\workspace\项目\明美项目\Git_mingmei\MingMeiMES\代码\MingmeiMES\用户控件\WarningRoll\bin\Release\GDICommon.dll
+E:\workspace\项目\明美项目\Git_mingmei\MingMeiMES\代码\MingmeiMES\用户控件\WarningRoll\bin\Release\GDICommon.pdb
+E:\workspace\项目\明美项目\Git_mingmei\MingMeiMES\代码\MingmeiMES\用户控件\WarningRoll\obj\x86\Release\WarningRoll.csprojResolveAssemblyReference.cache
+E:\workspace\项目\明美项目\Git_mingmei\MingMeiMES\代码\MingmeiMES\用户控件\WarningRoll\obj\x86\Release\WarningRoll.WarningRoll.resources
+E:\workspace\项目\明美项目\Git_mingmei\MingMeiMES\代码\MingmeiMES\用户控件\WarningRoll\obj\x86\Release\WarningRoll.csproj.GenerateResource.Cache
+E:\workspace\项目\明美项目\Git_mingmei\MingMeiMES\代码\MingmeiMES\用户控件\WarningRoll\obj\x86\Release\WarningRoll.dll
+E:\workspace\项目\明美项目\Git_mingmei\MingMeiMES\代码\MingmeiMES\用户控件\WarningRoll\obj\x86\Release\WarningRoll.pdb

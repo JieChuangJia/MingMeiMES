@@ -12,3 +12,7 @@ E:\tongyan\项目\明美MES\MingmeiMES20180305\MingmeiMES\用户控件\GDICommon
 E:\tongyan\项目\明美MES\MingmeiMES20180305\MingmeiMES\用户控件\GDICommon\bin\Release\GDICommon.pdb
 E:\tongyan\项目\明美MES\MingmeiMES20180305\MingmeiMES\用户控件\GDICommon\obj\x86\Release\GDICommon.dll
 E:\tongyan\项目\明美MES\MingmeiMES20180305\MingmeiMES\用户控件\GDICommon\obj\x86\Release\GDICommon.pdb
+E:\workspace\项目\明美项目\Git_mingmei\MingMeiMES\代码\MingmeiMES\用户控件\GDICommon\bin\Release\GDICommon.dll
+E:\workspace\项目\明美项目\Git_mingmei\MingMeiMES\代码\MingmeiMES\用户控件\GDICommon\bin\Release\GDICommon.pdb
+E:\workspace\项目\明美项目\Git_mingmei\MingMeiMES\代码\MingmeiMES\用户控件\GDICommon\obj\x86\Release\GDICommon.dll
+E:\workspace\项目\明美项目\Git_mingmei\MingMeiMES\代码\MingmeiMES\用户控件\GDICommon\obj\x86\Release\GDICommon.pdb

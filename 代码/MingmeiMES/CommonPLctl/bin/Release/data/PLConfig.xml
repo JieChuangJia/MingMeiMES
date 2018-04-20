@@ -59,61 +59,61 @@
     </PLCCfg>
     <!--思谷RFID配置-->
     <RfidCfg CommType="TCPIP">
-      <!--<RFID id="100" CommAddr="192.168.0.190:6000"></RFID>-->
-      <RFID id="1" CommAddr="192.168.0.191:6000">A线绑定工位A通道</RFID>
-      <RFID id="2" CommAddr="192.168.0.192:6000">A线绑定工位B通道</RFID>
-      <RFID id="3" CommAddr="192.168.0.193:6000">A线锁螺丝工位A通道</RFID>
-      <RFID id="4" CommAddr="192.168.0.194:6000">A线锁螺丝工位B通道</RFID>
-      <RFID id="5" CommAddr="192.168.0.195:6000">UV固化工位A通道</RFID>
-      <RFID id="6" CommAddr="192.168.0.196:6000">UV固化工位B通道</RFID>
-      <RFID id="7" CommAddr="192.168.0.197:6000">A线点胶3工位A通道</RFID>
-      <RFID id="8" CommAddr="192.168.0.198:6000">A线点胶3工位B通道</RFID>
-      <RFID id="9" CommAddr="192.168.0.199:6000">A线点胶4工位A通道</RFID>
-      <RFID id="10" CommAddr="192.168.0.200:6000">A线点胶4工位B通道</RFID>
-      <RFID id="11" CommAddr="192.168.0.201:6000">A线CCD工位A通道</RFID>
-      <RFID id="12" CommAddr="192.168.0.202:6000">A线CCD工位B通道</RFID>
-      <RFID id="13" CommAddr="192.168.0.210:6000">B线绑定工位</RFID>
-      <RFID id="14" CommAddr="192.168.0.211:6000">B线1#激光清洗机A道</RFID>
-      <RFID id="15" CommAddr="192.168.0.212:6000">B线1#激光清洗机B道</RFID>
-      <RFID id="16" CommAddr="192.168.0.213:6000">B线1#胶外溢检测A道</RFID>
-      <RFID id="17" CommAddr="192.168.0.214:6000">B线1#胶外溢检测B道</RFID>
-      <RFID id="18" CommAddr="192.168.0.215:6000">B线1#铝丝焊接A道</RFID>
-      <RFID id="19" CommAddr="192.168.0.216:6000">B线1#铝丝焊接B道</RFID>
-      <RFID id="20" CommAddr="192.168.0.217:6000">B线2#激光清洗机A道</RFID>
-      <RFID id="21" CommAddr="192.168.0.218:6000">B线2#激光清洗机B道</RFID>
-      <RFID id="22" CommAddr="192.168.0.219:6000">B线2#胶外溢检测A道</RFID>
-      <RFID id="23" CommAddr="192.168.0.220:6000">B线2#胶外溢检测B道</RFID>
-      <RFID id="24" CommAddr="192.168.0.221:6000">B线2#铝丝焊接A道</RFID>
-      <RFID id="25" CommAddr="192.168.0.222:6000">B线2#铝丝焊接B道</RFID>
-      <RFID id="26" CommAddr="192.168.0.223:6000">B线DCIR测试A道</RFID>
-      <RFID id="27" CommAddr="192.168.0.224:6000">B线DCIR测试B道</RFID>
-      <RFID id="28" CommAddr="192.168.0.230:6000">C线绑定工位</RFID>
-      <RFID id="29" CommAddr="192.168.0.231:6000">C线自动打带机</RFID>
-      <RFID id="30" CommAddr="192.168.0.232:6000">C线扫描及打码</RFID>
-      <RFID id="31" CommAddr="192.168.0.233:6000">C线连接片焊接</RFID>
-      <RFID id="32" CommAddr="192.168.0.234:6000">C线绑机器人出料</RFID>
+      <!--<RFID id="100" CommAddr="192.168.0.190:3001"></RFID>-->
+      <RFID id="1" CommAddr="192.168.0.191:3001">A线绑定工位A通道</RFID>
+      <RFID id="2" CommAddr="192.168.0.192:3001">A线绑定工位B通道</RFID>
+      <RFID id="3" CommAddr="192.168.0.193:3001">A线锁螺丝工位A通道</RFID>
+      <RFID id="4" CommAddr="192.168.0.194:3001">A线锁螺丝工位B通道</RFID>
+      <RFID id="5" CommAddr="192.168.0.195:3001">UV固化工位A通道</RFID>
+      <RFID id="6" CommAddr="192.168.0.196:3001">UV固化工位B通道</RFID>
+      <RFID id="7" CommAddr="192.168.0.197:3001">A线点胶3工位A通道</RFID>
+      <RFID id="8" CommAddr="192.168.0.198:3001">A线点胶3工位B通道</RFID>
+      <RFID id="9" CommAddr="192.168.0.199:3001">A线点胶4工位A通道</RFID>
+      <RFID id="10" CommAddr="192.168.0.200:3001">A线点胶4工位B通道</RFID>
+      <RFID id="11" CommAddr="192.168.0.201:3001">A线CCD工位A通道</RFID>
+      <RFID id="12" CommAddr="192.168.0.202:3001">A线CCD工位B通道</RFID>
+      <RFID id="13" CommAddr="192.168.0.210:3001">B线绑定工位</RFID>
+      <RFID id="14" CommAddr="192.168.0.211:3001">B线1#激光清洗机A道</RFID>
+      <RFID id="15" CommAddr="192.168.0.212:3001">B线1#激光清洗机B道</RFID>
+      <RFID id="16" CommAddr="192.168.0.213:3001">B线1#胶外溢检测A道</RFID>
+      <RFID id="17" CommAddr="192.168.0.214:3001">B线1#胶外溢检测B道</RFID>
+      <RFID id="18" CommAddr="192.168.0.215:3001">B线1#铝丝焊接A道</RFID>
+      <RFID id="19" CommAddr="192.168.0.216:3001">B线1#铝丝焊接B道</RFID>
+      <RFID id="20" CommAddr="192.168.0.217:3001">B线2#激光清洗机A道</RFID>
+      <RFID id="21" CommAddr="192.168.0.218:3001">B线2#激光清洗机B道</RFID>
+      <RFID id="22" CommAddr="192.168.0.219:3001">B线2#胶外溢检测A道</RFID>
+      <RFID id="23" CommAddr="192.168.0.220:3001">B线2#胶外溢检测B道</RFID>
+      <RFID id="24" CommAddr="192.168.0.221:3001">B线2#铝丝焊接A道</RFID>
+      <RFID id="25" CommAddr="192.168.0.222:3001">B线2#铝丝焊接B道</RFID>
+      <RFID id="26" CommAddr="192.168.0.223:3001">B线DCIR测试A道</RFID>
+      <RFID id="27" CommAddr="192.168.0.224:3001">B线DCIR测试B道</RFID>
+      <RFID id="28" CommAddr="192.168.0.230:3001">C线绑定工位</RFID>
+      <RFID id="29" CommAddr="192.168.0.231:3001">C线自动打带机</RFID>
+      <RFID id="30" CommAddr="192.168.0.232:3001">C线扫描及打码</RFID>
+      <RFID id="31" CommAddr="192.168.0.233:3001">C线连接片焊接</RFID>
+      <RFID id="32" CommAddr="192.168.0.234:3001">C线绑机器人出料</RFID>
 
-      <RFID id="33" CommAddr="192.168.0.203:6000">A线上下支架机A通道</RFID>
-      <RFID id="34" CommAddr="192.168.0.204:6000">A线上下支架机B通道</RFID>
-      <RFID id="35" CommAddr="192.168.0.205:6000">A线点胶机1A通道</RFID>
-      <RFID id="36" CommAddr="192.168.0.206:6000">A线点胶机1B通道</RFID>
-      <RFID id="37" CommAddr="192.168.0.207:6000">A线点胶机2A通道</RFID>
-      <RFID id="38" CommAddr="192.168.0.208:6000">A线点胶机2B通道</RFID>
+      <RFID id="33" CommAddr="192.168.0.203:3001">A线上下支架机A通道</RFID>
+      <RFID id="34" CommAddr="192.168.0.204:3001">A线上下支架机B通道</RFID>
+      <RFID id="35" CommAddr="192.168.0.205:3001">A线点胶机1A通道</RFID>
+      <RFID id="36" CommAddr="192.168.0.206:3001">A线点胶机1B通道</RFID>
+      <RFID id="37" CommAddr="192.168.0.207:3001">A线点胶机2A通道</RFID>
+      <RFID id="38" CommAddr="192.168.0.208:3001">A线点胶机2B通道</RFID>
 
-      <RFID id="39" CommAddr="192.168.0.240:6000">A线人工位1A通道</RFID>
-      <RFID id="40" CommAddr="192.168.0.241:6000">A线人工位1B通道</RFID>
-      <RFID id="41" CommAddr="192.168.0.242:6000">A线人工位2A通道</RFID>
-      <RFID id="42" CommAddr="192.168.0.243:6000">A线人工位2B通道</RFID>
-      <RFID id="43" CommAddr="192.168.0.244:6000">A线人工位3A通道</RFID>
-      <RFID id="44" CommAddr="192.168.0.245:6000">A线人工位3B通道</RFID>
+      <!--<RFID id="39" CommAddr="192.168.0.240:3001">A线人工位1A通道</RFID>-->
+      <!--<RFID id="40" CommAddr="192.168.0.241:3001">A线人工位1B通道</RFID>-->
+      <!--<RFID id="41" CommAddr="192.168.0.242:3001">A线人工位2A通道</RFID>-->
+      <!--<RFID id="42" CommAddr="192.168.0.243:3001">A线人工位2B通道</RFID>-->
+      <!--<RFID id="43" CommAddr="192.168.0.244:3001">A线人工位3A通道</RFID>-->
+      <!--<RFID id="44" CommAddr="192.168.0.245:3001">A线人工位3B通道</RFID>-->
 
 
-      <RFID id="45" CommAddr="192.168.0.225:6000">B线末端机器人</RFID>
-      <RFID id="46" CommAddr="192.168.0.235:6000">C线绝缘板锁螺丝机</RFID>
-      <RFID id="47" CommAddr="192.168.0.236:6000">C线人工位1</RFID>
-      <RFID id="48" CommAddr="192.168.0.237:6000">C线人工位2</RFID>
-      <RFID id="49" CommAddr="192.168.0.238:6000">C线人工位3</RFID>
-      <RFID id="50" CommAddr="192.168.0.239:6000">C线人工位4</RFID>
+      <RFID id="45" CommAddr="192.168.0.225:3001">B线末端机器人</RFID>
+      <RFID id="46" CommAddr="192.168.0.235:3001">C线绝缘板锁螺丝机</RFID>
+      <!--<RFID id="47" CommAddr="192.168.0.236:3001">C线人工位1</RFID>-->
+      <!--<RFID id="48" CommAddr="192.168.0.237:3001">C线人工位2</RFID>-->
+      <!--<RFID id="49" CommAddr="192.168.0.238:3001">C线人工位3</RFID>-->
+      <!--<RFID id="50" CommAddr="192.168.0.239:3001">C线人工位4</RFID>-->
       
       
     </RfidCfg>
@@ -1016,18 +1016,18 @@
           <DevContain></DevContain>
         </Node>-->
  	    <Node id="OPA010" nodeName="A线上下支架机" className="LineNodes.NodeUpDownMachine">
-          <BaseDatainfo plcID="1" plcID2="9" rfid="33,34"  >
-            <DB1Addr addrStart="D2150" blockNum="10">DB1数据区地址信息</DB1Addr>
-            <DB2Addr addrStart="D3150" blockNum="10">DB2数据区地址信息</DB2Addr>
+          <BaseDatainfo plcID="9"  rfid="33,34"  >
+            <DB1Addr addrStart="D9100" blockNum="10">DB1数据区地址信息</DB1Addr>
+            <DB2Addr addrStart="D9000" blockNum="10">DB2数据区地址信息</DB2Addr>
           </BaseDatainfo>
         </Node>
-        <Node id="OPA011" nodeName="A线点胶机1" className="LineNodes.NodeUpDownMachine">
+        <Node id="OPA011" nodeName="A线点胶机1" className="LineNodes.NodeDianjiao">
           <BaseDatainfo plcID="1"  rfid="35,36"  >
             <DB1Addr addrStart="D2160" blockNum="10">DB1数据区地址信息</DB1Addr>
             <DB2Addr addrStart="D3160" blockNum="10">DB2数据区地址信息</DB2Addr>
           </BaseDatainfo>
         </Node>
-        <Node id="OPA012" nodeName="A线点胶机2" className="LineNodes.NodeUpDownMachine">
+        <Node id="OPA012" nodeName="A线点胶机2" className="LineNodes.NodeDianjiao">
           <BaseDatainfo plcID="1"  rfid="37,38"  >
             <DB1Addr addrStart="D2170" blockNum="10">DB1数据区地址信息</DB1Addr>
             <DB2Addr addrStart="D3170" blockNum="10">DB2数据区地址信息</DB2Addr>
@@ -1964,7 +1964,7 @@
       <NodeContainer>
         <NodeID>OPA005</NodeID>
         <NodeID>OPA006</NodeID>
-  	<NodeID>OPA010</NodeID>
+  	    <NodeID>OPA010</NodeID>
         <NodeID>OPA011</NodeID>
         <NodeID>OPA012</NodeID>
       </NodeContainer>

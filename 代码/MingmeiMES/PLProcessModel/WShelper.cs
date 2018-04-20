@@ -349,8 +349,16 @@ namespace PLProcessModel
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public static RootObject DevDataUpload(int M_FLAG, string M_DEVICE_SN, string M_WORKSTATION_SN, string M_SN, string M_UNION_SN, string M_CONTAINER_SN, string M_LEVEL, string M_ITEMVALUE)
+        public static RootObject DevDataUpload(int M_FLAG, string M_DEVICE_SN, string M_WORKSTATION_SN, string M_SN, string M_UNION_SN, string M_CONTAINER_SN, string M_LEVEL, string M_ITEMVALUE, ref string strJson)
         {
+            RootObject rObj = null;
+            if(SysCfgModel.SimMode)
+            {
+                rObj = new RootObject();
+                rObj.RES="OK";
+
+                return rObj;
+            }
             List<ContentDetail> CList = new List<ContentDetail>();
             ContentDetail tail = new ContentDetail();
             tail.M_FLAG = M_FLAG;
@@ -363,12 +371,55 @@ namespace PLProcessModel
             tail.M_ITEMVALUE = M_ITEMVALUE;
             CList.Add(tail);
             //上传参数
-            string strJson = WShelper.ReturnJsonData("OK", "RUN", CList);
+            strJson = WShelper.ReturnJsonData("OK", "RUN", CList);
             object objJson = strJson;
             object[] addParams = new object[] { objJson };
             object result = WShelper.InvokeWebService(url, "DxDataUploadJson", addParams);
             string strRES = result.ToString();
-            RootObject rObj = new RootObject();
+            rObj = new RootObject();
+            rObj = JsonConvert.DeserializeObject<RootObject>(strRES);
+            return rObj;
+        }
+       /// <summary>
+       /// 过程参数上传
+       /// </summary>
+       /// <param name="M_FLAG"></param>
+       /// <param name="M_DEVICE_SN"></param>
+       /// <param name="M_WORKSTATION_SN"></param>
+       /// <param name="M_SN"></param>
+       /// <param name="M_UNION_SN"></param>
+       /// <param name="M_CONTAINER_SN"></param>
+       /// <param name="M_LEVEL"></param>
+       /// <param name="M_ITEMVALUE"></param>
+       /// <returns></returns>
+        public static RootObject ProcParamUpload(string M_AREA,string M_DEVICE_SN, string M_WORKSTATION_SN, string M_UNION_SN, string M_CONTAINER_SN, string M_LEVEL, string M_ITEMVALUE,ref string strJson)
+        {
+            RootObject rObj = null;
+            if (SysCfgModel.SimMode)
+            {
+                rObj = new RootObject();
+                rObj.RES = "OK";
+
+                return rObj;
+            }
+            List<ContentDetail> CList = new List<ContentDetail>();
+            ContentDetail tail = new ContentDetail();
+            tail.M_FLAG = 6;
+            tail.M_AREA = M_AREA;
+            tail.M_DEVICE_SN = M_DEVICE_SN;
+            tail.M_WORKSTATION_SN = M_WORKSTATION_SN;
+            tail.M_UNION_SN = M_UNION_SN;
+            tail.M_CONTAINER_SN = M_CONTAINER_SN;
+            tail.M_LEVEL = M_LEVEL;
+            tail.M_ITEMVALUE = M_ITEMVALUE;
+            CList.Add(tail);
+            //上传参数
+            strJson = WShelper.ReturnJsonData("OK", "RUN", CList);
+            object objJson = strJson;
+            object[] addParams = new object[] { objJson };
+            object result = WShelper.InvokeWebService(url, "DxDataUploadJson", addParams);
+            string strRES = result.ToString();
+            rObj = new RootObject();
             rObj = JsonConvert.DeserializeObject<RootObject>(strRES);
             return rObj;
         }
