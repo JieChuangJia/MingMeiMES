@@ -978,7 +978,7 @@ namespace LineNodes
 
                     //if (rfidType == "C线自动打带机")
                     //{
-                        rfidRW = new RfidRW_CFRH390(id,ip, port);
+                        rfidRW = new RfidRW_CFRH390_Tcp(id,ip, port,null);
                     //}
                     //else
                     //{
