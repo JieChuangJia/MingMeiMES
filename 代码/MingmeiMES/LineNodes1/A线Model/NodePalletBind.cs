@@ -370,6 +370,18 @@ namespace LineNodes
                     }
                 case 3:
                     {
+                        this.currentTaskDescribe = "开始上传MES数据";
+                        // 1 上传档位，电压，容量，内阻
+
+                        //2 上传极性检测结果
+
+                        currentTaskPhase++;
+                        this.currentTask.TaskPhase = this.currentTaskPhase;
+                        this.ctlTaskBll.Update(this.currentTask);
+                        break;
+                    }
+                case 4:
+                    {
                         //二维码和档位及位置信息绑定完成
                         this.db1ValsToSnd[3] = 2;
                         currentTaskPhase++;

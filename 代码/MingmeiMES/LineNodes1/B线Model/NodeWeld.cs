@@ -274,7 +274,7 @@ namespace LineNodes
                 case 5:
                     {
 
-                        Thread.Sleep(10000);
+                      //  Thread.Sleep(10000);
                         db1ValsToSnd[2 + this.channelIndex - 1] = 3;
                         currentTaskDescribe = "流程完成";
                         this.currentTask.TaskPhase = this.currentTaskPhase;

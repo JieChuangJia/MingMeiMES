@@ -24,7 +24,7 @@ namespace CommonPL
     {
          private delegate void DlgtAbortApp();
         #region 数据
-        private string version = "1.0.24 测试版 2017-12-14";
+        private string version = "1.0.25 测试版 2018-4-20";
 
         private int roleID = 3;
         private string userName = "";

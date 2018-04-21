@@ -89,6 +89,50 @@ namespace LineNodes
                     }
                 case 4:
                     {
+                        currentTaskDescribe = "开始上传MES数据";
+                        List<DBAccess.Model.BatteryModuleModel> modList = modBll.GetModelList(string.Format("palletID='{0}' and palletBinded=1", this.rfidUID));
+                        if(modList==null || modList.Count()==0)
+                        {
+                            currentTaskPhase = 5;
+                            break;
+                        }
+                        int uvTime = 0;
+                        int uvTem = 0;
+                        if(!plcRW2.ReadDB("D9000", ref uvTime))
+                        {
+                            currentTaskDescribe = "读UV设备PLC 时间，温度参数失败";
+                            break;
+                        }
+                        if (!plcRW2.ReadDB("D9002", ref uvTem))
+                        {
+                            currentTaskDescribe = "读UV设备PLC 时间，温度参数失败";
+                            break;
+                        }
+                        string mesItemVal = string.Format("UV胶固化时间:{0}:s|UV胶固化温度:{1}:℃", uvTime, uvTem);
+                        string M_WORKSTATION_SN = "Y00100701";
+                        int M_FLAG = 3;
+                        string M_DEVICE_SN = "";
+                        string M_UNION_SN = "";
+                        string M_CONTAINER_SN = "";
+                        string M_LEVEL = "";
+                        string M_ITEMVALUE = mesItemVal;
+                        string strJson = "";
+                        foreach(DBAccess.Model.BatteryModuleModel mod in modList)
+                        {
+                            string M_SN = mod.batModuleID;
+                            RootObject rObj = new RootObject();
+                            rObj = WShelper.DevDataUpload(M_FLAG, M_DEVICE_SN, M_WORKSTATION_SN, M_SN, M_UNION_SN, M_CONTAINER_SN, M_LEVEL, M_ITEMVALUE, ref strJson);
+                            logRecorder.AddDebugLog(nodeName, string.Format("模组{0}UV结果{1}上传MES，返回{2}", M_SN,mesItemVal, rObj.RES));
+                            this.currentTaskDescribe = string.Format("模组{0}UV结果{1}上传MES，返回{2}", M_SN, mesItemVal, rObj.RES);
+                        }
+                        currentTaskPhase++;
+                        this.currentTask.TaskPhase = this.currentTaskPhase;
+                        this.ctlTaskBll.Update(this.currentTask);
+                        
+                        break;
+                    }
+                case 5:
+                    {
                         db1ValsToSnd[2 + this.channelIndex - 1] = 3;
                         currentTaskDescribe = "流程完成";
                         this.currentTask.TaskPhase = this.currentTaskPhase;
