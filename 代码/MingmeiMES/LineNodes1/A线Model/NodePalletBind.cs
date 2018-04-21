@@ -157,33 +157,17 @@ namespace LineNodes
         protected bool ExeBindA(ref string reStr)
         {
             
-            //if (!base.ExeBusiness(ref reStr))
-            //{
-            //    return false;
-            //}
-           // Console.WriteLine(nodeName + "ExeBusinessAB前" );
+            
             if(!ExeBusinessAB(ref reStr))
             {
                 return false;
             }
-            //if(this.db2Vals[1] == 2)
-            //{
-            //    Console.WriteLine(nodeName + "rfidUIDA：" + this.rfidUIDA);
-            //}
-            //this.rfidRW = this.rfidRWList[0];  //临时
-            //if (this.db2Vals[0] == 1 && this.rfidRWList.Count > 0)
-            //{
-            //    this.rfidRW = this.rfidRWList[0];
-            //}
-            //else if (this.db2Vals[0] == 2 && this.rfidRWList.Count > 1)
-            //{
-            //    this.rfidRW = this.rfidRWList[1];
-            //}
+           
             switch(currentTaskPhase)
             {
                 case 1:
                     {
-                        Console.WriteLine("currentTaskPhase:" + 1);
+                       // Console.WriteLine("currentTaskPhase:" + 1);
                         currentTaskDescribe = "开始读RFID";
                         if(!RfidReadAB())
                         {
@@ -194,11 +178,7 @@ namespace LineNodes
                         db1ValsToSnd[3] = 1;//复位
                         db1ValsToSnd[4] = 1;//复位
                         db1ValsToSnd[5] = 1;//复位
-                        //if (!TryUnbind(rfidUID, ref reStr))
-                        //{
-                        //    logRecorder.AddDebugLog(nodeName, "解绑RFID:" + rfidUID + "失败," + reStr);
-                        //    break;
-                        //}
+                     
                         this.currentTask.TaskParam = rfidUID;
                         this.currentTask.TaskPhase = this.currentTaskPhase;
                         this.ctlTaskBll.Update(this.currentTask);
@@ -219,7 +199,7 @@ namespace LineNodes
 
                         if (bindModeCt > 0)  //判断是否都绑定完成
                         {
-                            Console.WriteLine("bindModeCt:" + bindModeCt);
+                        //    Console.WriteLine("bindModeCt:" + bindModeCt);
                             if ((db2Vals[0] == 1 && bindModeCt == db2Vals[7]) || (db2Vals[0] == 2 && bindModeCt == db2Vals[8]))
                             {
                                 currentTaskPhase++;
@@ -227,146 +207,12 @@ namespace LineNodes
                                 this.ctlTaskBll.Update(this.currentTask);
                                 break;
                             }
-                           
-                            
                         }
-                        if(db2Vals[3] == 1 )
-                        {
-                            //PLC请求读支架二维码和分档信息
-                            string modBarcode = "";
-                            string modGrade = "";
-                            //int modGrade = this.db2Vals[5];
-                            //add 20180320
-                            List<byte> modGradeBytes = new List<byte>();
-                            for (int j = 0; j < 10; j++)
-                            {
-                                int indexSt = 15 + j;
-                                modGradeBytes.Add((byte)(this.db2Vals[indexSt] & 0xff));
-                                modGradeBytes.Add((byte)((this.db2Vals[indexSt] >> 8) & 0xff));
-                            }
-                            //字节流转换成字符串
-                            modGrade = System.Text.ASCIIEncoding.UTF8.GetString(modGradeBytes.ToArray());
-                            Console.WriteLine("modGrade:" + modGrade);
-                            //判断二维码是否读取成功
-                            if (string.IsNullOrWhiteSpace(modGrade))
-                            {
-                                Console.WriteLine("  db2Vals[5] = 2;");
-                                db2Vals[5] = 2;
-                                if (!NodeDB2Commit(5, this.db2Vals[5], ref reStr))
-                                {
-                                    logRecorder.AddDebugLog(nodeName, "发送PLC数据失败，db2Vals[5]" + reStr);
-                                    break;
-                                }
-                                break;
-                            }
-                            else
-                            {
-                                Console.WriteLine("  db2Vals[5] = 1;");
-                                db2Vals[5] = 1;
-                                if (!NodeDB2Commit(5, this.db2Vals[5], ref reStr))
-                                {
-                                    logRecorder.AddDebugLog(nodeName, "发送PLC数据失败，db2Vals[5]" + reStr);
-                                    break;
-                                }
-                            }
-                            //add over
-                            if (SysCfgModel.SimMode)
-                            {
-                                //生成模拟数据
-                                //GenerateSimBatterys();
-                                modBarcode = SimBarcode;
-                            }
-                            else
-                            {
-
-                                List<byte> batteryBytes = new List<byte>();
-                                for (int j = 0; j < 30; j++)
-                                {
-                                  //  int indexSt = 6 + j;
-                                    //mod 20180320
-                                    int indexSt = 25 + j;
-                                    batteryBytes.Add((byte)(this.db2Vals[indexSt] & 0xff));
-                                    batteryBytes.Add((byte)((this.db2Vals[indexSt] >> 8) & 0xff));
-                                }
-                                //字节流转换成字符串
-                                modBarcode = System.Text.ASCIIEncoding.UTF8.GetString(batteryBytes.ToArray());
-                            }
-                           
-                            modBarcode = modBarcode.Trim(new char[] { '\0', '\r', '\n', '\t', ' ' }).ToUpper();
-                            Console.WriteLine("modBarcode:" + modBarcode);
-                            //判断二维码是否读取成功
-                            if(string.IsNullOrWhiteSpace(modBarcode))
-                            {
-                                Console.WriteLine("db2Vals[4] = 2;");
-                                db2Vals[4] = 2;
-                                if (!NodeDB2Commit(4, this.db2Vals[4], ref reStr))
-                                {
-                                    logRecorder.AddDebugLog(nodeName, "发送PLC数据失败，db2Vals[4]" + reStr);
-                                    break;
-                                }
-                                break;
-                            }
-                            else
-                            {
-                                Console.WriteLine("db2Vals[4] = 1;");
-                                db2Vals[4] = 1;
-                                if (!NodeDB2Commit(4, this.db2Vals[4], ref reStr))
-                                {
-                                    logRecorder.AddDebugLog(nodeName, "发送PLC数据失败，db2Vals[4]" + reStr);
-                                    break;
-                                }
-                            }
-
-                            DBAccess.Model.BatteryModuleModel mod = null;
-                            if(modBll.Exists(modBarcode))
-                            {
-                                 Console.WriteLine("modBll.Exists");
-                                 modBll.Delete(modBarcode);
-                                 this.bindModeCt = modBll.GetRecordCount(string.Format("palletID='{0}' and palletBinded=1", this.rfidUID));
-                            }
-                            mod=new DBAccess.Model.BatteryModuleModel();
-                            mod.batModuleID = modBarcode;
-                            if(!string.IsNullOrWhiteSpace(this.rfidUID))
-                            {
-                                mod.palletID = this.rfidUID;
-                                mod.palletBinded = true;
-                            }
-                            else
-                            {
-                                mod.palletBinded = false;
-                                mod.palletID = "";
-                            }
-                           // mod.checkResult = 1;
-                            mod.batPackID = "";
-                            mod.curProcessStage = nodeName;
-                            mod.asmTime = System.DateTime.Now;
-                            mod.tag1 = modGrade.ToString();
-                            if (this.db2Vals[0] == 1) //A通道
-                            {
-                                mod.tag2 = this.db2Vals[9].ToString();
-                            }
-                            else if (this.db2Vals[0] == 2) //B通道
-                            {
-                                mod.tag2 = this.db2Vals[10].ToString();
-                            }
-                           // mod.tag2 = (bindModeCt+1).ToString();
-                            modBll.Add(mod);
-                            Console.WriteLine("modBll.Add(mod)");
-                            logRecorder.AddDebugLog(nodeName, string.Format("绑定，RFID:{0},模块条码:{1}", rfidUID, modBarcode));
-                            AddProcessRecord(mod.batModuleID, "模块", "追溯记录", string.Format("绑定，RFID:{0},模块条码:{1}", rfidUID, modBarcode),"");
-                            //ProductTraceRecord();
-                            this.db2Vals[3] = 2;
-                            if(!NodeDB2Commit(3,this.db2Vals[3],ref reStr))
-                            {
-                                logRecorder.AddDebugLog(nodeName, "发送PLC数据失败，" + reStr);
-                                break;
-                            }
-                            Console.WriteLine("db2Vals[3] = 2");
-                            this.bindModeCt = modBll.GetRecordCount(string.Format("palletID='{0}' and curProcessStage = '{1}' and palletBinded=1", this.rfidUID,this.nodeName));
-                            this.db1ValsToSnd[2] = (short)this.bindModeCt;
-                        }
-                       
-                        break;
+                       if(!BindBatteryLoop(ref reStr))
+                       {
+                           break;
+                       }
+                       break;
                     }
                 case 3:
                     {
@@ -374,7 +220,10 @@ namespace LineNodes
                         // 1 上传档位，电压，容量，内阻
 
                         //2 上传极性检测结果
-
+                        if(!MESDataUnload(ref reStr))
+                        {
+                            break;
+                        }
                         currentTaskPhase++;
                         this.currentTask.TaskPhase = this.currentTaskPhase;
                         this.ctlTaskBll.Update(this.currentTask);
@@ -391,29 +240,165 @@ namespace LineNodes
                         this.ctlTaskBll.Update(this.currentTask);
                         break;
                     }
-                //case 4:
-                //    {
-                //        if (this.db2Vals[7] > 0)
-                //        {
-                //            this.db1ValsToSnd[4] = 2;
-                //        }
-                //        if (this.db2Vals[8] > 0)
-                //        {
-                //            this.db1ValsToSnd[5] = 2;
-                //        }
-                //        currentTaskPhase++;
-                //        currentTaskDescribe = "流程完成";
-                //        this.currentTask.TaskPhase = this.currentTaskPhase;
-                //        this.ctlTaskBll.Update(this.currentTask);
-                //        this.currentTask.TaskStatus = EnumTaskStatus.已完成.ToString();
-                //        break;
-                //    }
+              
                 default:
                     break;
             }
-            BindCheckResult(ref reStr);
-            MESDataUnload(ref reStr);
+       
             return true;
+        }
+        private bool BindBatteryLoop(ref string reStr)
+        {
+            try
+            {
+                
+                if (db2Vals[3] != 1)
+                {
+                    return false;
+                }
+                
+                //PLC请求读支架二维码和分档信息
+                string modBarcode = "";
+                string modGrade = "";
+               
+                List<byte> modGradeBytes = new List<byte>();
+                for (int j = 0; j < 10; j++)
+                {
+                    int indexSt = 15 + j;
+                    modGradeBytes.Add((byte)(this.db2Vals[indexSt] & 0xff));
+                    modGradeBytes.Add((byte)((this.db2Vals[indexSt] >> 8) & 0xff));
+                }
+                //字节流转换成字符串
+                modGrade = System.Text.ASCIIEncoding.UTF8.GetString(modGradeBytes.ToArray());
+                //      Console.WriteLine("modGrade:" + modGrade);
+                //判断二维码是否读取成功
+                if (string.IsNullOrWhiteSpace(modGrade))
+                {
+                    //   Console.WriteLine("  db2Vals[5] = 2;");
+                    db2Vals[5] = 2;
+                    if (!NodeDB2Commit(5, this.db2Vals[5], ref reStr))
+                    {
+                        logRecorder.AddDebugLog(nodeName, "发送PLC数据失败，db2Vals[5]" + reStr);
+                        return false;
+                    }
+                    return false;
+                }
+                else
+                {
+                    //    Console.WriteLine("  db2Vals[5] = 1;");
+                    db2Vals[5] = 1;
+                    if (!NodeDB2Commit(5, this.db2Vals[5], ref reStr))
+                    {
+                        logRecorder.AddDebugLog(nodeName, "发送PLC数据失败，db2Vals[5]" + reStr);
+                        return false;
+                    }
+                }
+                //add over
+                if (SysCfgModel.SimMode)
+                {
+                    //生成模拟数据
+                    //GenerateSimBatterys();
+                    modBarcode = SimBarcode;
+                }
+                else
+                {
+                    List<byte> batteryBytes = new List<byte>();
+                    for (int j = 0; j < 30; j++)
+                    {
+                        //  int indexSt = 6 + j;
+                        //mod 20180320
+                        int indexSt = 25 + j;
+                        batteryBytes.Add((byte)(this.db2Vals[indexSt] & 0xff));
+                        batteryBytes.Add((byte)((this.db2Vals[indexSt] >> 8) & 0xff));
+                    }
+                    //字节流转换成字符串
+                    modBarcode = System.Text.ASCIIEncoding.UTF8.GetString(batteryBytes.ToArray());
+                }
+
+                modBarcode = modBarcode.Trim(new char[] { '\0', '\r', '\n', '\t', ' ' }).ToUpper();
+                Console.WriteLine("modBarcode:" + modBarcode);
+                //判断二维码是否读取成功
+                if (string.IsNullOrWhiteSpace(modBarcode))
+                {
+                    // Console.WriteLine("db2Vals[4] = 2;");
+                    db2Vals[4] = 2;
+                    if (!NodeDB2Commit(4, this.db2Vals[4], ref reStr))
+                    {
+                        logRecorder.AddDebugLog(nodeName, "发送PLC数据失败，db2Vals[4]" + reStr);
+                        return false;
+                    }
+                    return false;
+                }
+                else
+                {
+                    //  Console.WriteLine("db2Vals[4] = 1;");
+                    db2Vals[4] = 1;
+                    if (!NodeDB2Commit(4, this.db2Vals[4], ref reStr))
+                    {
+                        logRecorder.AddDebugLog(nodeName, "发送PLC数据失败，db2Vals[4]" + reStr);
+                        return false;
+                    }
+                }
+
+                DBAccess.Model.BatteryModuleModel mod = null;
+                if (modBll.Exists(modBarcode))
+                {
+                    //Console.WriteLine("modBll.Exists");
+                    modBll.Delete(modBarcode);
+                    this.bindModeCt = modBll.GetRecordCount(string.Format("palletID='{0}' and palletBinded=1", this.rfidUID));
+                }
+                mod = new DBAccess.Model.BatteryModuleModel();
+                mod.batModuleID = modBarcode;
+                mod.palletID = this.rfidUID;
+                mod.palletBinded = true;
+
+                // mod.checkResult = 1;
+                mod.batPackID = "";
+                mod.curProcessStage = nodeName;
+                mod.asmTime = System.DateTime.Now;
+                mod.tag1 = modGrade.ToString();
+                if (this.db2Vals[0] == 1) //A通道
+                {
+                    mod.tag2 = this.db2Vals[9].ToString();
+                }
+                else if (this.db2Vals[0] == 2) //B通道
+                {
+                    mod.tag2 = this.db2Vals[10].ToString();
+                }
+                if(this.db2Vals[6] == 1)
+                {
+                    mod.checkResult = 1;
+                }
+                else if(this.db2Vals[6] == 2)
+                {
+                    mod.checkResult = 2;
+                }
+                // mod.tag2 = (bindModeCt+1).ToString();
+                modBll.Add(mod);
+                //Console.WriteLine("modBll.Add(mod)");
+                logRecorder.AddDebugLog(nodeName, string.Format("绑定，RFID:{0},模块条码:{1},档位:{2},极性检测：{3}", rfidUID, modBarcode,modGrade,mod.checkResult));
+                AddProcessRecord(mod.batModuleID, "模块", "追溯记录", string.Format("绑定，RFID:{0},模块条码:{1}", rfidUID, modBarcode), "");
+                //ProductTraceRecord();
+                if (!NodeDB2Commit(6, 0, ref reStr)) //极性检测复位
+                {
+                    return false;
+                }
+                if (!NodeDB2Commit(3, 2, ref reStr)) //MES读取完成
+                {
+                    logRecorder.AddDebugLog(nodeName, "发送PLC数据失败，" + reStr);
+                    return false;
+                }
+                //  Console.WriteLine("db2Vals[3] = 2");
+                this.bindModeCt = modBll.GetRecordCount(string.Format("palletID='{0}' and curProcessStage = '{1}' and palletBinded=1", this.rfidUID, this.nodeName));
+                this.db1ValsToSnd[2] = (short)this.bindModeCt;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return false;
+            }
+          
         }
         
         protected bool BindCheckResult(ref string reStr)
@@ -448,12 +433,12 @@ namespace LineNodes
             {
                 if (index == 11 || index == 12)
                 {
-                    Console.WriteLine("this.rfidUID = this.rfidUIDA;");
+                   // Console.WriteLine("this.rfidUID = this.rfidUIDA;");
                     this.rfidUID = this.rfidUIDA;
                 }
                 else if (index == 13 || index == 14)
                 {
-                    Console.WriteLine("this.rfidUID = this.rfidUIDB;");
+                    //Console.WriteLine("this.rfidUID = this.rfidUIDB;");
                     this.rfidUID = this.rfidUIDB;
                 }
                 
@@ -472,13 +457,13 @@ namespace LineNodes
             {
                 return false;
             }
-            Console.WriteLine("model != null" + model.batModuleID);
+            //Console.WriteLine("model != null" + model.batModuleID);
             model.checkResult = this.db2Vals[6];
             bool re = modBll.Update(model);
             if(re == true)
             {
                 db2Vals[index] = 2;
-                Console.WriteLine("db2Vals[index] = 2;");
+              //  Console.WriteLine("db2Vals[index] = 2;");
                 if (!NodeDB2Commit(index, this.db2Vals[index], ref reStr))
                 {
                     logRecorder.AddDebugLog(nodeName, "发送PLC数据失败， db2Vals[11]" + reStr);
@@ -496,7 +481,7 @@ namespace LineNodes
                 {
                     return false;
                 }
-                Console.WriteLine("modelList != null");
+               // Console.WriteLine("modelList != null");
                 bool isAllBindCheckResult = true;
                 for (int i = 0; i < modelList.Count; i++)
                 {
@@ -519,7 +504,7 @@ namespace LineNodes
                         this.db1ValsToSnd[1] = 0;
                     }
                 }
-                Console.WriteLine("isAllBindCheckResult = false");
+             //   Console.WriteLine("isAllBindCheckResult = false");
                 return true;
             }
             return false;
@@ -532,25 +517,26 @@ namespace LineNodes
                 return true;
             }
             //判断绑定极性结果是否完成
-            List<DBAccess.Model.BatteryModuleModel> modelList = modBll.GetModelByPalletID(this.rfidUID, this.nodeName);
+            List<DBAccess.Model.BatteryModuleModel> modelList = modBll.GetModelList(string.Format("palletID='{0}' and palletBinded=1", this.rfidUID)); //modBll.GetModelByPalletID(this.rfidUID, this.nodeName);
             if (modelList == null || modelList.Count == 0)
             {
                 return false;
             }
-            bool isAllBindCheckResult = true;
+            //bool isAllBindCheckResult = true;
+            //for (int i = 0; i < modelList.Count; i++)
+            //{
+            //    if (modelList[i].checkResult == null)
+            //    {
+            //        isAllBindCheckResult = false;
+            //    }
+            //}
+            //if (isAllBindCheckResult == false)
+            //{
+            //    return false;
+            //}
             for (int i = 0; i < modelList.Count; i++)
             {
-                if (modelList[i].checkResult == null)
-                {
-                    isAllBindCheckResult = false;
-                }
-            }
-            if (isAllBindCheckResult == false)
-            {
-                return false;
-            }
-            for (int i = 0; i < modelList.Count; i++)
-            {
+                //1 极性检测上传
                 string M_WORKSTATION_SN = "Y00100401";
                 int M_FLAG = 3;
                 string M_DEVICE_SN = "";
@@ -561,20 +547,29 @@ namespace LineNodes
                 string M_ITEMVALUE = "";
                 if (modelList[i].checkResult == 2)
                 {
-                    M_ITEMVALUE = "极性检测结果:" + "NG";
+                    M_ITEMVALUE = "极性检测结果:" + "NG:";
                 }
                 else
                 {
-                    M_ITEMVALUE = "极性检测结果:" + "OK";
+                    M_ITEMVALUE = "极性检测结果:" + "OK:";
                 }
                 RootObject rObj = new RootObject();
                 string strJson = "";
                 rObj = WShelper.DevDataUpload(M_FLAG, M_DEVICE_SN, M_WORKSTATION_SN, M_SN, M_UNION_SN, M_CONTAINER_SN, M_LEVEL, M_ITEMVALUE,ref strJson);
-                if (rObj.CONTROL_TYPE == "STOP" && rObj.RES == "OK")
-                {
-                    Console.WriteLine(this.nodeName + "CONTROL_TYPE = STOP");
-                }
-                currentTaskDescribe = this.nodeName + rObj.CONTROL_TYPE + "," + M_SN;
+                logRecorder.AddDebugLog(nodeName, string.Format("模组{0} 极性检测{1}上传MES，返回{2}", M_SN, M_ITEMVALUE, rObj.RES));
+                this.currentTaskDescribe = string.Format("模组{0}极性检测{{1}上传MES，返回{2}", M_SN, M_ITEMVALUE, rObj.RES);
+
+                //2 档位上传
+                M_WORKSTATION_SN = "Y00100301";
+                M_ITEMVALUE = "档位:"+modelList[i].tag1+":";
+                rObj = WShelper.DevDataUpload(M_FLAG, M_DEVICE_SN, M_WORKSTATION_SN, M_SN, M_UNION_SN, M_CONTAINER_SN, M_LEVEL, M_ITEMVALUE, ref strJson);
+                logRecorder.AddDebugLog(nodeName, string.Format("模组{0} 档位{1}上传MES，返回{2}", M_SN, M_ITEMVALUE, rObj.RES));
+                this.currentTaskDescribe = string.Format("模组{0}档位{{1}上传MES，返回{2}", M_SN, M_ITEMVALUE, rObj.RES);
+                //if (rObj.CONTROL_TYPE == "STOP" && rObj.RES == "OK")
+                //{
+                //    Console.WriteLine(this.nodeName + "CONTROL_TYPE = STOP");
+                //}
+                //currentTaskDescribe = this.nodeName + rObj.CONTROL_TYPE + "," + M_SN;
                       
             }
             return true;

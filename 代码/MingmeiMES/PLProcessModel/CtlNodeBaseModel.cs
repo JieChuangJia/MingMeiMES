@@ -534,7 +534,7 @@ namespace PLProcessModel
                         {
                             if (vals[seq - 1] == 0)
                             {
-                                mod.palletBinded = false;
+                                //mod.palletBinded = false; //等上传完MES再解绑
                                 mod.checkResult = 2;//NG
                                 if(this.nodeID == "OPB007")
                                 {

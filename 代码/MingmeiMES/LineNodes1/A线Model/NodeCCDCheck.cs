@@ -191,39 +191,25 @@ namespace LineNodes
                         this.ctlTaskBll.Update(this.currentTask);
                         break;
                     }
+               
                 case 7:
-                    {
-                       // if (this.nodeID == "OPA009" || this.nodeID == "OPB007")
-                        if (this.nodeID == "OPA009")
-                        {
-                            if (!TryUnbind(this.rfidUID, ref reStr))
-                            {
-                                this.currentTaskDescribe = "工装板解绑失败";
-                                break;
-                            }
-                        }
-                        currentTaskPhase++;
-                        this.currentTask.TaskPhase = this.currentTaskPhase;
-                        this.ctlTaskBll.Update(this.currentTask);
-                        break;
-                    }
-                case 8:
                     {
                         this.currentTaskDescribe = "上传MES数据";
                         List<DBAccess.Model.BatteryModuleModel> modList = null;
                         List<dcirMode> dataList = null;
-
-                        if (this.nodeID == "OPB003" || this.nodeID == "OPB006")
+                        modList = modBll.GetModelList(string.Format("palletID='{0}' and palletBinded=1", this.rfidUID));
+                        //if (this.nodeID == "OPB003" || this.nodeID == "OPB006")
+                        //{
+                        //    modList = modBll.GetModelList(string.Format("palletID='{0}'", this.rfidUID));
+                        //}
+                        //else 
+                        if (this.nodeID == "OPB007")
                         {
-                            modList = modBll.GetModelList(string.Format("palletID='{0}'", this.rfidUID));
-                        }
-                        else if (this.nodeID == "OPB007")
-                        {
-                           // modList = modBll.GetModelList(string.Format("palletID='{0}' and palletBinded=1", this.rfidUID));
-                            modList = modBll.GetModelList(string.Format("palletID='{0}'", this.rfidUID));
+                          
+                          //  modList = modBll.GetModelList(string.Format("palletID='{0}'", this.rfidUID));
                             dataList = dcirBll.GetModelListByTestTimeASC();
                         }
-                        if(isWithMes == true)
+                        // if(isWithMes == true)
                         {
                             string M_WORKSTATION_SN = "";
                             if (this.nodeID == "OPB003")
@@ -284,20 +270,45 @@ namespace LineNodes
                                 RootObject rObj = new RootObject();
                                 string strJson = "";
                                 rObj = WShelper.DevDataUpload(M_FLAG, M_DEVICE_SN, M_WORKSTATION_SN, M_SN, M_UNION_SN, M_CONTAINER_SN, M_LEVEL, M_ITEMVALUE,ref strJson);
-                                if (rObj.RES == "OK")
+                                logRecorder.AddDebugLog(nodeName, string.Format("模组{0} CCD检测结果{1}上传MES，返回{2}", M_SN, M_ITEMVALUE, rObj.RES));
+                                this.currentTaskDescribe = string.Format("模组{0}UV结果{1}上传MES，返回{2}", M_SN, M_ITEMVALUE, rObj.RES);
+                                foreach (DBAccess.Model.BatteryModuleModel mod in modList)
                                 {
-                                    //Console.WriteLine(this.nodeName + "CONTROL_TYPE = STOP");
-                                    currentTaskDescribe = M_FLAG + "," + M_WORKSTATION_SN + "," + M_ITEMVALUE + "上传成功";
+                                    if(mod.checkResult == 2)
+                                    {
+                                        mod.palletBinded = false;
+                                        modBll.Update(mod);
+                                    }
                                 }
-                                //else
+                                //if (rObj.RES == "OK")
                                 //{
-                                currentTaskDescribe = rObj.RES + "," + M_FLAG + "," + M_WORKSTATION_SN + "," + M_ITEMVALUE + this.nodeName + rObj.CONTROL_TYPE ;
-                                Console.WriteLine(M_ITEMVALUE);
+                                //    //Console.WriteLine(this.nodeName + "CONTROL_TYPE = STOP");
+                                //    currentTaskDescribe = M_FLAG + "," + M_WORKSTATION_SN + "," + M_ITEMVALUE + "上传成功";
+                                //}
+                                ////else
+                                ////{
+                                //currentTaskDescribe = rObj.RES + "," + M_FLAG + "," + M_WORKSTATION_SN + "," + M_ITEMVALUE + this.nodeName + rObj.CONTROL_TYPE ;
+                                //Console.WriteLine(M_ITEMVALUE);
                                 //}
                                 
                             }
-                            
-                            
+        
+                        }
+                        currentTaskPhase++;
+                        this.currentTask.TaskPhase = this.currentTaskPhase;
+                        this.ctlTaskBll.Update(this.currentTask);
+                        break;
+                    }
+                case 8:
+                    {
+                        // if (this.nodeID == "OPA009" || this.nodeID == "OPB007")
+                        if (this.nodeID == "OPA009")
+                        {
+                            if (!TryUnbind(this.rfidUID, ref reStr))
+                            {
+                                this.currentTaskDescribe = "工装板解绑失败";
+                                break;
+                            }
                         }
                         currentTaskPhase++;
                         this.currentTask.TaskPhase = this.currentTaskPhase;
