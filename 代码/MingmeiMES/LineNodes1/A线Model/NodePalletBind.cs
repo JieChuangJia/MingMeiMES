@@ -705,7 +705,7 @@ namespace LineNodes
                 M_ITEMVALUE = "档位:"+modelList[i].tag1+":";
                 rObj = WShelper.DevDataUpload(M_FLAG, M_DEVICE_SN, M_WORKSTATION_SN, M_SN, M_UNION_SN, M_CONTAINER_SN, M_LEVEL, M_ITEMVALUE, ref strJson);
                 logRecorder.AddDebugLog(nodeName, string.Format("模组{0} 档位{1}上传MES，返回{2}", M_SN, M_ITEMVALUE, rObj.RES));
-                this.currentTaskDescribe = string.Format("模组{0}档位{{1}上传MES，返回{2}", M_SN, M_ITEMVALUE, rObj.RES);
+                this.currentTaskDescribe = string.Format("模组{0}档位{1}上传MES，返回{2}", M_SN, M_ITEMVALUE, rObj.RES);
                 //if (rObj.CONTROL_TYPE == "STOP" && rObj.RES == "OK")
                 //{
                 //    Console.WriteLine(this.nodeName + "CONTROL_TYPE = STOP");
