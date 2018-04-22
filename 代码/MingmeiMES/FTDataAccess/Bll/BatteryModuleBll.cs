@@ -181,7 +181,11 @@ namespace DBAccess.BLL
             }
             return modelList;
         }
-
+        public List<DBAccess.Model.BatteryModuleModel> GetBindedMods(string palletID)
+        {
+            string strWhere = string.Format("palletID='{0}' and palletBinded=1", palletID);
+            return GetModelList(strWhere);
+        }
         #endregion  ExtensionMethod
     }
 }

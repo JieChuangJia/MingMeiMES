@@ -144,17 +144,17 @@ namespace LineNodes
             }
             if(this.nodeID=="OPA004")
             {
-                return ExeBindA(ref reStr);
+                return ExeBindALine(ref reStr);
             }
             else if(this.nodeID=="OPB001")
             {
-                return ExeBindB(ref reStr);
+                return ExeBindBLine(ref reStr);
             }
            
             
             return true;
         }
-        protected bool ExeBindA(ref string reStr)
+        protected bool ExeBindALine(ref string reStr)
         {
             
             
@@ -196,7 +196,7 @@ namespace LineNodes
                     }
                 case 2:
                     {
-
+                        //先数据绑定
                         if (bindModeCt > 0)  //判断是否都绑定完成
                         {
                         //    Console.WriteLine("bindModeCt:" + bindModeCt);
@@ -216,35 +216,47 @@ namespace LineNodes
                     }
                 case 3:
                     {
-                        this.currentTaskDescribe = "开始上传MES数据";
-                        // 1 上传档位，电压，容量，内阻
-
-                        //2 上传极性检测结果
-                        if(!MESDataUnload(ref reStr))
-                        {
-                            break;
-                        }
-                        currentTaskPhase++;
-                        this.currentTask.TaskPhase = this.currentTaskPhase;
-                        this.ctlTaskBll.Update(this.currentTask);
-                        break;
-                    }
-                case 4:
-                    {
                         //二维码和档位及位置信息绑定完成
                         this.db1ValsToSnd[3] = 2;
                         currentTaskPhase++;
-                        currentTaskDescribe = "流程完成";
+                        
                         this.currentTask.TaskPhase = this.currentTaskPhase;
                         this.currentTask.TaskStatus = EnumTaskStatus.已完成.ToString();
                         this.ctlTaskBll.Update(this.currentTask);
                         break;
                     }
-              
+                case 4:
+                    {
+                        currentTaskDescribe = "模组-工装板数据绑定完成，下一步:极性检测";
+                        break;
+                    }
+                //case 3:
+                //    {
+                //        this.currentTaskDescribe = "开始上传MES数据";
+                //        // 1 上传档位，电压，容量，内阻
+
+                //        //2 上传极性检测结果
+                //        if(!MESDataUnload(ref reStr))
+                //        {
+                //            break;
+                //        }
+                //        this.db1ValsToSnd[3 + channelIndex] = 2;
+                //        currentTaskPhase++;
+                //        this.currentTask.TaskPhase = this.currentTaskPhase;
+                //        this.ctlTaskBll.Update(this.currentTask);
+                //        break;
+                //    }
                 default:
                     break;
             }
-       
+            if(!BindCheckLoopA(ref reStr))
+            {
+                Console.WriteLine(reStr);
+            }
+            if(!BindCheckLoopB(ref reStr))
+            {
+                Console.WriteLine(reStr);
+            }
             return true;
         }
         private bool BindBatteryLoop(ref string reStr)
@@ -365,14 +377,14 @@ namespace LineNodes
                 {
                     mod.tag2 = this.db2Vals[10].ToString();
                 }
-                if(this.db2Vals[6] == 1)
-                {
-                    mod.checkResult = 1;
-                }
-                else if(this.db2Vals[6] == 2)
-                {
-                    mod.checkResult = 2;
-                }
+                //if(this.db2Vals[6] == 1)
+                //{
+                //    mod.checkResult = 1;
+                //}
+                //else if(this.db2Vals[6] == 2)
+                //{
+                //    mod.checkResult = 2;
+                //}
                 // mod.tag2 = (bindModeCt+1).ToString();
                 modBll.Add(mod);
                 //Console.WriteLine("modBll.Add(mod)");
@@ -400,9 +412,138 @@ namespace LineNodes
             }
           
         }
-        
+      
+        /// <summary>
+        ///A通道对应绑定的模组极性检测判断
+        /// </summary>
+        /// <param name="reStr"></param>
+        /// <returns></returns>
+        private bool BindCheckLoopA(ref string reStr)
+        {
+            if(this.db1ValsToSnd[4] ==2) //已经检测完成
+            {
+                return true;
+            }
+            string tempRfidUID = this.rfidUIDA;
+            int requiredBindCt = Math.Max(2,(int)db2Vals[7]); //A通道要求绑定数量
+            bool checkOK = true;
+            int posBase = 10;
+            for(int i=1;i<requiredBindCt+1;i++)
+            {
+                DBAccess.Model.BatteryModuleModel model = modBll.GetModelByPalletIDAndTag2(tempRfidUID, i.ToString(), this.nodeName); ;
+                if(model == null)
+                {
+                    continue;
+                }
+             
+                if (this.db2Vals[posBase + i] == 1)
+                {
+                    model.checkResult = this.db1ValsToSnd[6];
+                    if(!modBll.Update(model))
+                    {
+                        reStr = "模组极性检测状态提交到数据库失败";
+                        return false;
+                    }
+                    if (!NodeDB2Commit(posBase + i, 2, ref reStr))
+                    {
+                        return false;
+                    }
+                }
+            }
+            List<DBAccess.Model.BatteryModuleModel> modelList = modBll.GetBindedMods(tempRfidUID);//modBll.GetModelByPalletID(tempRfidUID, this.nodeName);
+            if (modelList == null || modelList.Count == 0)
+            {
+                return true;
+            }
+            for (int i = 0; i < modelList.Count; i++)
+            {
+                if (modelList[i].checkResult == null)
+                {
+                    checkOK = false;
+                }
+            }
+            if(checkOK)
+            {
+                //提交数据
+                if (MESDataUnload(ref reStr))
+                {
+                    this.db1ValsToSnd[4] = 2;
+                }
+                else
+                {
+                    return false;
+                }
+
+            }
+            return true;
+        }
+        /// <summary>
+        ///B通道对应绑定的模组极性检测判断
+        /// </summary>
+        /// <param name="reStr"></param>
+        /// <returns></returns>
+        private bool BindCheckLoopB(ref string reStr)
+        {
+            if (this.db1ValsToSnd[5] == 2) //已经检测完成
+            {
+                return true;
+            }
+            string tempRfidUID = "";
+            int requiredBindCt = Math.Max(2, (int)db2Vals[8]); //B通道要求绑定数量
+            bool checkOK = true;
+            int posBase = 12;
+            for (int i = 1; i < requiredBindCt + 1; i++)
+            {
+                DBAccess.Model.BatteryModuleModel model = modBll.GetModelByPalletIDAndTag2(tempRfidUID, i.ToString(), this.nodeName); ;
+                if (model == null)
+                {
+                    continue;
+                }
+                if (this.db2Vals[posBase + i] == 1)
+                {
+                    model.checkResult = this.db1ValsToSnd[6];
+                    if (!modBll.Update(model))
+                    {
+                        reStr = "模组极性检测状态提交到数据库失败";
+                        return false;
+                    }
+                    if (!NodeDB2Commit(posBase + i, 2, ref reStr))
+                    {
+                        return false;
+                    }
+                }
+            }
+            List<DBAccess.Model.BatteryModuleModel> modelList = modBll.GetBindedMods(tempRfidUID);//modBll.GetModelByPalletID(tempRfidUID, this.nodeName);
+            if (modelList == null || modelList.Count == 0)
+            {
+                return true;
+            }
+            for (int i = 0; i < modelList.Count; i++)
+            {
+                if (modelList[i].checkResult == null)
+                {
+                    checkOK = false;
+                }
+            }
+            if (checkOK)
+            {
+                //提交数据
+                if (MESDataUnload(ref reStr))
+                {
+                    this.db1ValsToSnd[5] = 2;
+                }
+                else
+                {
+                    return false;
+                }
+               
+            }
+            return true;
+            
+        }
         protected bool BindCheckResult(ref string reStr)
         {
+            string tempRfidUID = "";
             //绑定极性检测结果
             int index = 0;
             if(db2Vals[11] == 1)
@@ -427,19 +568,19 @@ namespace LineNodes
             }
             if (SysCfgModel.SimMode)
             {
-                this.rfidUID = SimRfidUID;
+                tempRfidUID = SimRfidUID;
             }
             else
             {
                 if (index == 11 || index == 12)
                 {
                    // Console.WriteLine("this.rfidUID = this.rfidUIDA;");
-                    this.rfidUID = this.rfidUIDA;
+                    tempRfidUID = this.rfidUIDA;
                 }
                 else if (index == 13 || index == 14)
                 {
                     //Console.WriteLine("this.rfidUID = this.rfidUIDB;");
-                    this.rfidUID = this.rfidUIDB;
+                    tempRfidUID = this.rfidUIDB;
                 }
                 
             }
@@ -447,11 +588,11 @@ namespace LineNodes
             DBAccess.Model.BatteryModuleModel model = null;
             if (index == 11 || index == 13)
             {
-                model = modBll.GetModelByPalletIDAndTag2(this.rfidUID, "1", this.nodeName);
+                model = modBll.GetModelByPalletIDAndTag2(tempRfidUID, "1", this.nodeName);
             }
             else
             {
-                model = modBll.GetModelByPalletIDAndTag2(this.rfidUID, "2", this.nodeName);
+                model = modBll.GetModelByPalletIDAndTag2(tempRfidUID, "2", this.nodeName);
             }
             if (model == null)
             {
@@ -476,7 +617,7 @@ namespace LineNodes
                     return false;
                 }
                 //判断绑定极性结果是否完成
-                List<DBAccess.Model.BatteryModuleModel> modelList = modBll.GetModelByPalletID(this.rfidUID, this.nodeName);
+                List<DBAccess.Model.BatteryModuleModel> modelList = modBll.GetBindedMods(tempRfidUID);//modBll.GetModelByPalletID(tempRfidUID, this.nodeName);
                 if (modelList == null || modelList.Count == 0)
                 {
                     return false;
@@ -557,7 +698,7 @@ namespace LineNodes
                 string strJson = "";
                 rObj = WShelper.DevDataUpload(M_FLAG, M_DEVICE_SN, M_WORKSTATION_SN, M_SN, M_UNION_SN, M_CONTAINER_SN, M_LEVEL, M_ITEMVALUE,ref strJson);
                 logRecorder.AddDebugLog(nodeName, string.Format("模组{0} 极性检测{1}上传MES，返回{2}", M_SN, M_ITEMVALUE, rObj.RES));
-                this.currentTaskDescribe = string.Format("模组{0}极性检测{{1}上传MES，返回{2}", M_SN, M_ITEMVALUE, rObj.RES);
+                this.currentTaskDescribe = string.Format("模组{0}极性检测{1}上传MES，返回{2}", M_SN, M_ITEMVALUE, rObj.RES);
 
                 //2 档位上传
                 M_WORKSTATION_SN = "Y00100301";
@@ -574,7 +715,7 @@ namespace LineNodes
             }
             return true;
         }
-        protected bool ExeBindB(ref string reStr)
+        protected bool ExeBindBLine(ref string reStr)
         {
             if (!devStatusRestore)
             {
