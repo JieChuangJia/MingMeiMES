@@ -435,7 +435,6 @@ namespace LineNodes
                 {
                     continue;
                 }
-             
                 if (this.db2Vals[posBase + i] == 1)
                 {
                     model.checkResult = this.db1ValsToSnd[6];
@@ -444,6 +443,7 @@ namespace LineNodes
                         reStr = "模组极性检测状态提交到数据库失败";
                         return false;
                     }
+                    logRecorder.AddDebugLog(nodeName,string.Format("工装板{0} ,位置{1} 模组{2} 极性检测结果{3}保存，给PLC应答2",tempRfidUID,i,model.batModuleID,model.checkResult));
                     if (!NodeDB2Commit(posBase + i, 2, ref reStr))
                     {
                         return false;
