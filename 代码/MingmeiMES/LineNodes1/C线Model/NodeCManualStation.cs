@@ -98,11 +98,17 @@ namespace LineNodes
                             }
                         }
                         this.logRecorder.AddDebugLog(this.nodeName, "上报MES数据成功：" + batteryModuleList[0].batPackID);
-                        currentTaskDescribe = "流程完成";
+                       
+                        currentTaskPhase++;
                         this.currentTask.TaskPhase = this.currentTaskPhase;
                         this.currentTask.TaskStatus = EnumTaskStatus.已完成.ToString();
                         this.ctlTaskBll.Update(this.currentTask);
                        
+                        break;
+                    }
+                case 4:
+                    {
+                        currentTaskDescribe = "流程完成";
                         break;
                     }
                 default:

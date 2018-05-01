@@ -198,7 +198,7 @@ namespace LineNodes
 
                         this.plNodeModel.tag1 = this.rfidUIDA;
                         plNodeBll.Update(this.plNodeModel);
-                        logRecorder.AddDebugLog(nodeName, string.Format("A通道读到RFID:{0}", this.rfidUIDA));
+                       // logRecorder.AddDebugLog(nodeName, string.Format("A通道读到RFID:{0}", this.rfidUIDA));
                         if (IsEmptyPallet(this.rfidUIDA) == true)
                         {
                             this.db1ValsToSnd[0] = 4;
@@ -213,7 +213,7 @@ namespace LineNodes
                 }
                 else
                 {
-                    logRecorder.AddDebugLog(nodeName, string.Format("A通道读到RFID:{0}", this.rfidUIDA));
+                  //  logRecorder.AddDebugLog(nodeName, string.Format("A通道读到RFID:{0}", this.rfidUIDA));
                     if (IsEmptyPallet(this.rfidUIDA) == true)
                     {
                         this.db1ValsToSnd[0] = 4;
@@ -268,8 +268,8 @@ namespace LineNodes
                     {
                         this.plNodeModel.tag2 = this.rfidUIDB;
                         plNodeBll.Update(this.plNodeModel);
-                        logRecorder.AddDebugLog(nodeName, string.Format("B通道读到RFID:{0}", this.rfidUIDB));
-                        logRecorder.AddDebugLog(nodeName, string.Format("A通道读到RFID:{0}", this.rfidUIDA));
+                    //    logRecorder.AddDebugLog(nodeName, string.Format("B通道读到RFID:{0}", this.rfidUIDB));
+                      //  logRecorder.AddDebugLog(nodeName, string.Format("A通道读到RFID:{0}", this.rfidUIDA));
                         if (IsEmptyPallet(this.rfidUIDA) == true)
                         {
                             this.db1ValsToSnd[1] = 4;
@@ -284,7 +284,7 @@ namespace LineNodes
                 }
                 else
                 {
-                    logRecorder.AddDebugLog(nodeName, string.Format("A通道读到RFID:{0}", this.rfidUIDA));
+                  //  logRecorder.AddDebugLog(nodeName, string.Format("A通道读到RFID:{0}", this.rfidUIDA));
                     if (IsEmptyPallet(this.rfidUIDA) == true)
                     {
                         this.db1ValsToSnd[1] = 4;

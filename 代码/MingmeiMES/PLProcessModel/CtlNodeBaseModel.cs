@@ -1151,7 +1151,11 @@ namespace PLProcessModel
                        
                         this.plNodeModel.tag1 = this.rfidUIDA;
                         plNodeBll.Update(this.plNodeModel);
-                        logRecorder.AddDebugLog(nodeName, string.Format("A通道读到RFID:{0}", this.rfidUIDA));
+                        //if(this.db1ValsToSnd[0] != 2)
+                        //{
+                        //    logRecorder.AddDebugLog(nodeName, string.Format("A通道读到RFID:{0}", this.rfidUIDA));
+                        //}
+                      
                         this.db1ValsToSnd[0] = 2;
                         //if (!SysCfgModel.SimMode)
                         //{

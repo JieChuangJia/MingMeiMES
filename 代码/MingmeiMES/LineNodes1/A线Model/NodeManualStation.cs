@@ -81,7 +81,8 @@ namespace LineNodes
                     {
                        if(false == UploadDataToMes(1,"Y00100501", this.rfidUID))
                        {
-                           Console.WriteLine("{0}上传MES二位码失败！", this.nodeName);
+                          // Console.WriteLine("{0}上传MES二位码失败！", this.nodeName);
+                           this.currentTaskDescribe = string.Format("上传MES二维码失败！");
                            break;
                        }
                     }
@@ -89,7 +90,8 @@ namespace LineNodes
                     {
                         if (false == UploadDataToMes(1,"Y00101001", this.rfidUID))
                         {
-                            Console.WriteLine("{0}上传MES二位码失败！", this.nodeName);
+                            //Console.WriteLine("{0}上传MES二位码失败！", this.nodeName);
+                            this.currentTaskDescribe = string.Format("上传MES二维码失败！");
                             break;
                         }
                         
@@ -98,14 +100,22 @@ namespace LineNodes
                     {
                         if (false == UploadDataToMes(1,"Y00101301", this.rfidUID))
                         {
-                            Console.WriteLine("{0}上传MES二位码失败！", this.nodeName);
+                          //  Console.WriteLine("{0}上传MES二位码失败！", this.nodeName);
+                            this.currentTaskDescribe = string.Format("上传MES二维码失败！");
                             break;
                         }
                     }
                     db1ValsToSnd[2 + this.channelIndex - 1] = 3;
-                    currentTaskDescribe = "流程完成";
+                    currentTaskPhase++;
+                    
                     LogRecorder.AddDebugLog(nodeName, string.Format("上传MES二位码成功：{0}", this.rfidUID));
+                    this.currentTaskDescribe = string.Format("上传MES二维码成功！");
                     break;
+                case 3:
+                    {
+                        currentTaskDescribe = "流程完成";
+                        break;
+                    }
                 default:
                     break;
             }
@@ -145,7 +155,7 @@ namespace LineNodes
             }
             else
             {
-                Console.WriteLine(this.nodeName + "上传MES二维码信息错误：" + rObj.RES);
+              //  Console.WriteLine(this.nodeName + "上传MES二维码信息错误：" + rObj.RES);
                 return false;
             }
         }

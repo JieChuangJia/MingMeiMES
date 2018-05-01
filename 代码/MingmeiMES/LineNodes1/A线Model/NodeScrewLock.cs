@@ -131,7 +131,7 @@ namespace LineNodes
                             break;
                         }
                         List<string> products = new List<string>();
-                        Thread.Sleep(10000);//延时10秒等待下边设备
+                        Thread.Sleep(2000);//延时10秒等待下边设备
                         foreach (DBAccess.Model.BatteryModuleModel m in modList)
                         {
                             products.Add(m.batModuleID);
@@ -224,7 +224,8 @@ namespace LineNodes
 
                         if (!AfterMech(modList, ref reStr))
                         {
-                            Console.WriteLine(string.Format("{0},{1}", nodeName, reStr));
+                           // Console.WriteLine(string.Format("{0},{1}", nodeName, reStr));
+                            currentTaskDescribe = reStr;
                             break;
                         }
                         currentTaskPhase++;
@@ -260,19 +261,21 @@ namespace LineNodes
             string M_UNION_SN = "";
             string M_CONTAINER_SN = "";
             string M_LEVEL = "";
-            string M_ITEMVALUE ="" ;
+            string M_ITEMVALUE = screwData;
             RootObject rObj = new RootObject();
             
             string strJson = "";
 
             rObj = WShelper.DevDataUpload(flag, M_DEVICE_SN, M_WORKSTATION_SN, modCode, M_UNION_SN, M_CONTAINER_SN, M_LEVEL, M_ITEMVALUE, ref strJson);
+            logRecorder.AddDebugLog(nodeName, string.Format("上传MES数据{0},返回{1},发送json数据{2}", M_ITEMVALUE, rObj.RES,strJson));
             if (rObj.RES.Contains("OK"))
             {
                 return true;
             }
             else
             {
-                Console.WriteLine(this.nodeName + "上传MES锁螺丝数据错误：" + rObj.RES);
+               // Console.WriteLine(this.nodeName + "上传MES锁螺丝数据错误：" + rObj.RES);
+                
                 return false;
             }
         
@@ -301,6 +304,7 @@ namespace LineNodes
 
             catch
             {
+                Console.WriteLine("CCD数据异常,{0}", screwData);
                 return false;
             }
         }
@@ -416,7 +420,7 @@ namespace LineNodes
 
                         this.plNodeModel.tag1 = this.rfidUIDA;
                         plNodeBll.Update(this.plNodeModel);
-                        logRecorder.AddDebugLog(nodeName, string.Format("A通道读到RFID:{0}", this.rfidUIDA));
+                      //  logRecorder.AddDebugLog(nodeName, string.Format("A通道读到RFID:{0}", this.rfidUIDA));
                         if (this.nodeID == "OPA005")
                         {
                             if (IsEmptyPallet(this.rfidUIDA) == true)
@@ -438,7 +442,7 @@ namespace LineNodes
                 }
                 else
                 {
-                    logRecorder.AddDebugLog(nodeName, string.Format("A通道读到RFID:{0}", this.rfidUIDA));
+                   // logRecorder.AddDebugLog(nodeName, string.Format("A通道读到RFID:{0}", this.rfidUIDA));
                     if (this.nodeID == "OPA005")
                     {
                         if (IsEmptyPallet(this.rfidUIDA) == true)
@@ -501,8 +505,8 @@ namespace LineNodes
                     {
                         this.plNodeModel.tag2 = this.rfidUIDB;
                         plNodeBll.Update(this.plNodeModel);
-                        logRecorder.AddDebugLog(nodeName, string.Format("B通道读到RFID:{0}", this.rfidUIDB));
-                        logRecorder.AddDebugLog(nodeName, string.Format("A通道读到RFID:{0}", this.rfidUIDA));
+                       // logRecorder.AddDebugLog(nodeName, string.Format("B通道读到RFID:{0}", this.rfidUIDB));
+                      //  logRecorder.AddDebugLog(nodeName, string.Format("A通道读到RFID:{0}", this.rfidUIDA));
                         if (this.nodeID == "OPA005")
                         {
                             if (IsEmptyPallet(this.rfidUIDA) == true)
@@ -525,7 +529,7 @@ namespace LineNodes
                 }
                 else
                 {
-                    logRecorder.AddDebugLog(nodeName, string.Format("A通道读到RFID:{0}", this.rfidUIDA));
+                 //   logRecorder.AddDebugLog(nodeName, string.Format("A通道读到RFID:{0}", this.rfidUIDA));
                     if (this.nodeID == "OPA005")
                     {
                         if (IsEmptyPallet(this.rfidUIDA) == true)

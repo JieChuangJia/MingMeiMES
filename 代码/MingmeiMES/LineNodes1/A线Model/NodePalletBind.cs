@@ -200,7 +200,7 @@ namespace LineNodes
                         if (bindModeCt > 0)  //判断是否都绑定完成
                         {
                         //    Console.WriteLine("bindModeCt:" + bindModeCt);
-                            if ((db2Vals[0] == 1 && bindModeCt == db2Vals[7] && db2Vals[3] == 1) || (db2Vals[0] == 2 && bindModeCt == db2Vals[8]&& db2Vals[3] == 1))
+                            if ((db2Vals[0] == 1 && bindModeCt == db2Vals[7] ) || (db2Vals[0] == 2 && bindModeCt == db2Vals[8]))
                             {
                                 currentTaskPhase++;
                                 this.currentTask.TaskPhase = this.currentTaskPhase;
@@ -281,7 +281,7 @@ namespace LineNodes
                     modGradeBytes.Add((byte)((this.db2Vals[indexSt] >> 8) & 0xff));
                 }
                 //字节流转换成字符串
-                modGrade = System.Text.ASCIIEncoding.UTF8.GetString(modGradeBytes.ToArray());
+                modGrade = System.Text.ASCIIEncoding.UTF8.GetString(modGradeBytes.ToArray()).Trim(new char[] { '\0', '\r', '\n', '\t', ' ' });
                 //      Console.WriteLine("modGrade:" + modGrade);
                 //判断二维码是否读取成功
                 if (string.IsNullOrWhiteSpace(modGrade))
@@ -678,8 +678,8 @@ namespace LineNodes
             for (int i = 0; i < modelList.Count; i++)
             {
                 //1 极性检测上传
-                string M_WORKSTATION_SN = "Y00100401";
-                int M_FLAG = 3;
+               
+              //  int M_FLAG = 3;
                 string M_DEVICE_SN = "";
                 string M_SN = modelList[i].batModuleID;
                 string M_UNION_SN = "";
@@ -696,16 +696,25 @@ namespace LineNodes
                 }
                 RootObject rObj = new RootObject();
                 string strJson = "";
-                rObj = WShelper.DevDataUpload(M_FLAG, M_DEVICE_SN, M_WORKSTATION_SN, M_SN, M_UNION_SN, M_CONTAINER_SN, M_LEVEL, M_ITEMVALUE,ref strJson);
-                logRecorder.AddDebugLog(nodeName, string.Format("模组{0} 极性检测{1}上传MES，返回{2}", M_SN, M_ITEMVALUE, rObj.RES));
-                this.currentTaskDescribe = string.Format("模组{0}极性检测{1}上传MES，返回{2}", M_SN, M_ITEMVALUE, rObj.RES);
-
-                //2 档位上传
-                M_WORKSTATION_SN = "Y00100301";
-                M_LEVEL = "档位:" + modelList[i].tag1 + ":";
-                rObj = WShelper.DevDataUpload(M_FLAG, M_DEVICE_SN, M_WORKSTATION_SN, M_SN, M_UNION_SN, M_CONTAINER_SN, M_LEVEL, M_ITEMVALUE, ref strJson);
-                logRecorder.AddDebugLog(nodeName, string.Format("模组{0} 档位{1}上传MES，返回{2}", M_SN, M_ITEMVALUE, rObj.RES));
+                
+                //1 档位上传
+                string  M_WORKSTATION_SN = "Y00100301";
+                //M_LEVEL = "档位:" + modelList[i].tag1 + ":";
+                M_LEVEL = modelList[i].tag1; //档位直接填值
+                rObj = WShelper.DevDataUpload(1, M_DEVICE_SN, M_WORKSTATION_SN, M_SN, M_UNION_SN, M_CONTAINER_SN, M_LEVEL, "", ref strJson);
+                logRecorder.AddDebugLog(nodeName, string.Format("模组{0} 档位{1}上传MES，返回{2},发送json{3}", M_SN, M_LEVEL, rObj.RES,strJson));
                 this.currentTaskDescribe = string.Format("模组{0}档位{1}上传MES，返回{2}", M_SN, M_ITEMVALUE, rObj.RES);
+                if(rObj.RES.ToUpper() == "OK")
+                {
+                    Thread.Sleep(300);
+                    //2 传数据
+                    M_WORKSTATION_SN = "Y00100401";
+                    rObj = WShelper.DevDataUpload(3, M_DEVICE_SN, M_WORKSTATION_SN, M_SN, M_UNION_SN, M_CONTAINER_SN, "", M_ITEMVALUE, ref strJson);
+                    logRecorder.AddDebugLog(nodeName, string.Format("模组{0} 极性检测{1}上传MES，返回{2},发送json{3}", M_SN, M_ITEMVALUE, rObj.RES, strJson));
+                    this.currentTaskDescribe = string.Format("模组{0}极性检测{1}上传MES，返回{2}", M_SN, M_ITEMVALUE, rObj.RES);
+                }
+              
+
                 //if (rObj.CONTROL_TYPE == "STOP" && rObj.RES == "OK")
                 //{
                 //    Console.WriteLine(this.nodeName + "CONTROL_TYPE = STOP");

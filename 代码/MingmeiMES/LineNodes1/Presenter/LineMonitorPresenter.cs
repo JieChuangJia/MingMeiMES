@@ -274,7 +274,7 @@ namespace LineNodes
            
             this.mainThread.TaskStart(ref reStr);
             this.historyDataClearThread.TaskStart(ref reStr);
-            this.devWarnMonitorThread.TaskStart(ref reStr);
+            //this.devWarnMonitorThread.TaskStart(ref reStr);
             lastStTime = System.DateTime.Now;
             Thread.Sleep(200);
           
@@ -318,7 +318,7 @@ namespace LineNodes
           // this.mesUploadThread.TaskExit(ref reStr);
             this.mainThread.TaskExit(ref reStr);
             this.historyDataClearThread.TaskExit(ref reStr);
-            this.devWarnMonitorThread.TaskExit(ref reStr);
+           // this.devWarnMonitorThread.TaskExit(ref reStr);
           //  this.printerLoopThread.TaskExit(ref reStr);
         }
        
