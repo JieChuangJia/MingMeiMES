@@ -74,16 +74,59 @@ namespace LineNodes
                     }
                 case 3:
                     {
+                        if(UploadMesData(this.rfidUID,ref reStr) == false)
+                        {
+                            this.logRecorder.AddDebugLog(this.nodeName, "上传MES数据失败！" + reStr);
+
+                        }
+                        else
+                        {
+                            this.logRecorder.AddDebugLog(this.nodeName, "上传MES数据成功！" + reStr);
+                        }
                         currentTaskDescribe = "流程完成";
                         this.currentTask.TaskPhase = this.currentTaskPhase;
-                        this.ctlTaskBll.Update(this.currentTask);
                         this.currentTask.TaskStatus = EnumTaskStatus.已完成.ToString();
+                        this.ctlTaskBll.Update(this.currentTask);
+                    
                         break;
                     }
                 default:
                     break;
             }
             return true;
+        }
+
+        public bool UploadMesData(string rfid,ref string reStr)
+        {
+            string M_AREA = "Y001";
+            string M_WORKSTATION_SN = "M00100801";
+            string M_DEVICE_SN = "";
+
+            string M_UNION_SN = "";
+            string M_CONTAINER_SN = "";
+            string M_LEVEL = "";
+            string M_ITEMVALUE = "";
+            RootObject rObj = new RootObject();
+            List<DBAccess.Model.BatteryModuleModel> modelList = modBll.GetModelList(string.Format("palletID='{0}' and palletBinded=1", rfid)); //modBll.GetModelByPalletID(this.rfidUID, this.nodeName);
+            if (modelList == null || modelList.Count == 0)
+            {
+                return false;
+            }
+            string barcode = modelList[0].batModuleID;
+            string strJson = "";
+
+            rObj = WShelper.DevDataUpload(1, M_DEVICE_SN, M_WORKSTATION_SN, barcode, M_UNION_SN, M_CONTAINER_SN, M_LEVEL, M_ITEMVALUE, ref strJson);
+            reStr = rObj.RES;
+            if (rObj.RES.Contains("OK"))
+            {
+                return true;
+            }
+            else
+            {
+                Console.WriteLine(this.nodeName + "上传MES二维码信息错误：" + rObj.RES);
+              
+                return false;
+            }
         }
     }
 }

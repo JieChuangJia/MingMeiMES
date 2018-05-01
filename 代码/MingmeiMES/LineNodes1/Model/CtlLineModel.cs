@@ -69,6 +69,10 @@ namespace LineNodes
 
                     //    (node as NodePalletBind).plcRW2 = GetPlcByID(plcRWList, (node as NodePalletBind).plcID2);
                     //}
+                    if(node.BarcodeID2>0)
+                    {
+                        node.BarcodeRW2 = GetBarcoderRWByID(barcodeList, node.BarcodeID2);
+                    }
                     if(node.BarcodeID>0)
                     {
                         node.BarcodeRW = GetBarcoderRWByID(barcodeList,node.BarcodeID);
@@ -196,6 +200,22 @@ namespace LineNodes
                                     ctlNode = new NodeTailRobot();
                                     break;
                                 }
+                            case "LineNodes.NodeManualStation":
+                                {
+                                    ctlNode = new  NodeManualStation();
+                                    break;
+                                }
+                            case "LineNodes.BakeStation":
+                                {
+                                    ctlNode = new BakeStation();
+                                    break;
+                                }
+                            case "LineNodes.NodeCManualStation":
+                                {
+                                    ctlNode = new  NodeCManualStation();
+                                    break;
+                                }
+                            
                             default:
                                 break;
                         }

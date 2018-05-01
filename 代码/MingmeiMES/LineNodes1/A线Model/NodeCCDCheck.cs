@@ -128,7 +128,11 @@ namespace LineNodes
                     }
                 case 4:
                     {
-                       
+                       if(this.nodeID =="OPB007" )
+                       {
+                           currentTaskPhase++;
+                           break;
+                       }
                         System.DateTime cur = System.DateTime.Now;
                         TimeSpan ts = cur - devOpenSt;
                         if (ts.TotalSeconds < 60)
@@ -203,12 +207,12 @@ namespace LineNodes
                         //    modList = modBll.GetModelList(string.Format("palletID='{0}'", this.rfidUID));
                         //}
                         //else 
-                        if (this.nodeID == "OPB007")
-                        {
+                        //if (this.nodeID == "OPB007")
+                        //{
                           
-                          //  modList = modBll.GetModelList(string.Format("palletID='{0}'", this.rfidUID));
-                            dataList = dcirBll.GetModelListByTestTimeASC();
-                        }
+                        //  //  modList = modBll.GetModelList(string.Format("palletID='{0}'", this.rfidUID));
+                        //    //dataList = dcirBll.GetModelListByTestTimeASC();
+                        //}
                         // if(isWithMes == true)
                         {
                             string M_WORKSTATION_SN = "";
@@ -250,10 +254,18 @@ namespace LineNodes
                                 }
                                 else if(this.nodeID == "OPB007")
                                 {
-                                    int index = dataList.Count-modList.Count + i;
+                                    //int index = dataList.Count-modList.Count + i;
+                                    dcirMode dcirData = dcirBll.GetModelByMoudCode(modList[i].batModuleID);
+                                    if(dcirData == null)
+                                    {
+                                        Console.WriteLine("获取dcir数据失败：二维码：" + modList[i].batModuleID);
+                                        break;
+                                    }
                                     int val = 0;
-                                    plcRW2.ReadDB("D9000", ref val);
-                                    M_ITEMVALUE = "DCIR值:0:mΩ|DCIR测试放电电流1:" + dataList[index].电流.ToString() + ":A|DCIR测试放电电流2:0:A|DCIR测试放电时间:0:s|DCIR测试静置时间:" + dataList[index].相对时间.ToString()+ ":s|温度:" + val.ToString() + ":℃";
+                                    plcRW2.ReadDB("D9000", ref val); 
+                                    M_ITEMVALUE = "DCIR值:" + dcirData.电阻值+ ":mΩ|DCIR测试放电电流1:" + dcirData.放电电流1 + ":A|DCIR测试放电电流2:" + dcirData.放电电流2 + ":A|DCIR测试放电时间:" + dcirData.放电时间
+                                     + ":s|DCIR测试静置时间:" + dcirData.静置时间 + ":s|温度:" + val.ToString() + ":℃";
+                                    //M_ITEMVALUE = "DCIR值:0:mΩ|DCIR测试放电电流1:" + dataList[index].电流.ToString() + ":A|DCIR测试放电电流2:0:A|DCIR测试放电时间:0:s|DCIR测试静置时间:" + dataList[index].相对时间.ToString()+ ":s|温度:" + val.ToString() + ":℃";
                                 }
                                 else if(this.nodeID == "OPA009")
                                 {

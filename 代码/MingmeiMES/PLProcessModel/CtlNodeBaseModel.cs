@@ -25,13 +25,14 @@ namespace PLProcessModel
         #region 私有数据
         protected int channelIndex = 0;
         protected DBAccess.BLL.BatteryModuleBll modBll = new DBAccess.BLL.BatteryModuleBll();
+        protected DBAccess.BLL.BatteryPackBll bllPack = new DBAccess.BLL.BatteryPackBll();
         //protected DCIRDataAccess.dbBll dcirBll = new DCIRDataAccess.dbBll();
        
         protected bool palletChecked = false;//检测到有板
         protected bool productChecked = false; //检测到有产品
         protected bool devStatusRestore = false;//是否已经恢复下电前状态
         protected string processName = "外观检查";
-        protected ControlTaskModel currentTask = null;
+        protected ControlTaskModel currentTask = null; 
         protected ControlTaskBll ctlTaskBll = new ControlTaskBll();
         protected DBAccess.BLL.ModPsRecordBll modPsRecordBll = new DBAccess.BLL.ModPsRecordBll();
 
@@ -61,12 +62,14 @@ namespace PLProcessModel
         protected IrfidRW rfidRW = null;//rfid读写接口
         protected List<IrfidRW> rfidRWList = null;
         protected IBarcodeRW barcodeRW= null; //条码枪读写接口
+        protected IBarcodeRW barcodeRW2 = null; //条码枪读写接口
 
         protected byte rfidID = 0;
-        protected List<byte> rfidIDS = null;
+        protected List<byte> rfidIDS = new List<byte>();
         protected int plcID = 0;
         protected int plcID2 = 0;
         protected int barcodeID = 0;
+        protected int barcodeID2 = 0;
    
         protected string db1StartAddr = ""; //db1 开始地址
         protected string db2StartAddr = ""; //db2 开始地址
@@ -135,6 +138,12 @@ namespace PLProcessModel
             get { return barcodeRW; }
             set { barcodeRW = value; }
         }
+
+        public IBarcodeRW BarcodeRW2
+        {
+            get { return barcodeRW2; }
+            set { barcodeRW2 = value; }
+        }
         public MingmeiDeviceAcc CCDDevAcc { get { return ccdDevAcc; } set { ccdDevAcc = value; } }
         public int ccdDevID = 0;
         public string ccdDevName = "";
@@ -161,7 +170,10 @@ namespace PLProcessModel
     //    public bool SimMode { get; set; }
         public int PlcID { get { return plcID; } set { plcID = value; } }
         public int PlcID2 { get { return plcID2; } set { plcID2 = value; } }
+
+        public int BarcodeID2 { get { return this.barcodeID2; } set { barcodeID2 = value; } }
         public byte RfidID { get { return rfidID; } set { rfidID = value; } }
+       
         public List<byte> RfidIDS { get { return rfidIDS; } set { rfidIDS = value; } }
         public string RfidUID { get { return rfidUID; } set { rfidUID = value; } }
         public int BarcodeID { get { return barcodeID; } set { barcodeID = value; } }
@@ -261,6 +273,7 @@ namespace PLProcessModel
                         //this.db2StartAddr = "D3000";//test
                         short[] vals = null;
                         //同步通信
+                      
                         if (!plcRW.ReadMultiDB(db2StartAddr, blockNum, ref vals))
                         {
                             // refreshStatusOK = false;
@@ -279,6 +292,8 @@ namespace PLProcessModel
                             {
                                 this.currentStat.Status = EnumNodeStatus.设备空闲;
                             }
+
+ 
                         }
                         for (int i = 0; i < blockNum; i++)
                         {
@@ -303,6 +318,7 @@ namespace PLProcessModel
                 }
                 else
                 {
+                  
                     plcRW.ReadMultiDB(this.db2StartAddr, blockNum, ref this.db2Vals);
                     for (int i = 0; i < blockNum; i++)
                     {
@@ -1086,7 +1102,7 @@ namespace PLProcessModel
         }
         protected virtual void ExeRfidBusinessAB()
         {
-            if (this.nodeID == "OPA011" || this.nodeID == "OPA012") //点胶1,2工位不需要读rfid
+            if (this.nodeID == "OPA011" || this.nodeID == "OPA012"||this.nodeID =="OPA016"||this.nodeID=="OPA017") //点胶1,2工位不需要读rfid
             {
                 return;
             }
@@ -1470,6 +1486,11 @@ namespace PLProcessModel
             if (attr != null)
             {
                 this.barcodeID = int.Parse(attr.Value);
+            }
+            XAttribute attr2 = baseDataXE.Attribute("barScanner2");
+            if (attr2 != null)
+            {
+                this.barcodeID2 = int.Parse(attr2.Value);
             }
             attr = baseDataXE.Attribute("rfid");
             if (attr != null)
@@ -2182,6 +2203,29 @@ namespace PLProcessModel
             //logRecorder.AddDebugLog(nodeName, "解绑:" + rfidCode + "," + barCode);
             return true;
         }
+        protected bool AddPack(string qrGroupCode, ref string reStr)
+        {
+            try
+            {
+                DBAccess.Model.BatteryPackModel packModel = bllPack.GetModel(qrGroupCode);
+                if (packModel != null)
+                {
+                    bllPack.Delete(qrGroupCode);
+                }
+                packModel = new DBAccess.Model.BatteryPackModel();
+                packModel.batPackID = qrGroupCode;
+                packModel.packAsmTime = DateTime.Now; 
+                bllPack.Add(packModel);
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                reStr = ex.ToString();
+                return false;
+            }
+
+        }
         protected bool TryUnbind(string rfidCode,ref string reStr)
         {
             try
@@ -2419,6 +2463,40 @@ namespace PLProcessModel
                 logRecorder.AddDebugLog(nodeName, "工装板：" + this.rfidUID + "无绑定模块数据");
             }
             return true;
+        }
+
+        //private  Dictionary<int, string> base31Code = new Dictionary<int, string>() {
+        //    {   0  ,"0"}, {   1  ,"1"}, {   2  ,"2"}, {   3  ,"3"}, {   4  ,"4"}, {   5  ,"5"}, {   6  ,"6"}, {   7  ,"7"}, {   8  ,"8"}, {   9  ,"9"},
+        //    {   10  ,"a"}, {   11  ,"b"}, {   12  ,"c"}, {   13  ,"d"}, {   14  ,"e"}, {   15  ,"f"}, {   16  ,"g"}, {   17  ,"h"}, {   18  ,"i"}, {   19  ,"j"},
+        //    {   20  ,"k"}, {   21  ,"l"}, {   22  ,"m"}, {   23  ,"n"}, {   24  ,"o"}, {   25  ,"p"}, {   26  ,"q"}, {   27  ,"r"}, {   28  ,"s"}, {   29  ,"t"},
+        //    {   30  ,"u"}, {   31  ,"v"}, {   32  ,"w"}, {   33  ,"x"}
+        //};
+
+        private Dictionary<string, int> base31Code = new Dictionary<string, int>() {
+            {   "0",0}, {  "1", 1  }, {  "2", 2  }, {   "3",3  }, {  "4", 4  }, {  "5", 5 }, {  "6", 6  }, { "7",7  }, {  "8", 8  }, {   "9",9  },
+            {   "a",10  }, {   "b",11  }, {   "c",12  }, {   "d",13  }, {  "e", 14  }, {  "f", 15  }, {   "g",16  }, {  "h",17  }, {   "j",18  }, {  "k", 19  },
+            {   "l",20  }, {  "m", 21  }, {   "n",22  }, {   "p",23  }, {  "r", 24  }, {  "s", 25  }, {  "t", 26  }, { "v",  27  }, { "w",  28  }, {  "x", 29  },
+            {   "y",30  }
+        };
+        /// <summary>
+        /// 解析二位码中的电池串数
+        /// </summary>
+        /// <param name="qrCode">二维码</param>
+        /// <param name="moduleNum">个数</param>
+        /// <returns></returns>
+        protected bool AnalysisQRCode(string qrCode,ref int moduleNum)
+        { 
+            if(qrCode.Length!=24)
+            {
+                return false;
+            }
+            string moduleNumStr = qrCode.Substring(10, 2);
+            string high = moduleNumStr.Substring(0, 1).ToLower();
+            string low = moduleNumStr.Substring(1, 1).ToLower();
+            moduleNum = base31Code[high] * 31 + base31Code[low];
+
+            return true;
+
         }
         #endregion
     }

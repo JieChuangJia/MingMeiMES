@@ -68,20 +68,90 @@ namespace LineNodes
                         currentTaskPhase++;
                         this.currentTask.TaskPhase = this.currentTaskPhase;
                         this.ctlTaskBll.Update(this.currentTask);
+
                         break;
                     }
                 case 3:
                     {
+                        int requireReadData =0;
+                        if(this.plcRW2.ReadDB("D9100",ref requireReadData)==false)
+                        {
+                            break;
+                        }
+                        if(requireReadData != 1)
+                        {
+                            break;
+                         
+                        }
+                        int weldLJL = 0;//焊接离胶量
+                        int hjdwjg = 0;//焊接定位结果
+                        if (this.plcRW2.ReadDB("D9000", ref hjdwjg) == false)
+                        {
+                            break;
+                        }
+                        if (this.plcRW2.ReadDB("D9002", ref weldLJL) == false)
+                        {
+                            break;
+                        }
+
+                        if (this.plcRW2.WriteDB("D9100", 2) == false)
+                        {
+                            break;
+                        }
+                        string checkResult = "OK";
+                        if(hjdwjg ==1)
+                        {
+                            checkResult = "OK";
+                        }
+                        else
+                        {
+                            checkResult = "NG";
+                        }
+                        float wedlljlF = (float)weldLJL / 100;
+                        string uploadMesData = "焊接定位结果:" + checkResult + ":|焊接离焦量:" + wedlljlF + ":mm";
+                        List<DBAccess.Model.BatteryModuleModel> moduleList = modBll.GetBindedMods(this.rfidUID);
+                        if(moduleList==null||moduleList.Count==0)
+                        {
+                            Console.WriteLine(this.nodeName,"此工装板没有绑定数据！");
+                            break;
+                        }
+                        currentTaskDescribe = "焊接数据读取成功：" + uploadMesData;
+                       if( UploadToMesData(3, moduleList[0].batPackID, "M00100601", uploadMesData, ref reStr)==false)
+                       {
+                           this.logRecorder.AddDebugLog(this.nodeName, "上传MES数据失败：" + reStr);
+                       }
+                       else
+                       {
+                           this.logRecorder.AddDebugLog(this.nodeName, "上传MES数据成功：" + uploadMesData);
+                       
+                       }
                         currentTaskDescribe = "流程完成";
                         this.currentTask.TaskPhase = this.currentTaskPhase;
-                        this.ctlTaskBll.Update(this.currentTask);
                         this.currentTask.TaskStatus = EnumTaskStatus.已完成.ToString();
+                        this.ctlTaskBll.Update(this.currentTask);
+                     
                         break;
                     }
                 default:
                     break;
             }
             return true;
+        }
+
+        private bool UploadToMesData(int flag, string groupCode, string workStationNum,string valueItem, ref string reStr)
+        {
+            RootObject rObj = WShelper.DevDataUpload(flag, "", workStationNum, groupCode, "", "", "", valueItem, ref reStr);
+            if (rObj.RES.Contains("OK"))
+            {
+
+                return true;
+            }
+            else
+            {
+                reStr = rObj.RES;
+                Console.WriteLine(this.nodeName + "上传MES二维码信息错误：" + rObj.RES);
+                return false;
+            }
         }
     }
 }

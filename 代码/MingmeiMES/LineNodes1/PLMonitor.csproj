@@ -74,6 +74,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="A线Model\BakeStation.cs" />
     <Compile Include="A线Model\NodeCCDCheck.cs" />
     <Compile Include="A线Model\NodeDianjiao.cs" />
     <Compile Include="A线Model\NodeManualStation.cs" />
@@ -84,6 +85,7 @@
     <Compile Include="B线Model\NodeLaserClean.cs" />
     <Compile Include="B线Model\NodeTailRobot.cs" />
     <Compile Include="B线Model\NodeWeld.cs" />
+    <Compile Include="C线Model\NodeCManualStation.cs" />
     <Compile Include="C线Model\NodePackFasten.cs" />
     <Compile Include="C线Model\NodePackLabel.cs" />
     <Compile Include="C线Model\NodePackOutput.cs" />

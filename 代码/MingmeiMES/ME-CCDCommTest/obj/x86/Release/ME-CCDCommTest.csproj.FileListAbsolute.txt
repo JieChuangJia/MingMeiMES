@@ -35,3 +35,16 @@ E:\tongyan\项目\明美MES\MingmeiMES20180305\MingmeiMES\ME-CCDCommTest\obj\x86
 E:\tongyan\项目\明美MES\MingmeiMES20180305\MingmeiMES\ME-CCDCommTest\obj\x86\Release\ME-CCDCommTest.csproj.GenerateResource.Cache
 E:\tongyan\项目\明美MES\MingmeiMES20180305\MingmeiMES\ME-CCDCommTest\obj\x86\Release\ME-CCDCommTest.exe
 E:\tongyan\项目\明美MES\MingmeiMES20180305\MingmeiMES\ME-CCDCommTest\obj\x86\Release\ME-CCDCommTest.pdb
+F:\NpWork\others\明美\代码\MingmeiMES\ME-CCDCommTest\bin\Release\ME-CCDCommTest.exe.config
+F:\NpWork\others\明美\代码\MingmeiMES\ME-CCDCommTest\bin\Release\ME-CCDCommTest.exe
+F:\NpWork\others\明美\代码\MingmeiMES\ME-CCDCommTest\bin\Release\ME-CCDCommTest.pdb
+F:\NpWork\others\明美\代码\MingmeiMES\ME-CCDCommTest\bin\Release\DevAccess.dll
+F:\NpWork\others\明美\代码\MingmeiMES\ME-CCDCommTest\bin\Release\DevInterface.dll
+F:\NpWork\others\明美\代码\MingmeiMES\ME-CCDCommTest\bin\Release\Oracle.ManagedDataAccess.dll
+F:\NpWork\others\明美\代码\MingmeiMES\ME-CCDCommTest\bin\Release\UHFReader06CSharp.dll
+F:\NpWork\others\明美\代码\MingmeiMES\ME-CCDCommTest\obj\x86\Release\ME-CCDCommTest.csprojResolveAssemblyReference.cache
+F:\NpWork\others\明美\代码\MingmeiMES\ME-CCDCommTest\obj\x86\Release\ME_CCDCommTest.Form1.resources
+F:\NpWork\others\明美\代码\MingmeiMES\ME-CCDCommTest\obj\x86\Release\ME_CCDCommTest.Properties.Resources.resources
+F:\NpWork\others\明美\代码\MingmeiMES\ME-CCDCommTest\obj\x86\Release\ME-CCDCommTest.csproj.GenerateResource.Cache
+F:\NpWork\others\明美\代码\MingmeiMES\ME-CCDCommTest\obj\x86\Release\ME-CCDCommTest.exe
+F:\NpWork\others\明美\代码\MingmeiMES\ME-CCDCommTest\obj\x86\Release\ME-CCDCommTest.pdb

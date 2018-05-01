@@ -84,15 +84,33 @@ namespace LineNodes
                         StringBuilder strBuild = new StringBuilder();
                         for (int i = 1; i < 5; i++)
                         {
-                            string str = string.Format("{0},{1},", i, this.rfidUID);
-                            foreach (DBAccess.Model.BatteryModuleModel mod in modList)
+                            string str = "";
+                            if(this.db2Vals[1] == 1 && this.db2Vals[2] == 2)//B通道5678
                             {
-                                if (mod.tag2.Trim() == i.ToString())
+                                str = string.Format("{0},{1},", i + 4, this.rfidUID);
+                                foreach (DBAccess.Model.BatteryModuleModel mod in modList)
                                 {
-                                    str += mod.batModuleID;
-                                    break;
+                                    if (mod.tag2.Trim() == i.ToString())
+                                    {
+                                        str += mod.batModuleID;
+                                        break;
+                                    }
                                 }
                             }
+                            else///A通道1234
+                            {
+                                str = string.Format("{0},{1},", i, this.rfidUID);
+                                foreach (DBAccess.Model.BatteryModuleModel mod in modList)
+                                {
+                                    if (mod.tag2.Trim() == i.ToString())
+                                    {
+                                        str += mod.batModuleID;
+                                        break;
+                                    }
+                                }
+                              
+                            }
+                        
                             strBuild.AppendLine(str);
                         }
                         writter.Write(strBuild.ToString());

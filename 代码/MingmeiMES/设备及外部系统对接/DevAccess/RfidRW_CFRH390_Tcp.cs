@@ -27,7 +27,7 @@ namespace DevAccess
         private object lockObj = new object();
         private ISocket mySocket { get; set; }
         private AutoResetEvent recvAutoEvent = new AutoResetEvent(false);
-        private const int TIMEWAITOUT = 50000;//5秒
+        private const int TIMEWAITOUT = 5000;//5秒
         private const int WAITTIME = 50;
         private List<byte> recBuffer = new List<byte>();
         private Action<string> printLog;
@@ -115,57 +115,72 @@ namespace DevAccess
         public string ReadUID()//读电子标签的label ID
         {
             string barCode = "";
-            lock (lockObj)
+            try
             {
-                string restr = "";
-
-                if(Request() == false)
+                lock (lockObj)
                 {
-                    
-                    return string.Empty;
-                }
-                byte[] cmdBytes = GetAnticollCmd().ToArray();
-                int reworkNum = 0;
-                this.recBuffer.Clear();
-                bool sendStatus = this.mySocket.Send(cmdBytes, ref restr);
-                
-                if (sendStatus == false)
-                {
-                    return string.Empty;
-                }
-                //this.OnLog("协议：" + DataConvert.ByteToHexStr(cmdBytes));
-                this.recvAutoEvent.Reset();
-                if (this.recvAutoEvent.WaitOne(TIMEWAITOUT) == true)
-                {
-                    while (reworkNum < MAXREWORKNUM)
+                    string restr = "";
+                    if (this.mySocket.IsConnected == false)
                     {
-                        if (CheckAnticollCmd(this.recBuffer.ToArray(), ref barCode) == false)
-                        {
-                            reworkNum++;
-                            OnLog("读卡接受"+reworkNum+"次，接收反馈数据：" + DataConvert.ByteToHexStr(this.recBuffer.ToArray()));
-                            System.Threading.Thread.Sleep(WAITTIME);
-                        }
-                        else
-                        {
-                            OnLog("读卡成功！");
-                            return barCode;
-                        }
-                     
+                        Disconnect();
+                        Connect();
                     }
-                    if (reworkNum >= MAXREWORKNUM)
+
+                    if (Request() == false)
                     {
-                        OnLog("读卡超时，写入请求读卡反馈数据错误！");
+
                         return string.Empty;
                     }
-                    
+                    byte[] cmdBytes = GetAnticollCmd().ToArray();
+                    int reworkNum = 0;
+                    this.recBuffer.Clear();
+                    bool sendStatus = this.mySocket.Send(cmdBytes, ref restr);
+
+                    if (sendStatus == false)
+                    {
+                        return string.Empty;
+                    }
+                    //this.OnLog("协议：" + DataConvert.ByteToHexStr(cmdBytes));
+                    this.recvAutoEvent.Reset();
+                    if (this.recvAutoEvent.WaitOne(TIMEWAITOUT) == true)
+                    {
+                        while (reworkNum < MAXREWORKNUM)
+                        {
+                            if (CheckAnticollCmd(this.recBuffer.ToArray(), ref barCode) == false)
+                            {
+                                reworkNum++;
+                                OnLog("读卡接受" + reworkNum + "次，接收反馈数据：" + DataConvert.ByteToHexStr(this.recBuffer.ToArray()));
+                                System.Threading.Thread.Sleep(WAITTIME);
+                            }
+                            else
+                            {
+                                OnLog("读卡成功！");
+                                return barCode;
+                            }
+
+                        }
+                        if (reworkNum >= MAXREWORKNUM)
+                        {
+                            OnLog("读卡超时，写入请求读卡反馈数据错误！");
+                            return string.Empty;
+                        }
+
+                    }
+                    else
+                    {
+                        OnLog("读卡超时！");
+                        return string.Empty;
+                    }
                 }
-                else
-                {
-                    OnLog("读卡超时！");
-                    return string.Empty;
-                }
+                return barCode;
             }
-            return barCode;
+            catch
+            {
+                Disconnect();
+                Connect();
+                return string.Empty;
+
+            }
         }
         public string ReadStrData()
         {
@@ -265,47 +280,55 @@ namespace DevAccess
         }
         private bool CheckAnticollCmd(byte[] checkQeqCmd,ref string barCode)
         {
-            if (checkQeqCmd == null || checkQeqCmd.Length < 3)
+            try
             {
-                
-                return false;
-            }
-            int startIndex = 0;
-            if (checkQeqCmd.Length>9)
-            {
-                for(int i=0;i<checkQeqCmd.Length;i++)
+                if (checkQeqCmd == null || checkQeqCmd.Length < 3)
                 {
-                    if (checkQeqCmd[i] ==8 && checkQeqCmd.Length>=(i + 9))
+
+                    return false;
+                }
+                int startIndex = 0;
+                if (checkQeqCmd.Length > 9)
+                {
+                    for (int i = 0; i < checkQeqCmd.Length; i++)
                     {
-                        startIndex += i;
-                        break;
+                        if (checkQeqCmd[i] == 8 && checkQeqCmd.Length >= (i + 9))
+                        {
+                            startIndex += i;
+                            break;
+                        }
                     }
                 }
+                if (checkQeqCmd[startIndex] == 0x08 && checkQeqCmd[startIndex + 2] == 0x00 && checkQeqCmd.Length >= startIndex + 8)
+                {
+                    //3-6序列号
+                    List<byte> codeList = new List<byte>();
+                    codeList.Add(checkQeqCmd[startIndex + 3]);
+                    codeList.Add(checkQeqCmd[startIndex + 4]);
+                    codeList.Add(checkQeqCmd[startIndex + 5]);
+                    codeList.Add(checkQeqCmd[startIndex + 6]);
+                    barCode = DataConvert.ByteToHexStr(codeList.ToArray());
+                    return true;
+                }
+                else
+                {
+                    //this.printLog("读卡错误，接受数据：" + checkQeqCmd[0].ToString() + "-" + checkQeqCmd[1].ToString() + "-" + checkQeqCmd[2].ToString());
+                    return false;
+                }
             }
-            if (checkQeqCmd[startIndex] == 0x08 && checkQeqCmd[startIndex + 2] == 0x00 && checkQeqCmd.Length >= startIndex + 8)
+            catch
             {
-                //3-6序列号
-                List<byte> codeList = new List<byte>();
-                codeList.Add(checkQeqCmd[startIndex+3]);
-                codeList.Add(checkQeqCmd[startIndex+4]);
-                codeList.Add(checkQeqCmd[startIndex+5]);
-                codeList.Add(checkQeqCmd[startIndex+6]);
-                barCode = DataConvert.ByteToHexStr(codeList.ToArray());
-
-                return true;
-            }
-            else
-            {
-                //this.printLog("读卡错误，接受数据：" + checkQeqCmd[0].ToString() + "-" + checkQeqCmd[1].ToString() + "-" + checkQeqCmd[2].ToString());
-               
+                Disconnect();
+                Connect();
                 return false;
             }
+            
         }
         private bool CheckRequestCmd(byte[] checkQeqCmd)
         {
             if(checkQeqCmd == null||checkQeqCmd.Length<3)
             {
-                this.printLog("结束数据长度为空或者小于1");
+                this.OnLog("结束数据长度为空或者小于1");
                 return false;
             }
             if(checkQeqCmd[0] == 0x06&&checkQeqCmd[2] == 0x00)
@@ -314,7 +337,7 @@ namespace DevAccess
             }
             else
             {
-                this.printLog("接受数据："+checkQeqCmd[0].ToString() + "-" + checkQeqCmd[1].ToString() + "-" + checkQeqCmd[2].ToString());
+                this.OnLog("接受数据：" + checkQeqCmd[0].ToString() + "-" + checkQeqCmd[1].ToString() + "-" + checkQeqCmd[2].ToString());
                 return false;
             }
 
@@ -335,6 +358,7 @@ namespace DevAccess
 
                 if (sendStatus == false)
                 {
+                   
                     return false;
                 }
                 //this.OnLog("协议：" + DataConvert.ByteToHexStr(cmdBytes));
@@ -376,7 +400,7 @@ namespace DevAccess
             }
 
         }
-
+     
         private void CalcuCRC(List<byte> crcSouce,ref byte lsbCRC,ref byte msbCRC)
         {
             UInt32 ployNomal = 0x8408;

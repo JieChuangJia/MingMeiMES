@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using PLProcessModel;
+using DevInterface;
+using System.Threading;
+using FTDataAccess.BLL;
 namespace LineNodes
 {
     /// <summary>
@@ -11,6 +14,9 @@ namespace LineNodes
     public class NodeScrewLock: CtlNodeBaseModel
     {
         protected System.DateTime devOpenSt = DateTime.Now;
+        protected DBAccess.BLL.BatteryModuleBll modBll = new DBAccess.BLL.BatteryModuleBll();
+        private MTDBAccess.BLL.dbBLL blldb = new MTDBAccess.BLL.dbBLL();//码头螺丝数据
+     
         //protected string ccdDevName = "A线锁螺丝机";
          public override bool BuildCfg(System.Xml.Linq.XElement xe, ref string reStr)
         {
@@ -72,7 +78,9 @@ namespace LineNodes
                         this.currentTask.TaskParam = rfidUID;
                         this.currentTask.TaskPhase = this.currentTaskPhase;
                         this.ctlTaskBll.Update(this.currentTask);
-                        db1ValsToSnd[1] = 2;//
+                        //db1ValsToSnd[1] = 2;//
+
+                      
                         if (!ProductTraceRecord())
                         {
                             break;
@@ -123,6 +131,7 @@ namespace LineNodes
                             break;
                         }
                         List<string> products = new List<string>();
+                        Thread.Sleep(10000);//延时10秒等待下边设备
                         foreach (DBAccess.Model.BatteryModuleModel m in modList)
                         {
                             products.Add(m.batModuleID);
@@ -170,6 +179,19 @@ namespace LineNodes
                             string str = string.Format("CCD数据，产品ID:{0}，数据：{1}", keyStr, ccdDataDic[keyStr]);
                             logRecorder.AddDebugLog(nodeName, str);
                             AddProcessRecord(keyStr, "模块", "检测数据", string.Format("读取到{0}检测数据", ccdDevName), ccdDataDic[keyStr]);
+                            string upLoadMesScrewData = "";
+                            if (GetScrewData(ccdDataDic[keyStr], ref upLoadMesScrewData) == false)
+                            {
+
+                                logRecorder.AddDebugLog(nodeName, "CCD数据格式错误！无法转换为MES需要格式！");
+                                continue;
+                            }
+                            if (UploadMesScrewData(keyStr, upLoadMesScrewData) == false)
+                            {
+                                logRecorder.AddDebugLog(nodeName, "上传MES锁螺丝数据失败！");
+                                continue;
+                            }
+                            logRecorder.AddDebugLog(nodeName, "上传MES锁螺丝数据成功！");
                         }
                         currentTaskPhase++;
                         this.currentTask.TaskPhase = this.currentTaskPhase;
@@ -227,6 +249,62 @@ namespace LineNodes
            
         }
 
+        private bool UploadMesScrewData(string modCode, string screwData)
+        {
+
+            int flag = 3;
+            string M_AREA = "Y001";
+            string M_WORKSTATION_SN = "Y00100601";
+            string M_DEVICE_SN = "";
+       
+            string M_UNION_SN = "";
+            string M_CONTAINER_SN = "";
+            string M_LEVEL = "";
+            string M_ITEMVALUE ="" ;
+            RootObject rObj = new RootObject();
+            
+            string strJson = "";
+
+            rObj = WShelper.DevDataUpload(flag, M_DEVICE_SN, M_WORKSTATION_SN, modCode, M_UNION_SN, M_CONTAINER_SN, M_LEVEL, M_ITEMVALUE, ref strJson);
+            if (rObj.RES.Contains("OK"))
+            {
+                return true;
+            }
+            else
+            {
+                Console.WriteLine(this.nodeName + "上传MES锁螺丝数据错误：" + rObj.RES);
+                return false;
+            }
+        
+
+        }
+
+        private bool GetScrewData(string screwData, ref string mesScrewData)
+        {
+            try
+            {
+                string[] data = screwData.Split(',');
+                string screwNJ1 = data[1].Split('=')[1];
+                string screwNJ2 = data[5].Split('=')[1];
+                string screwNJ3 = data[9].Split('=')[1];
+                string screwNJ4 = data[13].Split('=')[1];
+
+                string screwJD1 = data[2].Split('=')[1];
+                string screwJD2 = data[6].Split('=')[1];
+                string screwJD3 = data[10].Split('=')[1];
+                string screwJD4 = data[14].Split('=')[1];
+
+                mesScrewData = "螺丝1扭矩:" + screwNJ1 + ":Nm|螺丝2扭矩:" + screwNJ2 + ":Nm|螺丝3扭矩:" + screwNJ3 + ":Nm|螺丝4扭矩:" + screwNJ4
+                   + ":Nm|螺丝1角度:" + screwJD1 + ":°|螺丝2角度:" + screwJD2 + ":°|螺丝3角度:" + screwJD3 + ":°|螺丝4角度:" + screwJD4 + ":°";
+                return true;
+            }
+
+            catch
+            {
+                return false;
+            }
+        }
+
         protected bool ExeBindC(ref string reStr)
         {
             if (!ExeBusinessC(ref reStr))
@@ -273,6 +351,8 @@ namespace LineNodes
                     }
                 case 3:
                     {
+                      
+
                         db1ValsToSnd[1] = 3;
                         currentStat.StatDescribe = "流程完成";
                         currentTaskDescribe = "流程完成";
@@ -287,5 +367,259 @@ namespace LineNodes
             }
             return true;
         }
+
+        protected override void ExeRfidBusinessAB()
+        {
+
+            if (this.rfidRWList == null || this.rfidRWList.Count() < 1)
+            {
+                return;
+            }
+            PLNodesBll plNodeBll = new PLNodesBll();
+            if (this.db2Vals[1] == 2)
+            {
+                //A通道
+                if (string.IsNullOrWhiteSpace(this.rfidUIDA))
+                {
+                    IrfidRW rw = null;
+                    if (SysCfgModel.SimMode)
+                    {
+                        this.rfidUIDA = this.SimRfidUID;
+                    }
+                    else if (this.rfidRWList.Count > 0)
+                    {
+                        rw = this.rfidRWList[0];
+                        this.rfidUIDA = rw.ReadUID();
+
+                    }
+                    if (string.IsNullOrWhiteSpace(this.rfidUIDA))
+                    {
+                        //读RFID失败 
+
+                        if (this.db1ValsToSnd[0] != 3)
+                        {
+                            //logRecorder.AddDebugLog(nodeName, "读RFID失败");
+                            db1ValsToSnd[0] = 3;
+                        }
+                        else
+                        {
+                            db1ValsToSnd[0] = 1;
+                        }
+                        Thread.Sleep(1000);
+                        this.currentStat.Status = EnumNodeStatus.无法识别;
+                        this.currentStat.StatDescribe = "读A通道RFID失败:" + db1ValsToSnd[0].ToString();
+                        this.currentTaskDescribe = "读A通道RFID失败:" + db1ValsToSnd[0].ToString();
+
+                    }
+                    else
+                    {
+
+                        this.plNodeModel.tag1 = this.rfidUIDA;
+                        plNodeBll.Update(this.plNodeModel);
+                        logRecorder.AddDebugLog(nodeName, string.Format("A通道读到RFID:{0}", this.rfidUIDA));
+                        if (this.nodeID == "OPA005")
+                        {
+                            if (IsEmptyPallet(this.rfidUIDA) == true)
+                            {
+                                this.db1ValsToSnd[0] = 4;
+                            }
+                            else
+                            {
+                                this.db1ValsToSnd[0] = 2;
+                            }
+
+                        }
+                        else
+                        {
+                            this.db1ValsToSnd[0] = 2;
+                        }
+                    }
+
+                }
+                else
+                {
+                    logRecorder.AddDebugLog(nodeName, string.Format("A通道读到RFID:{0}", this.rfidUIDA));
+                    if (this.nodeID == "OPA005")
+                    {
+                        if (IsEmptyPallet(this.rfidUIDA) == true)
+                        {
+                            this.db1ValsToSnd[0] = 4;
+                        }
+                        else
+                        {
+                            this.db1ValsToSnd[0] = 2;
+                        }
+
+                    }
+                    else
+                    {
+                        this.db1ValsToSnd[0] = 2;
+                    }
+                }
+
+            }
+            else if (this.db2Vals[1] == 1)
+            {
+                this.db1ValsToSnd[0] = 1;
+                this.plNodeModel.tag1 = "";
+                plNodeBll.Update(this.plNodeModel);
+            }
+
+            if (this.db2Vals[2] == 2)
+            {
+                //B通道
+                IrfidRW rw = null;
+                if (string.IsNullOrWhiteSpace(this.rfidUIDB))
+                {
+                    if (SysCfgModel.SimMode)
+                    {
+                        this.rfidUIDB = this.SimRfidUID;
+                    }
+                    else if (this.rfidRWList.Count > 1)
+                    {
+                        rw = this.rfidRWList[1];
+                        this.rfidUIDB = rw.ReadUID();
+
+                    }
+                    if (string.IsNullOrWhiteSpace(this.rfidUIDB))
+                    {
+                        if (this.db1ValsToSnd[1] != 3)
+                        {
+                            //logRecorder.AddDebugLog(nodeName, "读RFID失败");
+                            db1ValsToSnd[1] = 3;
+                        }
+                        else
+                        {
+                            db1ValsToSnd[1] = 1;
+                        }
+                        Thread.Sleep(1000);
+                        this.currentStat.Status = EnumNodeStatus.无法识别;
+                        this.currentStat.StatDescribe = "读B通道RFID失败:" + db1ValsToSnd[1].ToString();
+                        this.currentTaskDescribe = "读B通道RFID失败:" + db1ValsToSnd[1].ToString();
+                    }
+                    else
+                    {
+                        this.plNodeModel.tag2 = this.rfidUIDB;
+                        plNodeBll.Update(this.plNodeModel);
+                        logRecorder.AddDebugLog(nodeName, string.Format("B通道读到RFID:{0}", this.rfidUIDB));
+                        logRecorder.AddDebugLog(nodeName, string.Format("A通道读到RFID:{0}", this.rfidUIDA));
+                        if (this.nodeID == "OPA005")
+                        {
+                            if (IsEmptyPallet(this.rfidUIDA) == true)
+                            {
+                                this.db1ValsToSnd[1] = 4;
+                            }
+                            else
+                            {
+                                this.db1ValsToSnd[1] = 2;
+                            }
+
+                        }
+                        else
+                        {
+                            this.db1ValsToSnd[1] = 2;
+                        }
+
+                    }
+
+                }
+                else
+                {
+                    logRecorder.AddDebugLog(nodeName, string.Format("A通道读到RFID:{0}", this.rfidUIDA));
+                    if (this.nodeID == "OPA005")
+                    {
+                        if (IsEmptyPallet(this.rfidUIDA) == true)
+                        {
+                            this.db1ValsToSnd[1] = 4;
+                        }
+                        else
+                        {
+                            this.db1ValsToSnd[1] = 2;
+                        }
+
+                    }
+                    else
+                    {
+                        this.db1ValsToSnd[1] = 2;
+                    }
+                }
+
+            }
+            else if (this.db2Vals[2] == 1)
+            {
+
+                this.db1ValsToSnd[1] = 1;
+                this.plNodeModel.tag2 = "";
+                plNodeBll.Update(this.plNodeModel);
+            }
+
+        }
+
+        /// <summary>
+        /// 是否为空板，空板就是没有绑定数据
+        /// </summary>
+        /// <param name="rfidUID">rfid数据</param>
+        /// <returns></returns>
+        public bool IsEmptyPallet(string rfidUID)
+        {
+
+            List<DBAccess.Model.BatteryModuleModel> modList = modBll.GetModelList(string.Format("palletID='{0}' and palletBinded=1", rfidUID));
+            if (modList != null && modList.Count > 0)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        //public bool UploadMesData(string rfid, string valueItems,ref string reStr)
+        //{
+        //    string M_AREA = "Y001";
+        //    string M_WORKSTATION_SN = "Y00102201";
+        //    string M_DEVICE_SN = "";
+
+        //    string M_UNION_SN = "";
+        //    string M_CONTAINER_SN = "";
+        //    string M_LEVEL = "";
+        //    string M_ITEMVALUE = valueItems;
+        //    RootObject rObj = new RootObject();
+        //    List<DBAccess.Model.BatteryModuleModel> modelList = modBll.GetModelList(string.Format("palletID='{0}' and palletBinded=1", rfid)); //modBll.GetModelByPalletID(this.rfidUID, this.nodeName);
+        //    if (modelList == null || modelList.Count == 0)
+        //    {
+        //        return false;
+        //    }
+        //    foreach(DBAccess.Model.BatteryModuleModel battery in modelList)
+        //    {
+        //        MTDBAccess.Model.dbModel screwModel =  blldb.GetModel(battery.batModuleID);
+        //        if(screwModel == null)
+        //        {
+        //            continue;
+        //        }
+        //        M_LEVEL = battery.tag1;
+        //        string barcode = modelList[0].batModuleID;
+        //        M_ITEMVALUE = "";//需要拼接螺丝数据
+        //        string strJson = "";
+
+        //        rObj = WShelper.DevDataUpload(3, M_DEVICE_SN, M_WORKSTATION_SN, barcode, M_UNION_SN, M_CONTAINER_SN, M_LEVEL, M_ITEMVALUE, ref strJson);
+        //        reStr = rObj.RES;
+
+        //        if (rObj.RES.Contains("OK"))
+        //        {
+        //            logRecorder.AddDebugLog(nodeName, string.Format("上传螺丝数据失败：{0}", M_ITEMVALUE) +"-"+ rObj.RES);
+        //            return true;
+        //        }
+        //        else
+        //        {
+        //            logRecorder.AddDebugLog(nodeName, string.Format("上传螺丝数据失败：{0}", M_ITEMVALUE + "-" + rObj.RES));
+
+        //            return false;
+        //        }
+
+        //    }
+
+        //    return true;
+        //}
     }
 }

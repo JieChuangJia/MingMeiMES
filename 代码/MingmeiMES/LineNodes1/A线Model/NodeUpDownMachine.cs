@@ -110,13 +110,13 @@ namespace LineNodes
             {
                 case 1:
                     {
-                        Console.WriteLine("{0}开始从MES申请模组码", nodeName);
-                        this.currentTaskDescribe = string.Format("{0}开始从MES申请模组码", nodeName);
+                        Console.WriteLine("{0}开始从MES申请模块码", nodeName);
+                        this.currentTaskDescribe = string.Format("{0}开始从MES申请模块码", nodeName);
                         if (!ModuleCodeRequire(ref M_SN, ref reStr))
                         {
                             LogRecorder.AddDebugLog(nodeName, "ModuleCodeRequire FALSE" + "," + reStr);
                             this.db1ValsToSnd[0] = 3;
-                            this.currentTaskDescribe = "从MES申请模组码失败" + reStr;
+                            this.currentTaskDescribe = "从MES申请模块码失败" + reStr;
                             break;
                         }
                         if(!plcRW.WriteDB("D9000", 0))
@@ -126,8 +126,8 @@ namespace LineNodes
                             plcRW.ConnectPLC(ref reStr);
                             break;
                         }
-                        LogRecorder.AddDebugLog(nodeName, "从MES申请到模组码:" + M_SN);
-                        this.currentTaskDescribe = "从MES申请到模组码:" + M_SN;
+                        LogRecorder.AddDebugLog(nodeName, "从MES申请到模块码:" + M_SN);
+                        this.currentTaskDescribe = "从MES申请到模块码:" + M_SN;
                         currentTaskPhase++;
                         break;
                     }
@@ -150,8 +150,8 @@ namespace LineNodes
                         writter.Flush();
                         writter.Close();
                         this.db1ValsToSnd[0] = 2;
-                        LogRecorder.AddDebugLog(nodeName, string.Format("模组码{0}写到打码内容文本中", M_SN));
-                        this.currentTaskDescribe = string.Format("模组码{0}写到打码内容文本中",M_SN);
+                        LogRecorder.AddDebugLog(nodeName, string.Format("模块码{0}写到打码内容文本中", M_SN));
+                        this.currentTaskDescribe = string.Format("模块码{0}写到打码内容文本中", M_SN);
                         currentTaskPhase++;
                         break;
                     }
@@ -187,7 +187,7 @@ namespace LineNodes
                         //上传Mes
                         int M_FLAG = 3;
                         string M_AREA = "Y001";
-                        string M_WORKSTATION_SN = "Y00200101";
+                        string M_WORKSTATION_SN = "Y00100101";
                         string M_DEVICE_SN = "";
                        // string M_SN = modCode;
                         string M_UNION_SN = "";
@@ -265,7 +265,7 @@ namespace LineNodes
                 return false;
             }
           //  LogRecorder.AddDebugLog(nodeName, "D9000 = 1");
-            Console.WriteLine("{0}开始从MES申请模组码", nodeName);
+            Console.WriteLine("{0}开始从MES申请模块码", nodeName);
             string M_SN = "";
             if (!ModuleCodeRequire(ref M_SN, ref reStr))
             {
@@ -278,7 +278,7 @@ namespace LineNodes
                 }
                 return false;
             }
-            LogRecorder.AddDebugLog(nodeName, "从MES申请到模组码:" + M_SN);
+            LogRecorder.AddDebugLog(nodeName, "从MES申请到模块码:" + M_SN);
             //写条码到文件
             string modCodeFile = "";
             modCodeFile = string.Format(@"\\{0}\打标文件\加工文件\打码内容.txt", machionIP);
@@ -304,7 +304,7 @@ namespace LineNodes
                 plcRW2.ConnectPLC(ref reStr);
                 return false;
             }
-            LogRecorder.AddDebugLog(nodeName, "模组条码写到打码内容文本中");
+            LogRecorder.AddDebugLog(nodeName, "模块条码写到打码内容文本中");
             return true;
         }
 
@@ -346,7 +346,7 @@ namespace LineNodes
             string modCode = reader.ReadLine();
              //上传Mes
             int M_FLAG = 3;
-            string M_WORKSTATION_SN = "Y00200101";
+            string M_WORKSTATION_SN = "Y00100101";
             string M_DEVICE_SN = "";
             string M_SN = modCode;
             string M_UNION_SN = "";
@@ -393,19 +393,28 @@ namespace LineNodes
         {
             string M_WORKSTATION_SN = "Y00200101";
             RootObject rObj = new RootObject();
-            rObj = WShelper.BarCodeRequest(M_WORKSTATION_SN);
-            if (rObj.RES.Contains("OK"))
+            if(SysCfgModel.IsRequireMesQRCode == true)
             {
-                M_SN = rObj.M_COMENT[0].M_SN;
-                reStr = this.nodeName + "模组条码请求成功";
-                return true;
+                rObj = WShelper.BarCodeRequest(M_WORKSTATION_SN);
+                if (rObj.RES.Contains("OK"))
+                {
+                    M_SN = rObj.M_COMENT[0].M_SN;
+                    reStr = this.nodeName + "模块条码请求成功";
+                    return true;
+                }
+                else
+                {
+                    M_SN = "";
+                    reStr = this.nodeName + "模块条码请求失败!" + rObj.RES;
+                    return false;
+                }
             }
             else
             {
-                M_SN = "";
-                reStr = this.nodeName + "模组条码请求失败!" + rObj.RES;
-                return false;
+                M_SN = "123456789201345678999013";
+                return true;
             }
+          
         }
     }
 }

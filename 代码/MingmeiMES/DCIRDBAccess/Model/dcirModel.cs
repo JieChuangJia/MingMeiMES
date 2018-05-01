@@ -16,12 +16,14 @@ namespace DCIRDBAccess
         { }
         #region Model
         private string _测试时间;
-        private string _电流;
-        private string _电压;
-        private string _容量;
-        private string _能量;
-        private string _总时间;
-        private string _相对时间;
+        private string _二维码;
+        private string _电阻值;
+        private string _放电电流1;
+        private string _放电电流2;
+        private string _放电时间;
+        private string _静置时间;
+        private string _结果电压;
+        private string _结果电流;
         /// <summary>
         /// 
         /// </summary>
@@ -33,50 +35,66 @@ namespace DCIRDBAccess
         /// <summary>
         /// 
         /// </summary>
-        public string 电流
+        public string 二维码
         {
-            set { _电流 = value; }
-            get { return _电流; }
+            set { _二维码 = value; }
+            get { return _二维码; }
         }
         /// <summary>
         /// 
         /// </summary>
-        public string 电压
+        public string 电阻值
         {
-            set { _电压 = value; }
-            get { return _电压; }
+            set { _电阻值 = value; }
+            get { return _电阻值; }
         }
         /// <summary>
         /// 
         /// </summary>
-        public string 容量
+        public string 放电电流1
         {
-            set { _容量 = value; }
-            get { return _容量; }
+            set { _放电电流1 = value; }
+            get { return _放电电流1; }
         }
         /// <summary>
         /// 
         /// </summary>
-        public string 能量
+        public string 放电电流2
         {
-            set { _能量 = value; }
-            get { return _能量; }
+            set { _放电电流2 = value; }
+            get { return _放电电流2; }
         }
         /// <summary>
         /// 
         /// </summary>
-        public string 总时间
+        public string 放电时间
         {
-            set { _总时间 = value; }
-            get { return _总时间; }
+            set { _放电时间 = value; }
+            get { return _放电时间; }
         }
         /// <summary>
         /// 
         /// </summary>
-        public string 相对时间
+        public string 静置时间
         {
-            set { _相对时间 = value; }
-            get { return _相对时间; }
+            set { _静置时间 = value; }
+            get { return _静置时间; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string 结果电压
+        {
+            set { _结果电压 = value; }
+            get { return _结果电压; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string 结果电流
+        {
+            set { _结果电流 = value; }
+            get { return _结果电流; }
         }
         #endregion Model
 

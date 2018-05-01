@@ -40,3 +40,13 @@ E:\workspace\项目\明美项目\Git_mingmei\MingMeiMES\代码\MingmeiMES\设备
 E:\workspace\项目\明美项目\Git_mingmei\MingMeiMES\代码\MingmeiMES\设备及外部系统对接\DevAccess\obj\x86\Release\DevAccess.csproj.ResolveComReference.cache
 E:\workspace\项目\明美项目\Git_mingmei\MingMeiMES\代码\MingmeiMES\设备及外部系统对接\DevAccess\obj\x86\Release\DevAccess.dll
 E:\workspace\项目\明美项目\Git_mingmei\MingMeiMES\代码\MingmeiMES\设备及外部系统对接\DevAccess\obj\x86\Release\DevAccess.pdb
+F:\NpWork\others\明美\代码\MingmeiMES\设备及外部系统对接\DevAccess\obj\x86\Release\DevAccess.csprojResolveAssemblyReference.cache
+F:\NpWork\others\明美\代码\MingmeiMES\设备及外部系统对接\DevAccess\obj\x86\Release\DevAccess.dll
+F:\NpWork\others\明美\代码\MingmeiMES\设备及外部系统对接\DevAccess\obj\x86\Release\DevAccess.pdb
+F:\NpWork\others\明美\代码\MingmeiMES\设备及外部系统对接\DevAccess\bin\Release\DevAccess.dll.config
+F:\NpWork\others\明美\代码\MingmeiMES\设备及外部系统对接\DevAccess\bin\Release\DevAccess.dll
+F:\NpWork\others\明美\代码\MingmeiMES\设备及外部系统对接\DevAccess\bin\Release\DevAccess.pdb
+F:\NpWork\others\明美\代码\MingmeiMES\设备及外部系统对接\DevAccess\bin\Release\DevInterface.dll
+F:\NpWork\others\明美\代码\MingmeiMES\设备及外部系统对接\DevAccess\bin\Release\Oracle.DataAccess.dll
+F:\NpWork\others\明美\代码\MingmeiMES\设备及外部系统对接\DevAccess\bin\Release\Oracle.ManagedDataAccess.dll
+F:\NpWork\others\明美\代码\MingmeiMES\设备及外部系统对接\DevAccess\bin\Release\DevInterface.pdb

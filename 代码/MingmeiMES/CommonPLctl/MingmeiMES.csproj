@@ -226,6 +226,7 @@
     <Content Include="battery-3.ico" />
     <Content Include="bugrecord.txt" />
     <Content Include="trust.ico" />
+    <Content Include="修改记录.txt" />
     <Content Include="开发记录.txt" />
   </ItemGroup>
   <ItemGroup>

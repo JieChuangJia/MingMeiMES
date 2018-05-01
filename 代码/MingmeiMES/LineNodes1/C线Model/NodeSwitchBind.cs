@@ -15,7 +15,10 @@ namespace LineNodes
     {
         private PLNodesBll plNodeBll = new PLNodesBll();
         private MTDBAccess.BLL.dbBLL blldb = new MTDBAccess.BLL.dbBLL();//码头螺丝数据
-
+        private DBAccess.BLL.QRCodeBLL bllQrCode = new DBAccess.BLL.QRCodeBLL();
+        private List<string> qrList = new List<string>();//第二个扫码枪扫码列表
+        private string mesReqGroupCode = "";//向mes申请的模组条码
+        private int readCodeTimes = 0;//扫码器读3次不成工认为失败，需要通知plc
         int modPalletMax = 4; //每个模组最多码放模块数量
         public override bool BuildCfg(System.Xml.Linq.XElement xe, ref string reStr)
         {
@@ -28,10 +31,12 @@ namespace LineNodes
             this.dicCommuDataDB1[3].DataDescription = "待绑定模块数量";
             this.dicCommuDataDB1[4].DataDescription = "1：复位/待机状态,2：RFID读取成功,3：RFID读取失败";
             this.dicCommuDataDB1[5].DataDescription = "1：复位,2：数据绑定完成，允许放行,3: 模块数量为空";
+
             this.dicCommuDataDB2[1].DataDescription = "1：扫码请求(PLC>MES),2：扫码完成(MES->PLC)";
             this.dicCommuDataDB2[2].DataDescription = "1：无板,2：有板，读卡请求";
             this.dicCommuDataDB2[3].DataDescription = "1：复位,2：抓取完成，允许绑定";
             this.dicCommuDataDB2[4].DataDescription = "正在绑定的分档位(1~4)";
+            this.dicCommuDataDB2[5].DataDescription = "1：2号扫码请求(PLC>MES),2：2号扫码完成(MES->PLC)3：扫码失败！";
             return true;
         }
         public override bool ExeBusiness(ref string reStr)
@@ -86,6 +91,7 @@ namespace LineNodes
                 this.db1ValsToSnd[0] = 3;
                 return;
             }
+
             string pattern = @"^[0-9]*$"; //数字正则  
             if (!System.Text.RegularExpressions.Regex.IsMatch(mod.tag1, pattern))
             {
@@ -96,19 +102,21 @@ namespace LineNodes
                 this.db1ValsToSnd[1] = 0;
                 return;
             }
-         //  if (this.db1ValsToSnd[1]==0)
-            
+           
             this.db1ValsToSnd[0] = 1;
             short groupSeq = short.Parse(mod.tag1);
             this.db1ValsToSnd[1] = groupSeq;
             PLNodesBll plNodesBll = new PLNodesBll();
             plNodeModel = plNodesBll.GetModel(this.nodeID);
-            switch(groupSeq)
+
+
+          
+            switch (groupSeq)
             {
                 case 1:
                     {
                         string[] modExistArray = plNodeModel.tag1.Split(new string[]{ "," },StringSplitOptions.RemoveEmptyEntries);
-                        if (modExistArray != null && modExistArray.Count() >= modPalletMax)
+                        if (modExistArray != null && modExistArray.Count() > modPalletMax)
                         {
                             this.db1ValsToSnd[0] = 4;
                             this.currentTaskDescribe = string.Format("档位{0}已满,最大允许数量，目前数量{1}",groupSeq,modPalletMax);
@@ -129,7 +137,7 @@ namespace LineNodes
                 case 2:
                     {
                         string[] modExistArray = plNodeModel.tag2.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
-                        if (modExistArray != null && modExistArray.Count() >= modPalletMax)
+                        if (modExistArray != null && modExistArray.Count() > modPalletMax)
                         {
                             this.db1ValsToSnd[0] = 4;
                             this.currentTaskDescribe = string.Format("档位{0}已满,最大允许数量，目前数量{1}", groupSeq, modPalletMax);
@@ -149,7 +157,7 @@ namespace LineNodes
                 case 3:
                     {
                         string[] modExistArray = plNodeModel.tag3.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
-                        if (modExistArray != null && modExistArray.Count() >= modPalletMax)
+                        if (modExistArray != null && modExistArray.Count() > modPalletMax)
                         {
                             this.db1ValsToSnd[0] = 4;
                             this.currentTaskDescribe = string.Format("档位{0}已满,最大允许数量，目前数量{1}", groupSeq, modPalletMax);
@@ -169,7 +177,7 @@ namespace LineNodes
                 case 4:
                     {
                         string[] modExistArray = plNodeModel.tag4.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
-                        if (modExistArray != null && modExistArray.Count() >= modPalletMax)
+                        if (modExistArray != null && modExistArray.Count() > modPalletMax)
                         {
                             this.db1ValsToSnd[0] = 4;
                             this.currentTaskDescribe = string.Format("档位{0}已满,最大允许数量，目前数量{1}", groupSeq, modPalletMax);
@@ -191,6 +199,13 @@ namespace LineNodes
             }
             plNodeBll.Update(plNodeModel);
 
+            if (UploadMesScrewData(this.rfidUID, barcode, ref reStr) == false)//上报码头数据
+            {
+
+            }
+
+            
+
             if(!NodeDB2Commit(0,2,ref reStr))
             {
                 logRecorder.AddDebugLog(nodeName, "发送PLC数据失败");
@@ -201,6 +216,9 @@ namespace LineNodes
             //}
 
         }
+
+       
+
         private bool ExeBind(ref string reStr)
         {
             if (!devStatusRestore)
@@ -273,9 +291,10 @@ namespace LineNodes
                     this.currentTask = task;
                 }
             }
-            
-          
-            this.db1ValsToSnd[2] = (short)modPalletMax;
+            int bindCount = modPalletMax;
+           
+            //this.db1ValsToSnd[2] = (short)modPalletMax;
+            //this.db1ValsToSnd[2] = (short)bindCount;
             switch(currentTaskPhase)
             {
                 case 1:
@@ -285,6 +304,25 @@ namespace LineNodes
                         {
                             break;
                         }
+                        //int bindCount = 0;
+                        if(SysCfgModel.SimMode== false)
+                        {
+                            //if (CalcuBindCount(rfidUID, ref bindCount, ref mesReqGroupCode) == false)
+                            //{
+                            //    currentTaskDescribe = "带绑定模块数量计算错误！";
+                            //    return false;
+                            //}
+                            bindCount = 2;//现场条码不正确
+                            mesReqGroupCode = "123456789202345678988043";
+                        }
+                        else
+                        {
+                            bindCount = 4;
+                            mesReqGroupCode = "123456789202345678988043";
+                        }
+                        this.db1ValsToSnd[2] = (short)bindCount;
+                        //this.db1ValsToSnd[2] = (short)modPalletMax;//测试版本
+                        this.plcRW2.WriteDB("D8500", (short)modPalletMax);
                         currentTaskPhase++;
                         this.currentTask.TaskParam = rfidUID;
                         this.currentTask.TaskPhase = this.currentTaskPhase;
@@ -292,81 +330,141 @@ namespace LineNodes
                         logRecorder.AddDebugLog(nodeName, string.Format("读到RFID:{0}，开始绑定", this.rfidUID));
                         break;
                     }
+                //case 2:
+                //    {
+                        //currentTaskDescribe = "等待抓取完成";
+                        
+                        //if(this.db2Vals[2] != 2)
+                        //{
+                        //    break;
+                        //}
+                        //currentTaskDescribe = "分档中";
+                        //if(this.db2Vals[3]<1 || this.db2Vals[3]>4)
+                        //{
+                        //    break;
+                        //}
+                        //currentTaskPhase++;
+                        //this.currentTask.TaskPhase = this.currentTaskPhase;
+                        //this.ctlTaskBll.Update(this.currentTask);
+                        //break;
+                    //}
                 case 2:
                     {
-                        currentTaskDescribe = "等待抓取完成";
-                        
-                        if(this.db2Vals[2] != 2)
+                        #region 原来绑定流程
+                        //short groupSeq = this.db2Vals[3];
+                        //plNodeModel = plNodeBll.GetModel(nodeID);
+                        //List<string> mods = new List<string>();
+                        //switch (groupSeq)
+                        //{
+                        //    case 1:
+                        //        {
+                        //            string[] strArray = plNodeModel.tag1.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+                        //            if (strArray != null && strArray.Count() > 0)
+                        //            {
+                        //                mods.AddRange(strArray);
+                        //            }
+
+                        //            break;
+                        //        }
+                        //    case 2:
+                        //        {
+                        //            string[] strArray = plNodeModel.tag2.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+                        //            if (strArray != null && strArray.Count() > 0)
+                        //            {
+                        //                mods.AddRange(strArray);
+                        //            }
+                        //            break;
+                        //        }
+                        //    case 3:
+                        //        {
+                        //            string[] strArray = plNodeModel.tag3.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+                        //            if (strArray != null && strArray.Count() > 0)
+                        //            {
+                        //                mods.AddRange(strArray);
+                        //            }
+                        //            break;
+                        //        }
+                        //    case 4:
+                        //        {
+                        //            string[] strArray = plNodeModel.tag4.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+                        //            if (strArray != null && strArray.Count() > 0)
+                        //            {
+                        //                mods.AddRange(strArray);
+                        //            }
+                        //            break;
+                        //        }
+                        //    default:
+                        //        break;
+                        //}
+                        #endregion
+                        currentTaskDescribe = "扫码中，计划扫码个数:"+bindCount+",当前扫码计数：第" + this.qrList.Count()+ "个！";
+                        int rqRequire = 0;
+                        if (this.plcRW2.ReadDB("D3004", ref rqRequire) == false)//有第二个扫码请求
                         {
                             break;
                         }
-                        if(this.db2Vals[3]<1 || this.db2Vals[3]>4)
+                        NodeDB2Commit(4, (short)rqRequire,ref reStr);
+                        if (rqRequire != 1)//有第二个扫码请求
                         {
                             break;
                         }
-                        currentTaskPhase++;
-                        this.currentTask.TaskPhase = this.currentTaskPhase;
-                        this.ctlTaskBll.Update(this.currentTask);
+                        //扫码请求
+                        string barcode = "";
+                        if (SysCfgModel.SimMode)
+                        {
+                            barcode = this.SimBarcode;
+                        }
+                        else
+                        {
+                            barcode = barcodeRW2.ReadBarcode();
+                        }
+                        if(string.IsNullOrWhiteSpace(barcode) == true)
+                        {
+                            this.readCodeTimes++;
+                            if(this.readCodeTimes>4)
+                            {
+                                if (this.plcRW2.WriteDB("D3004", 3) == false)
+                                {
+                                    break;
+                                }
+                                NodeDB2Commit(4,3, ref reStr);
+                                this.readCodeTimes = 0;
+                            }
+                            break;
+                        }
+
+                        if (this.plcRW2.WriteDB("D3004", 2) == false)
+                        {
+                            break;
+                        }
+                        NodeDB2Commit(4,2, ref reStr);
+                        this.qrList.Add(barcode);
+
+                        if(this.qrList.Count != bindCount)
+                        {
+                            break;
+                        }
+                        if (this.qrList.Count() < 1)
+                        {
+                            this.db1ValsToSnd[4] = 3;
+                            //this.currentTaskDescribe = string.Format("分档位：{0} 可供绑定的模块为空，", groupSeq);
+                            break;
+                        }
+                        this.currentTaskPhase++;
                         break;
+                       
                     }
                 case 3:
                     {
-                        short groupSeq = this.db2Vals[3];
-                        plNodeModel = plNodeBll.GetModel(nodeID);
-                        List<string> mods = new List<string>();
-                        switch (groupSeq)
-                        {
-                            case 1:
-                                {
-                                    string[] strArray = plNodeModel.tag1.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
-                                    if (strArray != null && strArray.Count() > 0)
-                                    {
-                                        mods.AddRange(strArray);
-                                    }
-
-                                    break;
-                                }
-                            case 2:
-                                {
-                                    string[] strArray = plNodeModel.tag2.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
-                                    if (strArray != null && strArray.Count() > 0)
-                                    {
-                                        mods.AddRange(strArray);
-                                    }
-                                    break;
-                                }
-                            case 3:
-                                {
-                                    string[] strArray = plNodeModel.tag3.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
-                                    if (strArray != null && strArray.Count() > 0)
-                                    {
-                                        mods.AddRange(strArray);
-                                    }
-                                    break;
-                                }
-                            case 4:
-                                {
-                                    string[] strArray = plNodeModel.tag4.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
-                                    if (strArray != null && strArray.Count() > 0)
-                                    {
-                                        mods.AddRange(strArray);
-                                    }
-                                    break;
-                                }
-                            default:
-                                break;
-                        }
-                        if (mods.Count() < 1)
-                        {
-                            this.db1ValsToSnd[4] = 3;
-                            this.currentTaskDescribe = string.Format("分档位：{0} 可供绑定的模块为空，", groupSeq);
-                            break;
-                        }
+                        currentTaskDescribe = "绑定中！";
                         //绑定
                         TryUnbind(this.rfidUID, ref reStr);
-                        for (int i = 0; i < Math.Min(mods.Count(), modPalletMax);i++ )
+
+                        AddPack(this.mesReqGroupCode, ref reStr);
+
+                        for (int i = 0; i < Math.Min(this.qrList.Count(), modPalletMax); i++)
                         {
-                            string modID = mods[i];
+                            string modID = this.qrList[i];
                             DBAccess.Model.BatteryModuleModel mod = modBll.GetModel(modID);
                             if (mod == null)
                             {
@@ -374,7 +472,7 @@ namespace LineNodes
                                 mod.batModuleID = modID;
                                 mod.palletID = this.rfidUID;
                                 mod.palletBinded = true;
-                                mod.batPackID = "";
+                                mod.batPackID = this.mesReqGroupCode;
                                 mod.curProcessStage = nodeName;
                                 mod.asmTime = System.DateTime.Now;
                                 mod.tag1 = this.db2Vals[3].ToString();
@@ -384,74 +482,100 @@ namespace LineNodes
                             {
                                 mod.palletBinded = true;
                                 mod.palletID = this.rfidUID;
+                                mod.batPackID = this.mesReqGroupCode;
                                 modBll.Update(mod);
                             }
-                          
+
                             this.currentTaskDescribe = string.Format("绑定，RFID:{0},模块条码:{1}", rfidUID, modID);
-                            MTDBAccess.Model.dbModel mtModel = blldb.GetModel(modID);
-                            string screwData = "";
-                            if (mtModel != null)
-                            {
-                                screwData = ",测试时间:" + mtModel.测试时间.ToString() + ",反螺丝数据:" + mtModel.反螺丝数据.ToString() + "正螺丝数据:" + mtModel.正螺丝数据.ToString();
-                            }
-                            else
-                            {
-                                screwData = ",无螺丝数据";
-                            }
-                            logRecorder.AddDebugLog(nodeName, string.Format("绑定，RFID:{0},模块条码:{1}", rfidUID, modID) + screwData);
-                            AddProcessRecord(mod.batModuleID, "模块", "追溯记录", string.Format("绑定，RFID:{0},模块条码:{1}", rfidUID, modID) + screwData, "");
-                            //AddProcessRecord(mod.batModuleID, this.nodeName, "");
                            
+                            logRecorder.AddDebugLog(nodeName, string.Format("绑定，RFID:{0},模块条码:{1}", rfidUID, modID));
+                            AddProcessRecord(mod.batModuleID, "模块", "追溯记录", string.Format("绑定，RFID:{0},模块条码:{1}", rfidUID, modID), "");
+                            //AddProcessRecord(mod.batModuleID, this.nodeName, "");
+
                         }
-                        int removeSum = Math.Min(mods.Count(), modPalletMax);
-                        mods.RemoveRange(0, removeSum);
+                        int removeSum = Math.Min(this.qrList.Count(), modPalletMax);
+                        this.qrList.RemoveRange(0, removeSum);
+
+                        //string strMods = "";
+                        //for (int i = 0; i < this.qrList.Count(); i++)
+                        //{
+                        //    strMods += (this.qrList[i] + ",");
+                        //}
+                        //switch (groupSeq)
+                        //{
+                        //    case 1:
+                        //        {
+                        //            plNodeModel.tag1 = strMods;
+                        //            break;
+                        //        }
+                        //    case 2:
+                        //        {
+                        //            plNodeModel.tag2 = strMods;
+                        //            break;
+                        //        }
+                        //    case 3:
+                        //        {
+                        //            plNodeModel.tag3 = strMods;
+                        //            break;
+                        //        }
+                        //    case 4:
+                        //        {
+                        //            plNodeModel.tag4 = strMods;
+                        //            break;
+                        //        }
+                        //    default:
+                        //        break;
+                        //}
+                        //plNodeBll.Update(plNodeModel);
+
+
+                        if (this.db2Vals[2] != 2)
+                        {
+                            break;
+                        }
                        
-                        string strMods = "";
-                        for(int i=0;i<mods.Count();i++)
+                        if (this.db2Vals[3] < 1 || this.db2Vals[3] > 4)
                         {
-                            strMods += (mods[i] + ",");
+                            break;
                         }
-                        switch (groupSeq)
-                        {
-                            case 1:
-                                {
-                                    plNodeModel.tag1 = strMods;
-                                    break;
-                                }
-                            case 2:
-                                {
-                                    plNodeModel.tag2 = strMods;
-                                    break;
-                                }
-                            case 3:
-                                {
-                                    plNodeModel.tag3 = strMods;
-                                    break;
-                                }
-                            case 4:
-                                {
-                                    plNodeModel.tag4 = strMods;
-                                    break;
-                                }
-                            default:
-                                break;
-                        }
-                        plNodeBll.Update(plNodeModel);
+                     
+
                         this.db1ValsToSnd[4] = 2;
+
+
+
+
                         currentTaskPhase++;
                         this.currentTask.TaskPhase = this.currentTaskPhase;
                         this.ctlTaskBll.Update(this.currentTask);
+                        currentTaskDescribe = "绑定完成！";
                         break;
-                       
                     }
                 case 4:
                     {
+                        #region 上传MES绑定数据
+                        currentTaskDescribe = "开始上传MES绑定数据!";
+                        string restr = "";
+                        if (UploadDataToMes(2, "M00100101", this.rfidUID,ref restr) == false)
+                        {
+                            this.logRecorder.AddDebugLog(this.nodeName, "上传MES数据失败：" + restr);
+                        }
+                        else
+                        {
+                            this.logRecorder.AddDebugLog(this.nodeName, "上传MES数据成功：" + restr);
+                        }
+                        #endregion
+
                         currentTaskDescribe = "流程完成";
+                        this.db1ValsToSnd[2] = 0;
+                        this.mesReqGroupCode = "";
                         this.currentTask.TaskPhase = this.currentTaskPhase;
-                        this.ctlTaskBll.Update(this.currentTask);
                         this.currentTask.TaskStatus = EnumTaskStatus.已完成.ToString();
+                        this.ctlTaskBll.Update(this.currentTask);
+                   
                         break;
                     }
+               
                 default:
                     break;
             }
@@ -507,6 +631,174 @@ namespace LineNodes
             this.currentTaskDescribe = "RFID识别完成:"+this.rfidUID;
             logRecorder.AddDebugLog(nodeName, string.Format("读到RFID:{0}", this.rfidUID));
             return true;
+        }
+
+        private bool CalcuBindCount( string palletID,ref int bindCount,ref string qrCode)
+        {
+            string reStr = "";
+            
+            if (ModuleCodeRequire(ref  qrCode, ref reStr) == false)
+            {
+                currentTaskDescribe = "请求二位码失败！";
+                return false;
+            }
+            int groupNum = 0;
+            int moduleNum = 0;
+            if (AnalysisQRCode(qrCode, ref groupNum) == false)
+            {
+                currentTaskDescribe = "模组二位码解析失败！";
+                return false;
+            }
+            List<DBAccess.Model.BatteryModuleModel> moduleList = modBll.GetBindedMods(palletID);
+            if (moduleList == null || moduleList.Count==0)
+            {
+                currentTaskDescribe = "此RFID没有绑定数据！";
+                return false;
+            }
+            if (AnalysisQRCode(moduleList[0].batModuleID, ref groupNum) == false)
+            {
+                currentTaskDescribe = "模块二位码解析失败！";
+                return false;
+            }
+            bindCount = groupNum / moduleNum;
+            return true;
+        }
+
+        /// 模组条码请求
+        /// </summary>
+        /// <returns></returns>
+        private bool ModuleCodeRequire(ref string M_SN, ref string reStr)
+        {
+            if (SysCfgModel.IsRequireMesQRCode == true)
+            {
+                string M_WORKSTATION_SN = "M00100101";
+                RootObject rObj = new RootObject();
+                rObj = WShelper.BarCodeRequest(M_WORKSTATION_SN);
+                if (rObj.RES.Contains("OK"))
+                {
+                    M_SN = rObj.M_COMENT[0].M_SN;
+                    reStr = this.nodeName + "模组条码请求成功";
+                    return true;
+                }
+                else
+                {
+                    M_SN = "";
+                    reStr = this.nodeName + "模组条码请求失败!" + rObj.RES;
+                    return false;
+                }
+            }
+            else
+            {
+                //DBAccess.Model.QRCodeModelModel qrCode = bllQrCode.RequireQrCode();
+                //if(qrCode == null)
+                //{
+                //    reStr = this.nodeName + "当前系统中已经没有可申请的模组二维码!";
+                //    return false;
+                //}
+                //M_SN = qrCode.QRCode;
+
+                M_SN = "123456789202345678988043";//4个
+            }
+            return true;
+      
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="M_WORKSTATION_SN">工作中心号码</param>
+        /// <param name="rfid">二维码</param>
+        /// <returns></returns>
+        private bool UploadDataToMes(int flag, string workStaionSn, string rfid,ref string restr)
+        {
+            string M_AREA = "Y001";
+            string M_WORKSTATION_SN = workStaionSn;
+            string M_DEVICE_SN = "";
+
+            string M_UNION_SN = "";
+            string M_CONTAINER_SN = "";
+            string M_LEVEL = "";
+            string M_ITEMVALUE = "";
+            RootObject rObj = new RootObject();
+            List<DBAccess.Model.BatteryModuleModel> modelList = modBll.GetModelList(string.Format("palletID='{0}' and palletBinded=1", rfid)); //modBll.GetModelByPalletID(this.rfidUID, this.nodeName);
+            if (modelList == null || modelList.Count == 0)
+            {
+                return false;
+            }
+          
+            foreach (DBAccess.Model.BatteryModuleModel battery in modelList)
+            {
+                M_UNION_SN += battery.batModuleID + "|";
+            }
+            string barcode = modelList[0].batPackID;
+            string strJson = "";
+
+            rObj = WShelper.DevDataUpload(flag, M_DEVICE_SN, M_WORKSTATION_SN, barcode, M_UNION_SN, rfid, M_LEVEL, M_ITEMVALUE, ref strJson);
+            restr = rObj.RES;
+            if (rObj.RES.Contains("OK"))
+            {
+                return true;
+            }
+            else
+            {
+                Console.WriteLine(this.nodeName + "上传MES二维码信息错误：" + rObj.RES);
+               
+                return false;
+            }
+        }
+
+        public bool UploadMesScrewData(string rfid, string moduCode, ref string reStr)
+        {
+            try
+            {
+                string M_AREA = "Y001";
+                string M_WORKSTATION_SN = "Y00102201";
+                string M_DEVICE_SN = "";
+
+                string M_UNION_SN = "";
+                string M_CONTAINER_SN = "";
+                string M_LEVEL = "";
+                string M_ITEMVALUE = "";
+                RootObject rObj = new RootObject();
+
+                DBAccess.Model.BatteryModuleModel battery = modBll.GetModel(moduCode);
+                if (battery == null)
+                {
+
+                    return false;
+                }
+
+                MTDBAccess.Model.dbModel screwModel = blldb.GetModel(moduCode);//获取码头数据
+                if (screwModel == null)
+                {
+                    return false;
+                }
+                M_LEVEL = battery.tag1;
+                string barcode = battery.batModuleID;
+                M_ITEMVALUE = "";//需要拼接螺丝数据
+                string strJson = "";
+
+                rObj = WShelper.DevDataUpload(3, M_DEVICE_SN, M_WORKSTATION_SN, barcode, M_UNION_SN, M_CONTAINER_SN, M_LEVEL, M_ITEMVALUE, ref strJson);
+                reStr = rObj.RES;
+
+                if (rObj.RES.Contains("OK"))
+                {
+                    logRecorder.AddDebugLog(nodeName, string.Format("上传螺丝数据失败：{0}", M_ITEMVALUE) + "-" + rObj.RES);
+                    return true;
+                }
+                else
+                {
+                    logRecorder.AddDebugLog(nodeName, string.Format("上传螺丝数据失败：{0}", M_ITEMVALUE + "-" + rObj.RES));
+
+                    return false;
+                }
+            }
+            catch(Exception ex)
+            {
+                reStr = ex.Message;
+                return false;
+            }
+          
         }
     }
 }

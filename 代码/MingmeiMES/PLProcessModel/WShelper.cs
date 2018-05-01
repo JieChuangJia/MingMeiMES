@@ -327,6 +327,7 @@ namespace PLProcessModel
         /// </summary>
         public static RootObject BarCodeRequest(string M_WORKSTATION_SN)
         {
+        
             List<ContentDetail> CList = new List<ContentDetail>();
             ContentDetail tail = new ContentDetail();
             tail.M_FLAG = 11;

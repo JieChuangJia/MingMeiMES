@@ -24,18 +24,17 @@ namespace LineNodes
             {
                 this.dicCommuDataDB1[1].DataDescription = "A通道读卡结果，1：复位/待机状态,2：RFID读取成功,3：RFID读取失败,4：无绑定数据";
                 this.dicCommuDataDB1[2].DataDescription = "B通道读卡结果,1：复位/待机状态,2：RFID读取成功,3：RFID读取失败,4：无绑定数据";
-                this.dicCommuDataDB1[3].DataDescription = "A通道,1：复位/待机状态,2：数据读取中,3：数据读取完毕，放行";
-                this.dicCommuDataDB1[4].DataDescription = "B通道,1：复位/待机状态,2：数据读取中,3：数据读取完毕，放行";
+                this.dicCommuDataDB1[3].DataDescription = "1：复位/待机状态2：数据读取中3：数据读取完毕，放行";
+              
                 this.dicCommuDataDB2[1].DataDescription = "0：无,1：正在运行A通道,2：正在运行B通道";
                 this.dicCommuDataDB2[2].DataDescription = "1：A通道无板,2：A通道有板，读卡请求";
                 this.dicCommuDataDB2[3].DataDescription = "1：B通道无板,2：B通道有板，读卡请求";
-
-
             }
             else if (this.nodeID == "OPC008" || this.nodeID == "OPC009" || this.nodeID == "OPC010")
             {
                 this.dicCommuDataDB1[1].DataDescription = "工位读卡结果，1：复位/待机状态,2：RFID读取成功,3：RFID读取失败,4：无绑定数据";
                 this.dicCommuDataDB1[2].DataDescription = "工位状态,1：复位/待机状态,2：数据读取中,3：数据读取完毕，放行";
+
                 this.dicCommuDataDB2[1].DataDescription = "1：通道无板,2：通道有板，读卡请求";
             }
             return true;
@@ -77,7 +76,36 @@ namespace LineNodes
                     LogRecorder.AddDebugLog(nodeName, string.Format("RFID：{0}", this.rfidUID));
                     currentTaskPhase++;
                     break;
-
+                case 2:
+                    if(this.nodeID =="OPA013")
+                    {
+                       if(false == UploadDataToMes(1,"Y00100501", this.rfidUID))
+                       {
+                           Console.WriteLine("{0}上传MES二位码失败！", this.nodeName);
+                           break;
+                       }
+                    }
+                    else if (this.nodeID == "OPA014")
+                    {
+                        if (false == UploadDataToMes(1,"Y00101001", this.rfidUID))
+                        {
+                            Console.WriteLine("{0}上传MES二位码失败！", this.nodeName);
+                            break;
+                        }
+                        
+                    }
+                    else if (this.nodeID == "OPA015")
+                    {
+                        if (false == UploadDataToMes(1,"Y00101301", this.rfidUID))
+                        {
+                            Console.WriteLine("{0}上传MES二位码失败！", this.nodeName);
+                            break;
+                        }
+                    }
+                    db1ValsToSnd[2 + this.channelIndex - 1] = 3;
+                    currentTaskDescribe = "流程完成";
+                    LogRecorder.AddDebugLog(nodeName, string.Format("上传MES二位码成功：{0}", this.rfidUID));
+                    break;
                 default:
                     break;
             }
@@ -85,6 +113,42 @@ namespace LineNodes
             return true;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="M_WORKSTATION_SN">工作中心号码</param>
+        /// <param name="rfid">二维码</param>
+        /// <returns></returns>
+        private bool UploadDataToMes(int flag,string workStaionSn,string rfid)
+        {
+            string M_AREA = "Y001";
+            string M_WORKSTATION_SN = workStaionSn;
+            string M_DEVICE_SN = "";
+       
+            string M_UNION_SN = "";
+            string M_CONTAINER_SN = "";
+            string M_LEVEL = "";
+            string M_ITEMVALUE ="" ;
+            RootObject rObj = new RootObject();
+            List<DBAccess.Model.BatteryModuleModel> modelList = modBll.GetModelList(string.Format("palletID='{0}' and palletBinded=1", rfid)); //modBll.GetModelByPalletID(this.rfidUID, this.nodeName);
+            if (modelList == null || modelList.Count == 0)
+            {
+                return false;
+            }
+            string barcode = modelList[0].batModuleID;
+            string strJson = "";
+
+            rObj = WShelper.DevDataUpload(flag, M_DEVICE_SN, M_WORKSTATION_SN, barcode, M_UNION_SN, M_CONTAINER_SN, M_LEVEL, M_ITEMVALUE, ref strJson);
+            if (rObj.RES.Contains("OK"))
+            {
+                return true;
+            }
+            else
+            {
+                Console.WriteLine(this.nodeName + "上传MES二维码信息错误：" + rObj.RES);
+                return false;
+            }
+        }
         protected bool ExeBindC(ref string reStr)
         {
             if (!ExeBusinessC(ref reStr))

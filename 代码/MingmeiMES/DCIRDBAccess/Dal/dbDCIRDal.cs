@@ -20,26 +20,30 @@ namespace DCIRDBAccess
         /// <summary>
         /// 是否存在该记录
         /// </summary>
-        public bool Exists(string 测试时间, string 电流, string 电压, string 容量, string 能量, string 总时间, string 相对时间)
+        public bool Exists(string 测试时间, string 二维码, string 电阻值, string 放电电流1, string 放电电流2, string 放电时间, string 静置时间, string 结果电压, string 结果电流)
         {
             StringBuilder strSql = new StringBuilder();
             strSql.Append("select count(1) from db");
-            strSql.Append(" where 测试时间=@测试时间 and 电流=@电流 and 电压=@电压 and 容量=@容量 and 能量=@能量 and 总时间=@总时间 and 相对时间=@相对时间 ");
+            strSql.Append(" where 测试时间=@测试时间 and 二维码=@二维码 and 电阻值=@电阻值 and 放电电流1=@放电电流1 and 放电电流2=@放电电流2 and 放电时间=@放电时间 and 静置时间=@静置时间 and 结果电压=@结果电压 and 结果电流=@结果电流 ");
             OleDbParameter[] parameters = {
 					new OleDbParameter("@测试时间", OleDbType.VarChar,255),
-					new OleDbParameter("@电流", OleDbType.VarChar,255),
-					new OleDbParameter("@电压", OleDbType.VarChar,255),
-					new OleDbParameter("@容量", OleDbType.VarChar,255),
-					new OleDbParameter("@能量", OleDbType.VarChar,255),
-					new OleDbParameter("@总时间", OleDbType.VarChar,255),
-					new OleDbParameter("@相对时间", OleDbType.VarChar,255)			};
+					new OleDbParameter("@二维码", OleDbType.VarChar,255),
+					new OleDbParameter("@电阻值", OleDbType.VarChar,255),
+					new OleDbParameter("@放电电流1", OleDbType.VarChar,255),
+					new OleDbParameter("@放电电流2", OleDbType.VarChar,255),
+					new OleDbParameter("@放电时间", OleDbType.VarChar,255),
+					new OleDbParameter("@静置时间", OleDbType.VarChar,255),
+					new OleDbParameter("@结果电压", OleDbType.VarChar,255),
+					new OleDbParameter("@结果电流", OleDbType.VarChar,255)			};
             parameters[0].Value = 测试时间;
-            parameters[1].Value = 电流;
-            parameters[2].Value = 电压;
-            parameters[3].Value = 容量;
-            parameters[4].Value = 能量;
-            parameters[5].Value = 总时间;
-            parameters[6].Value = 相对时间;
+            parameters[1].Value = 二维码;
+            parameters[2].Value = 电阻值;
+            parameters[3].Value = 放电电流1;
+            parameters[4].Value = 放电电流2;
+            parameters[5].Value = 放电时间;
+            parameters[6].Value = 静置时间;
+            parameters[7].Value = 结果电压;
+            parameters[8].Value = 结果电流;
 
             return DbHelperOleDb.Exists(strSql.ToString(), parameters);
         }
@@ -48,28 +52,32 @@ namespace DCIRDBAccess
         /// <summary>
         /// 增加一条数据
         /// </summary>
-        public bool Add(dcirMode model)
+        public bool Add(DCIRDBAccess.dcirMode model)
         {
             StringBuilder strSql = new StringBuilder();
             strSql.Append("insert into db(");
-            strSql.Append("测试时间,电流,电压,容量,能量,总时间,相对时间)");
+            strSql.Append("测试时间,二维码,电阻值,放电电流1,放电电流2,放电时间,静置时间,结果电压,结果电流)");
             strSql.Append(" values (");
-            strSql.Append("@测试时间,@电流,@电压,@容量,@能量,@总时间,@相对时间)");
+            strSql.Append("@测试时间,@二维码,@电阻值,@放电电流1,@放电电流2,@放电时间,@静置时间,@结果电压,@结果电流)");
             OleDbParameter[] parameters = {
 					new OleDbParameter("@测试时间", OleDbType.VarChar,255),
-					new OleDbParameter("@电流", OleDbType.VarChar,255),
-					new OleDbParameter("@电压", OleDbType.VarChar,255),
-					new OleDbParameter("@容量", OleDbType.VarChar,255),
-					new OleDbParameter("@能量", OleDbType.VarChar,255),
-					new OleDbParameter("@总时间", OleDbType.VarChar,255),
-					new OleDbParameter("@相对时间", OleDbType.VarChar,255)};
+					new OleDbParameter("@二维码", OleDbType.VarChar,255),
+					new OleDbParameter("@电阻值", OleDbType.VarChar,255),
+					new OleDbParameter("@放电电流1", OleDbType.VarChar,255),
+					new OleDbParameter("@放电电流2", OleDbType.VarChar,255),
+					new OleDbParameter("@放电时间", OleDbType.VarChar,255),
+					new OleDbParameter("@静置时间", OleDbType.VarChar,255),
+					new OleDbParameter("@结果电压", OleDbType.VarChar,255),
+					new OleDbParameter("@结果电流", OleDbType.VarChar,255)};
             parameters[0].Value = model.测试时间;
-            parameters[1].Value = model.电流;
-            parameters[2].Value = model.电压;
-            parameters[3].Value = model.容量;
-            parameters[4].Value = model.能量;
-            parameters[5].Value = model.总时间;
-            parameters[6].Value = model.相对时间;
+            parameters[1].Value = model.二维码;
+            parameters[2].Value = model.电阻值;
+            parameters[3].Value = model.放电电流1;
+            parameters[4].Value = model.放电电流2;
+            parameters[5].Value = model.放电时间;
+            parameters[6].Value = model.静置时间;
+            parameters[7].Value = model.结果电压;
+            parameters[8].Value = model.结果电流;
 
             int rows = DbHelperOleDb.ExecuteSql(strSql.ToString(), parameters);
             if (rows > 0)
@@ -84,32 +92,38 @@ namespace DCIRDBAccess
         /// <summary>
         /// 更新一条数据
         /// </summary>
-        public bool Update(dcirMode model)
+        public bool Update(DCIRDBAccess.dcirMode model)
         {
             StringBuilder strSql = new StringBuilder();
             strSql.Append("update db set ");
-            strSql.Append("电流=@电流,");
-            strSql.Append("电压=@电压,");
-            strSql.Append("容量=@容量,");
-            strSql.Append("能量=@能量,");
-            strSql.Append("总时间=@总时间,");
-            strSql.Append("相对时间=@相对时间");
-            strSql.Append(" where 测试时间=@测试时间 and 电流=@电流 and 电压=@电压 and 容量=@容量 and 能量=@能量 and 总时间=@总时间 and 相对时间=@相对时间 ");
+            strSql.Append("二维码=@二维码,");
+            strSql.Append("电阻值=@电阻值,");
+            strSql.Append("放电电流1=@放电电流1,");
+            strSql.Append("放电电流2=@放电电流2,");
+            strSql.Append("放电时间=@放电时间,");
+            strSql.Append("静置时间=@静置时间,");
+            strSql.Append("结果电压=@结果电压,");
+            strSql.Append("结果电流=@结果电流");
+            strSql.Append(" where 测试时间=@测试时间 and 二维码=@二维码 and 电阻值=@电阻值 and 放电电流1=@放电电流1 and 放电电流2=@放电电流2 and 放电时间=@放电时间 and 静置时间=@静置时间 and 结果电压=@结果电压 and 结果电流=@结果电流 ");
             OleDbParameter[] parameters = {
-					new OleDbParameter("@电流", OleDbType.VarChar,255),
-					new OleDbParameter("@电压", OleDbType.VarChar,255),
-					new OleDbParameter("@容量", OleDbType.VarChar,255),
-					new OleDbParameter("@能量", OleDbType.VarChar,255),
-					new OleDbParameter("@总时间", OleDbType.VarChar,255),
-					new OleDbParameter("@相对时间", OleDbType.VarChar,255),
+					new OleDbParameter("@二维码", OleDbType.VarChar,255),
+					new OleDbParameter("@电阻值", OleDbType.VarChar,255),
+					new OleDbParameter("@放电电流1", OleDbType.VarChar,255),
+					new OleDbParameter("@放电电流2", OleDbType.VarChar,255),
+					new OleDbParameter("@放电时间", OleDbType.VarChar,255),
+					new OleDbParameter("@静置时间", OleDbType.VarChar,255),
+					new OleDbParameter("@结果电压", OleDbType.VarChar,255),
+					new OleDbParameter("@结果电流", OleDbType.VarChar,255),
 					new OleDbParameter("@测试时间", OleDbType.VarChar,255)};
-            parameters[0].Value = model.电流;
-            parameters[1].Value = model.电压;
-            parameters[2].Value = model.容量;
-            parameters[3].Value = model.能量;
-            parameters[4].Value = model.总时间;
-            parameters[5].Value = model.相对时间;
-            parameters[6].Value = model.测试时间;
+            parameters[0].Value = model.二维码;
+            parameters[1].Value = model.电阻值;
+            parameters[2].Value = model.放电电流1;
+            parameters[3].Value = model.放电电流2;
+            parameters[4].Value = model.放电时间;
+            parameters[5].Value = model.静置时间;
+            parameters[6].Value = model.结果电压;
+            parameters[7].Value = model.结果电流;
+            parameters[8].Value = model.测试时间;
 
             int rows = DbHelperOleDb.ExecuteSql(strSql.ToString(), parameters);
             if (rows > 0)
@@ -125,27 +139,31 @@ namespace DCIRDBAccess
         /// <summary>
         /// 删除一条数据
         /// </summary>
-        public bool Delete(string 测试时间, string 电流, string 电压, string 容量, string 能量, string 总时间, string 相对时间)
+        public bool Delete(string 测试时间, string 二维码, string 电阻值, string 放电电流1, string 放电电流2, string 放电时间, string 静置时间, string 结果电压, string 结果电流)
         {
 
             StringBuilder strSql = new StringBuilder();
             strSql.Append("delete from db ");
-            strSql.Append(" where 测试时间=@测试时间 and 电流=@电流 and 电压=@电压 and 容量=@容量 and 能量=@能量 and 总时间=@总时间 and 相对时间=@相对时间 ");
+            strSql.Append(" where 测试时间=@测试时间 and 二维码=@二维码 and 电阻值=@电阻值 and 放电电流1=@放电电流1 and 放电电流2=@放电电流2 and 放电时间=@放电时间 and 静置时间=@静置时间 and 结果电压=@结果电压 and 结果电流=@结果电流 ");
             OleDbParameter[] parameters = {
 					new OleDbParameter("@测试时间", OleDbType.VarChar,255),
-					new OleDbParameter("@电流", OleDbType.VarChar,255),
-					new OleDbParameter("@电压", OleDbType.VarChar,255),
-					new OleDbParameter("@容量", OleDbType.VarChar,255),
-					new OleDbParameter("@能量", OleDbType.VarChar,255),
-					new OleDbParameter("@总时间", OleDbType.VarChar,255),
-					new OleDbParameter("@相对时间", OleDbType.VarChar,255)			};
+					new OleDbParameter("@二维码", OleDbType.VarChar,255),
+					new OleDbParameter("@电阻值", OleDbType.VarChar,255),
+					new OleDbParameter("@放电电流1", OleDbType.VarChar,255),
+					new OleDbParameter("@放电电流2", OleDbType.VarChar,255),
+					new OleDbParameter("@放电时间", OleDbType.VarChar,255),
+					new OleDbParameter("@静置时间", OleDbType.VarChar,255),
+					new OleDbParameter("@结果电压", OleDbType.VarChar,255),
+					new OleDbParameter("@结果电流", OleDbType.VarChar,255)			};
             parameters[0].Value = 测试时间;
-            parameters[1].Value = 电流;
-            parameters[2].Value = 电压;
-            parameters[3].Value = 容量;
-            parameters[4].Value = 能量;
-            parameters[5].Value = 总时间;
-            parameters[6].Value = 相对时间;
+            parameters[1].Value = 二维码;
+            parameters[2].Value = 电阻值;
+            parameters[3].Value = 放电电流1;
+            parameters[4].Value = 放电电流2;
+            parameters[5].Value = 放电时间;
+            parameters[6].Value = 静置时间;
+            parameters[7].Value = 结果电压;
+            parameters[8].Value = 结果电流;
 
             int rows = DbHelperOleDb.ExecuteSql(strSql.ToString(), parameters);
             if (rows > 0)
@@ -162,29 +180,33 @@ namespace DCIRDBAccess
         /// <summary>
         /// 得到一个对象实体
         /// </summary>
-        public dcirMode GetModel(string 测试时间, string 电流, string 电压, string 容量, string 能量, string 总时间, string 相对时间)
+        public DCIRDBAccess.dcirMode GetModel(string 测试时间, string 二维码, string 电阻值, string 放电电流1, string 放电电流2, string 放电时间, string 静置时间, string 结果电压, string 结果电流)
         {
 
             StringBuilder strSql = new StringBuilder();
-            strSql.Append("select 测试时间,电流,电压,容量,能量,总时间,相对时间 from db ");
-            strSql.Append(" where 测试时间=@测试时间 and 电流=@电流 and 电压=@电压 and 容量=@容量 and 能量=@能量 and 总时间=@总时间 and 相对时间=@相对时间 ");
+            strSql.Append("select 测试时间,二维码,电阻值,放电电流1,放电电流2,放电时间,静置时间,结果电压,结果电流 from db ");
+            strSql.Append(" where 测试时间=@测试时间 and 二维码=@二维码 and 电阻值=@电阻值 and 放电电流1=@放电电流1 and 放电电流2=@放电电流2 and 放电时间=@放电时间 and 静置时间=@静置时间 and 结果电压=@结果电压 and 结果电流=@结果电流 ");
             OleDbParameter[] parameters = {
 					new OleDbParameter("@测试时间", OleDbType.VarChar,255),
-					new OleDbParameter("@电流", OleDbType.VarChar,255),
-					new OleDbParameter("@电压", OleDbType.VarChar,255),
-					new OleDbParameter("@容量", OleDbType.VarChar,255),
-					new OleDbParameter("@能量", OleDbType.VarChar,255),
-					new OleDbParameter("@总时间", OleDbType.VarChar,255),
-					new OleDbParameter("@相对时间", OleDbType.VarChar,255)			};
+					new OleDbParameter("@二维码", OleDbType.VarChar,255),
+					new OleDbParameter("@电阻值", OleDbType.VarChar,255),
+					new OleDbParameter("@放电电流1", OleDbType.VarChar,255),
+					new OleDbParameter("@放电电流2", OleDbType.VarChar,255),
+					new OleDbParameter("@放电时间", OleDbType.VarChar,255),
+					new OleDbParameter("@静置时间", OleDbType.VarChar,255),
+					new OleDbParameter("@结果电压", OleDbType.VarChar,255),
+					new OleDbParameter("@结果电流", OleDbType.VarChar,255)			};
             parameters[0].Value = 测试时间;
-            parameters[1].Value = 电流;
-            parameters[2].Value = 电压;
-            parameters[3].Value = 容量;
-            parameters[4].Value = 能量;
-            parameters[5].Value = 总时间;
-            parameters[6].Value = 相对时间;
+            parameters[1].Value = 二维码;
+            parameters[2].Value = 电阻值;
+            parameters[3].Value = 放电电流1;
+            parameters[4].Value = 放电电流2;
+            parameters[5].Value = 放电时间;
+            parameters[6].Value = 静置时间;
+            parameters[7].Value = 结果电压;
+            parameters[8].Value = 结果电流;
 
-            dcirMode model = new dcirMode();
+            DCIRDBAccess.dcirMode model = new DCIRDBAccess.dcirMode();
             DataSet ds = DbHelperOleDb.Query(strSql.ToString(), parameters);
             if (ds.Tables[0].Rows.Count > 0)
             {
@@ -200,38 +222,46 @@ namespace DCIRDBAccess
         /// <summary>
         /// 得到一个对象实体
         /// </summary>
-        public dcirMode DataRowToModel(DataRow row)
+        public DCIRDBAccess.dcirMode DataRowToModel(DataRow row)
         {
-            dcirMode model = new dcirMode();
+            DCIRDBAccess.dcirMode model = new DCIRDBAccess.dcirMode();
             if (row != null)
             {
                 if (row["测试时间"] != null)
                 {
                     model.测试时间 = row["测试时间"].ToString();
                 }
-                if (row["电流"] != null)
+                if (row["二维码"] != null)
                 {
-                    model.电流 = row["电流"].ToString();
+                    model.二维码 = row["二维码"].ToString();
                 }
-                if (row["电压"] != null)
+                if (row["电阻值"] != null)
                 {
-                    model.电压 = row["电压"].ToString();
+                    model.电阻值 = row["电阻值"].ToString();
                 }
-                if (row["容量"] != null)
+                if (row["放电电流1"] != null)
                 {
-                    model.容量 = row["容量"].ToString();
+                    model.放电电流1 = row["放电电流1"].ToString();
                 }
-                if (row["能量"] != null)
+                if (row["放电电流2"] != null)
                 {
-                    model.能量 = row["能量"].ToString();
+                    model.放电电流2 = row["放电电流2"].ToString();
                 }
-                if (row["总时间"] != null)
+                if (row["放电时间"] != null)
                 {
-                    model.总时间 = row["总时间"].ToString();
+                    model.放电时间 = row["放电时间"].ToString();
                 }
-                if (row["相对时间"] != null)
+                if (row["静置时间"] != null)
                 {
-                    model.相对时间 = row["相对时间"].ToString();
+                    model.静置时间 = row["静置时间"].ToString();
+                }
+                if (row["结果电压"] != null)
+                {
+                    model.结果电压 = row["结果电压"].ToString();
+                }
+                if (row["结果电流"] != null)
+                {
+                    model.结果电流 = row["结果电流"].ToString();
                 }
             }
             return model;
@@ -243,7 +273,7 @@ namespace DCIRDBAccess
         public DataSet GetList(string strWhere)
         {
             StringBuilder strSql = new StringBuilder();
-            strSql.Append("select 测试时间,电流,电压,容量,能量,总时间,相对时间 ");
+            strSql.Append("select 测试时间,二维码,电阻值,放电电流1,放电电流2,放电时间,静置时间,结果电压,结果电流 ");
             strSql.Append(" FROM db ");
             if (strWhere.Trim() != "")
             {
@@ -287,7 +317,7 @@ namespace DCIRDBAccess
             }
             else
             {
-                strSql.Append("order by T.相对时间 desc");
+                strSql.Append("order by T.结果电流 desc");
             }
             strSql.Append(")AS Row, T.*  from db T ");
             if (!string.IsNullOrEmpty(strWhere.Trim()))
@@ -315,7 +345,7 @@ namespace DCIRDBAccess
                     new OleDbParameter("@strWhere", OleDbType.VarChar,1000),
                     };
             parameters[0].Value = "db";
-            parameters[1].Value = "相对时间";
+            parameters[1].Value = "结果电流";
             parameters[2].Value = PageSize;
             parameters[3].Value = PageIndex;
             parameters[4].Value = 0;

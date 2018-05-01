@@ -200,7 +200,7 @@ namespace LineNodes
                         if (bindModeCt > 0)  //判断是否都绑定完成
                         {
                         //    Console.WriteLine("bindModeCt:" + bindModeCt);
-                            if ((db2Vals[0] == 1 && bindModeCt == db2Vals[7]) || (db2Vals[0] == 2 && bindModeCt == db2Vals[8]))
+                            if ((db2Vals[0] == 1 && bindModeCt == db2Vals[7] && db2Vals[3] == 1) || (db2Vals[0] == 2 && bindModeCt == db2Vals[8]&& db2Vals[3] == 1))
                             {
                                 currentTaskPhase++;
                                 this.currentTask.TaskPhase = this.currentTaskPhase;
@@ -488,7 +488,7 @@ namespace LineNodes
             {
                 return true;
             }
-            string tempRfidUID = "";
+            string tempRfidUID =   this.rfidUIDB;
             int requiredBindCt = Math.Max(2, (int)db2Vals[8]); //B通道要求绑定数量
             bool checkOK = true;
             int posBase = 12;
@@ -702,7 +702,7 @@ namespace LineNodes
 
                 //2 档位上传
                 M_WORKSTATION_SN = "Y00100301";
-                M_ITEMVALUE = "档位:"+modelList[i].tag1+":";
+                M_LEVEL = "档位:" + modelList[i].tag1 + ":";
                 rObj = WShelper.DevDataUpload(M_FLAG, M_DEVICE_SN, M_WORKSTATION_SN, M_SN, M_UNION_SN, M_CONTAINER_SN, M_LEVEL, M_ITEMVALUE, ref strJson);
                 logRecorder.AddDebugLog(nodeName, string.Format("模组{0} 档位{1}上传MES，返回{2}", M_SN, M_ITEMVALUE, rObj.RES));
                 this.currentTaskDescribe = string.Format("模组{0}档位{1}上传MES，返回{2}", M_SN, M_ITEMVALUE, rObj.RES);
