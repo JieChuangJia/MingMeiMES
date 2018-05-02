@@ -509,7 +509,7 @@ namespace LineNodes
                       //  logRecorder.AddDebugLog(nodeName, string.Format("A通道读到RFID:{0}", this.rfidUIDA));
                         if (this.nodeID == "OPA005")
                         {
-                            if (IsEmptyPallet(this.rfidUIDA) == true)
+                            if (IsEmptyPallet(this.rfidUIDB) == true)
                             {
                                 this.db1ValsToSnd[1] = 4;
                             }
@@ -532,7 +532,7 @@ namespace LineNodes
                  //   logRecorder.AddDebugLog(nodeName, string.Format("A通道读到RFID:{0}", this.rfidUIDA));
                     if (this.nodeID == "OPA005")
                     {
-                        if (IsEmptyPallet(this.rfidUIDA) == true)
+                        if (IsEmptyPallet(this.rfidUIDB) == true)
                         {
                             this.db1ValsToSnd[1] = 4;
                         }

@@ -503,10 +503,10 @@ namespace PLProcessModel
         {
             try
             {
-                //if (SysCfgModel.SimMode)
-                //{
-                //    return true;
-                //}
+                if (SysCfgModel.SimMode)
+                {
+                    return true;
+                }
                 if (this.LineID == 3)
                 {
                     return true;

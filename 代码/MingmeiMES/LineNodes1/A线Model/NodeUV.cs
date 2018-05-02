@@ -58,9 +58,9 @@ namespace LineNodes
                     }
                 case 2:
                     {
-
+                        currentTaskDescribe = "启动加工";
                         List<DBAccess.Model.BatteryModuleModel> modList = modBll.GetModelList(string.Format("palletID='{0}' and palletBinded=1", this.rfidUID));
-                       
+                        
                         if (!PreMech(modList, ref reStr))
                         {
                             Console.WriteLine(string.Format("{0},{1}", nodeName, reStr));
@@ -79,7 +79,7 @@ namespace LineNodes
                 case 3:
                     {
                         List<DBAccess.Model.BatteryModuleModel> modList = modBll.GetModelList(string.Format("palletID='{0}' and palletBinded=1", this.rfidUID));
-                       
+                        currentTaskDescribe = "等待加工结束";
                         if (!AfterMech(modList, ref reStr))
                         {
                            // Console.WriteLine(string.Format("{0},{1}", nodeName, reStr));
@@ -96,6 +96,7 @@ namespace LineNodes
                         List<DBAccess.Model.BatteryModuleModel> modList = modBll.GetModelList(string.Format("palletID='{0}' and palletBinded=1", this.rfidUID));
                         if(modList==null || modList.Count()==0)
                         {
+                            
                             currentTaskPhase = 5;
                             break;
                         }
@@ -270,7 +271,7 @@ namespace LineNodes
                         plNodeBll.Update(this.plNodeModel);
                     //    logRecorder.AddDebugLog(nodeName, string.Format("B通道读到RFID:{0}", this.rfidUIDB));
                       //  logRecorder.AddDebugLog(nodeName, string.Format("A通道读到RFID:{0}", this.rfidUIDA));
-                        if (IsEmptyPallet(this.rfidUIDA) == true)
+                        if (IsEmptyPallet(this.rfidUIDB) == true)
                         {
                             this.db1ValsToSnd[1] = 4;
                         }
@@ -285,7 +286,7 @@ namespace LineNodes
                 else
                 {
                   //  logRecorder.AddDebugLog(nodeName, string.Format("A通道读到RFID:{0}", this.rfidUIDA));
-                    if (IsEmptyPallet(this.rfidUIDA) == true)
+                    if (IsEmptyPallet(this.rfidUIDB) == true)
                     {
                         this.db1ValsToSnd[1] = 4;
                     }
