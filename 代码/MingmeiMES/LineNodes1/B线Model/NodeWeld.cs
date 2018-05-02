@@ -496,150 +496,185 @@ namespace LineNodes
             string strP = "";
             string strN = "";
             string strLv = "";
-            string strPV = "正极电压";
-            string strNV = "负极电压";
-            string strLvV = "铝片电压";
-            string strPA = "正极电流";
-            string strNA = "负级电流";
+            string strPV = "正负极电压";
+           // string strNV = "负极电压";
+            string strPA = "正负极电流";
+          //  string strNA = "负级电流";
+            string strPT = "正负极时间";
+           // string strNT = "负级时间";
             string strLvA = "铝片电流";
-            string strPT = "正极时间";
-            string strNT = "负级时间";
+            string strLvV = "铝片电压";
             string strLvT = "铝片时间";
             int pIndex = 0;
             int nIndex = 0;
             int lvIndex = 0;
             #region
-            for (int i = 0; i < dt.Rows.Count; i++)
+           // for (int i = 0; i < dt.Rows.Count; i++)
+            for (int i = 0; i < SysCfgModel.batteryNumInMod;i++ )
             {
-                if (dt.Rows[i]["Traceability - reference system"].ToString().ToUpper() == "2") //正极
+                if (i > dt.Rows.Count-1)
                 {
-                    pIndex++;
-                    string tempV = strPV + pIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 1+Voltage [V]"].ToString() + ":V|";
-                    string tempA = strPA + pIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 1+Bondforce [cN]"].ToString() + ":A|";
-                    string tempT = strPT + pIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 1+Force ramp [ms]"].ToString() + ":S|";
-                    strP = strP + tempV + tempA + tempT;
-                    pIndex++;
-                    tempV = strPV + pIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 2+Voltage [V]"].ToString() + ":V|";
-                    tempA = strPA + pIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 2+Bondforce [cN]"].ToString() + ":A|";
-                    tempT = strPT + pIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 2+Force ramp [ms]"].ToString() + ":S|";
-                    strP = strP + tempV + tempA + tempT;
-                    pIndex++;
-                    tempV = strPV + pIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 3+Voltage [V]"].ToString() + ":V|";
-                    tempA = strPA + pIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 3+Bondforce [cN]"].ToString() + ":A|";
-                    tempT = strPT + pIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 3+Force ramp [ms]"].ToString() + ":S|";
-                    strP = strP + tempV + tempA + tempT;
-                    pIndex++;
-                    tempV = strPV + pIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 4+Voltage [V]"].ToString() + ":V|";
-                    tempA = strPA + pIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 4+Bondforce [cN]"].ToString() + ":A|";
-                    tempT = strPT + pIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 4+Force ramp [ms]"].ToString() + ":S|";
-                    strP = strP + tempV + tempA + tempT;
-                    pIndex++;
-                    tempV = strPV + pIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 5+Voltage [V]"].ToString() + ":V|";
-                    tempA = strPA + pIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 5+Bondforce [cN]"].ToString() + ":A|";
-                    tempT = strPT + pIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 5+Force ramp [ms]"].ToString() + ":S|";
-                    strP = strP + tempV + tempA + tempT;
-                    pIndex++;
-                    tempV = strPV + pIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 6+Voltage [V]"].ToString() + ":V|";
-                    tempA = strPA + pIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 6+Bondforce [cN]"].ToString() + ":A|";
-                    tempT = strPT + pIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 6+Force ramp [ms]"].ToString() + ":S|";
-                    strP = strP + tempV + tempA + tempT;
-                    pIndex++;
-                    tempV = strPV + pIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 7+Voltage [V]"].ToString() + ":V|";
-                    tempA = strPA + pIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 7+Bondforce [cN]"].ToString() + ":A|";
-                    tempT = strPT + pIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 7+Force ramp [ms]"].ToString() + ":S|";
-                    strP = strP + tempV + tempA + tempT;
-                    pIndex++;
-                    tempV = strPV + pIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 8+Voltage [V]"].ToString() + ":V|";
-                    tempA = strPA + pIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 8+Bondforce [cN]"].ToString() + ":A|";
-                    tempT = strPT + pIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 8+Force ramp [ms]"].ToString() + ":S|";
-                    strP = strP + tempV + tempA + tempT;
+                    for(int j = 0;j<8;j++)
+                    {
+                        pIndex++;
+                        string tempV = strPV + pIndex.ToString() + ":" + "0" + ":V|";
+                        string tempA = strPA + pIndex.ToString() + ":" + "0" + ":A|";
+                        string tempT = strPT + pIndex.ToString() + ":" + "0" + ":S|";
+                        strP = strP + tempV + tempA + tempT;
+                    }
+                    for (int j = 0; j < 8; j++)
+                    {
+                        lvIndex++;
+
+
+                        string tempV = strLvV + lvIndex.ToString() + ":" +"0" + ":V|";
+                        string tempA = strLvA + lvIndex.ToString() + ":" +"0" + ":A|";
+                        string tempT = strLvT + lvIndex.ToString() + ":" +"0" + ":S|";
+                        strLv = strLv + tempV + tempA + tempT;
+                    }
+                    for (int j = 0; j < 8; j++)
+                    {
+                        pIndex++;
+                        string tempV = strPV + pIndex.ToString() + ":" + "0" + ":V|";
+                        string tempA = strPA + pIndex.ToString() + ":" + "0" + ":A|";
+                        string tempT = strPT + pIndex.ToString() + ":" + "0" + ":S|";
+                        strP = strP + tempV + tempA + tempT;
+                    }
                 }
-                else if (dt.Rows[i]["Traceability - reference system"].ToString().ToUpper() == "1") //铝片
+                else
                 {
-                    lvIndex++;
-                    string tempV = strLvV + lvIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 1+Voltage [V]"].ToString() + ":V|";
-                    string tempA = strLvA + lvIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 1+Bondforce [cN]"].ToString() + ":A|";
-                    string tempT = strLvT + lvIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 1+Force ramp [ms]"].ToString() + ":S|";
-                    strLv = strLv + tempV + tempA + tempT;
-                    lvIndex++;
-                    tempV = strLvV + lvIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 2+Voltage [V]"].ToString() + ":V|";
-                    tempA = strLvA + lvIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 2+Bondforce [cN]"].ToString() + ":A|";
-                    tempT = strLvT + lvIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 2+Force ramp [ms]"].ToString() + ":S|";
-                    strLv = strLv + tempV + tempA + tempT;
-                    lvIndex++;
-                    tempV = strLvV + lvIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 3+Voltage [V]"].ToString() + ":V|";
-                    tempA = strLvA + lvIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 3+Bondforce [cN]"].ToString() + ":A|";
-                    tempT = strLvT + lvIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 3+Force ramp [ms]"].ToString() + ":S|";
-                    strLv = strLv + tempV + tempA + tempT;
-                    lvIndex++;
-                    tempV = strLvV + lvIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 4+Voltage [V]"].ToString() + ":V|";
-                    tempA = strLvA + lvIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 4+Bondforce [cN]"].ToString() + ":A|";
-                    tempT = strLvT + lvIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 4+Force ramp [ms]"].ToString() + ":S|";
-                    strLv = strLv + tempV + tempA + tempT;
-                    lvIndex++;
-                    tempV = strLvV + lvIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 5+Voltage [V]"].ToString() + ":V|";
-                    tempA = strLvA + lvIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 5+Bondforce [cN]"].ToString() + ":A|";
-                    tempT = strLvT + lvIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 5+Force ramp [ms]"].ToString() + ":S|";
-                    strLv = strLv + tempV + tempA + tempT;
-                    lvIndex++;
-                    tempV = strLvV + lvIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 6+Voltage [V]"].ToString() + ":V|";
-                    tempA = strLvA + lvIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 6+Bondforce [cN]"].ToString() + ":A|";
-                    tempT = strLvT + lvIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 6+Force ramp [ms]"].ToString() + ":S|";
-                    strLv = strLv + tempV + tempA + tempT;
-                    lvIndex++;
-                    tempV = strLvV + lvIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 7+Voltage [V]"].ToString() + ":V|";
-                    tempA = strLvA + lvIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 7+Bondforce [cN]"].ToString() + ":A|";
-                    tempT = strLvT + lvIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 7+Force ramp [ms]"].ToString() + ":S|";
-                    strLv = strLv + tempV + tempA + tempT;
-                    lvIndex++;
-                    tempV = strLvV + lvIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 8+Voltage [V]"].ToString() + ":V|";
-                    tempA = strLvA + lvIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 8+Bondforce [cN]"].ToString() + ":A|";
-                    tempT = strLvT + lvIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 8+Force ramp [ms]"].ToString() + ":S|";
-                    strLv = strLv + tempV + tempA + tempT;
+                    if (dt.Rows[i]["Traceability - reference system"].ToString().ToUpper() == "2") //正极
+                    {
+                        pIndex++;
+                        string tempV = strPV + pIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 1+Voltage [V]"].ToString() + ":V|";
+                        string tempA = strPA + pIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 1+Bondforce [cN]"].ToString() + ":A|";
+                        string tempT = strPT + pIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 1+Force ramp [ms]"].ToString() + ":S|";
+                        strP = strP + tempV + tempA + tempT;
+                        pIndex++;
+                        tempV = strPV + pIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 2+Voltage [V]"].ToString() + ":V|";
+                        tempA = strPA + pIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 2+Bondforce [cN]"].ToString() + ":A|";
+                        tempT = strPT + pIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 2+Force ramp [ms]"].ToString() + ":S|";
+                        strP = strP + tempV + tempA + tempT;
+                        pIndex++;
+                        tempV = strPV + pIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 3+Voltage [V]"].ToString() + ":V|";
+                        tempA = strPA + pIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 3+Bondforce [cN]"].ToString() + ":A|";
+                        tempT = strPT + pIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 3+Force ramp [ms]"].ToString() + ":S|";
+                        strP = strP + tempV + tempA + tempT;
+                        pIndex++;
+                        tempV = strPV + pIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 4+Voltage [V]"].ToString() + ":V|";
+                        tempA = strPA + pIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 4+Bondforce [cN]"].ToString() + ":A|";
+                        tempT = strPT + pIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 4+Force ramp [ms]"].ToString() + ":S|";
+                        strP = strP + tempV + tempA + tempT;
+                        pIndex++;
+                        tempV = strPV + pIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 5+Voltage [V]"].ToString() + ":V|";
+                        tempA = strPA + pIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 5+Bondforce [cN]"].ToString() + ":A|";
+                        tempT = strPT + pIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 5+Force ramp [ms]"].ToString() + ":S|";
+                        strP = strP + tempV + tempA + tempT;
+                        pIndex++;
+                        tempV = strPV + pIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 6+Voltage [V]"].ToString() + ":V|";
+                        tempA = strPA + pIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 6+Bondforce [cN]"].ToString() + ":A|";
+                        tempT = strPT + pIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 6+Force ramp [ms]"].ToString() + ":S|";
+                        strP = strP + tempV + tempA + tempT;
+                        pIndex++;
+                        tempV = strPV + pIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 7+Voltage [V]"].ToString() + ":V|";
+                        tempA = strPA + pIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 7+Bondforce [cN]"].ToString() + ":A|";
+                        tempT = strPT + pIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 7+Force ramp [ms]"].ToString() + ":S|";
+                        strP = strP + tempV + tempA + tempT;
+                        pIndex++;
+                        tempV = strPV + pIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 8+Voltage [V]"].ToString() + ":V|";
+                        tempA = strPA + pIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 8+Bondforce [cN]"].ToString() + ":A|";
+                        tempT = strPT + pIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 8+Force ramp [ms]"].ToString() + ":S|";
+                        strP = strP + tempV + tempA + tempT;
+                    }
+                    else if (dt.Rows[i]["Traceability - reference system"].ToString().ToUpper() == "1") //铝片
+                    {
+                        lvIndex++;
+                        string tempV = strLvV + lvIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 1+Voltage [V]"].ToString() + ":V|";
+                        string tempA = strLvA + lvIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 1+Bondforce [cN]"].ToString() + ":A|";
+                        string tempT = strLvT + lvIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 1+Force ramp [ms]"].ToString() + ":S|";
+                        strLv = strLv + tempV + tempA + tempT;
+                        lvIndex++;
+                        tempV = strLvV + lvIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 2+Voltage [V]"].ToString() + ":V|";
+                        tempA = strLvA + lvIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 2+Bondforce [cN]"].ToString() + ":A|";
+                        tempT = strLvT + lvIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 2+Force ramp [ms]"].ToString() + ":S|";
+                        strLv = strLv + tempV + tempA + tempT;
+                        lvIndex++;
+                        tempV = strLvV + lvIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 3+Voltage [V]"].ToString() + ":V|";
+                        tempA = strLvA + lvIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 3+Bondforce [cN]"].ToString() + ":A|";
+                        tempT = strLvT + lvIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 3+Force ramp [ms]"].ToString() + ":S|";
+                        strLv = strLv + tempV + tempA + tempT;
+                        lvIndex++;
+                        tempV = strLvV + lvIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 4+Voltage [V]"].ToString() + ":V|";
+                        tempA = strLvA + lvIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 4+Bondforce [cN]"].ToString() + ":A|";
+                        tempT = strLvT + lvIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 4+Force ramp [ms]"].ToString() + ":S|";
+                        strLv = strLv + tempV + tempA + tempT;
+                        lvIndex++;
+                        tempV = strLvV + lvIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 5+Voltage [V]"].ToString() + ":V|";
+                        tempA = strLvA + lvIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 5+Bondforce [cN]"].ToString() + ":A|";
+                        tempT = strLvT + lvIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 5+Force ramp [ms]"].ToString() + ":S|";
+                        strLv = strLv + tempV + tempA + tempT;
+                        lvIndex++;
+                        tempV = strLvV + lvIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 6+Voltage [V]"].ToString() + ":V|";
+                        tempA = strLvA + lvIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 6+Bondforce [cN]"].ToString() + ":A|";
+                        tempT = strLvT + lvIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 6+Force ramp [ms]"].ToString() + ":S|";
+                        strLv = strLv + tempV + tempA + tempT;
+                        lvIndex++;
+                        tempV = strLvV + lvIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 7+Voltage [V]"].ToString() + ":V|";
+                        tempA = strLvA + lvIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 7+Bondforce [cN]"].ToString() + ":A|";
+                        tempT = strLvT + lvIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 7+Force ramp [ms]"].ToString() + ":S|";
+                        strLv = strLv + tempV + tempA + tempT;
+                        lvIndex++;
+                        tempV = strLvV + lvIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 8+Voltage [V]"].ToString() + ":V|";
+                        tempA = strLvA + lvIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 8+Bondforce [cN]"].ToString() + ":A|";
+                        tempT = strLvT + lvIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 8+Force ramp [ms]"].ToString() + ":S|";
+                        strLv = strLv + tempV + tempA + tempT;
+                    }
+                    else if (dt.Rows[i]["Traceability - reference system"].ToString().ToUpper() == "3") //负极
+                    {
+                        //nIndex++;
+                        nIndex = pIndex + 1;
+                        string tempV = strPV + nIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 1+Voltage [V]"].ToString() + ":V|";
+                        string tempA = strPA + nIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 1+Bondforce [cN]"].ToString() + ":A|";
+                        string tempT = strPT + nIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 1+Force ramp [ms]"].ToString() + ":S|";
+                        strN = strN + tempV + tempA + tempT;
+                        nIndex++;
+                        tempV = strPV + nIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 2+Voltage [V]"].ToString() + ":V|";
+                        tempA = strPA + nIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 2+Bondforce [cN]"].ToString() + ":A|";
+                        tempT = strPT + nIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 2+Force ramp [ms]"].ToString() + ":S|";
+                        strN = strN + tempV + tempA + tempT;
+                        nIndex++;
+                        tempV = strPV + nIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 3+Voltage [V]"].ToString() + ":V|";
+                        tempA = strPA + nIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 3+Bondforce [cN]"].ToString() + ":A|";
+                        tempT = strPT + nIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 3+Force ramp [ms]"].ToString() + ":S|";
+                        strN = strN + tempV + tempA + tempT;
+                        nIndex++;
+                        tempV = strPV + nIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 4+Voltage [V]"].ToString() + ":V|";
+                        tempA = strPA + nIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 4+Bondforce [cN]"].ToString() + ":A|";
+                        tempT = strPT + nIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 4+Force ramp [ms]"].ToString() + ":S|";
+                        strN = strN + tempV + tempA + tempT;
+                        nIndex++;
+                        tempV = strPV + nIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 5+Voltage [V]"].ToString() + ":V|";
+                        tempA = strPA + nIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 5+Bondforce [cN]"].ToString() + ":A|";
+                        tempT = strPT + nIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 5+Force ramp [ms]"].ToString() + ":S|";
+                        strN = strN + tempV + tempA + tempT;
+                        nIndex++;
+                        tempV = strPV + nIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 6+Voltage [V]"].ToString() + ":V|";
+                        tempA = strPA + nIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 6+Bondforce [cN]"].ToString() + ":A|";
+                        tempT = strPT + nIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 6+Force ramp [ms]"].ToString() + ":S|";
+                        strN = strN + tempV + tempA + tempT;
+                        nIndex++;
+                        tempV = strPV + nIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 7+Voltage [V]"].ToString() + ":V|";
+                        tempA = strPA + nIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 7+Bondforce [cN]"].ToString() + ":A|";
+                        tempT = strPT + nIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 7+Force ramp [ms]"].ToString() + ":S|";
+                        strN = strN + tempV + tempA + tempT;
+                        nIndex++;
+                        tempV = strPV + nIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 8+Voltage [V]"].ToString() + ":V|";
+                        tempA = strPA + nIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 8+Bondforce [cN]"].ToString() + ":A|";
+                        tempT = strPT + nIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 8+Force ramp [ms]"].ToString() + ":S|";
+                        strN = strN + tempV + tempA + tempT;
+                    }
                 }
-                else if (dt.Rows[i]["Traceability - reference system"].ToString().ToUpper() == "3") //负极
-                {
-                    nIndex++;
-                    string tempV = strNV + nIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 1+Voltage [V]"].ToString() + ":V|";
-                    string tempA = strNA + nIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 1+Bondforce [cN]"].ToString() + ":A|";
-                    string tempT = strNT + nIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 1+Force ramp [ms]"].ToString() + ":S|";
-                    strN = strN + tempV + tempA + tempT;
-                    nIndex++;
-                    tempV = strNV + nIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 2+Voltage [V]"].ToString() + ":V|";
-                    tempA = strNA + nIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 2+Bondforce [cN]"].ToString() + ":A|";
-                    tempT = strNT + nIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 2+Force ramp [ms]"].ToString() + ":S|";
-                    strN = strN + tempV + tempA + tempT;
-                    nIndex++;
-                    tempV = strNV + nIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 3+Voltage [V]"].ToString() + ":V|";
-                    tempA = strNA + nIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 3+Bondforce [cN]"].ToString() + ":A|";
-                    tempT = strNT + nIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 3+Force ramp [ms]"].ToString() + ":S|";
-                    strN = strN + tempV + tempA + tempT;
-                    nIndex++;
-                    tempV = strNV + nIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 4+Voltage [V]"].ToString() + ":V|";
-                    tempA = strNA + nIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 4+Bondforce [cN]"].ToString() + ":A|";
-                    tempT = strNT + nIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 4+Force ramp [ms]"].ToString() + ":S|";
-                    strN = strN + tempV + tempA + tempT;
-                    nIndex++;
-                    tempV = strNV + nIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 5+Voltage [V]"].ToString() + ":V|";
-                    tempA = strNA + nIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 5+Bondforce [cN]"].ToString() + ":A|";
-                    tempT = strNT + nIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 5+Force ramp [ms]"].ToString() + ":S|";
-                    strN = strN + tempV + tempA + tempT;
-                    nIndex++;
-                    tempV = strNV + nIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 6+Voltage [V]"].ToString() + ":V|";
-                    tempA = strNA + nIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 6+Bondforce [cN]"].ToString() + ":A|";
-                    tempT = strNT + nIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 6+Force ramp [ms]"].ToString() + ":S|";
-                    strN = strN + tempV + tempA + tempT;
-                    nIndex++;
-                    tempV = strNV + nIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 7+Voltage [V]"].ToString() + ":V|";
-                    tempA = strNA + nIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 7+Bondforce [cN]"].ToString() + ":A|";
-                    tempT = strNT + nIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 7+Force ramp [ms]"].ToString() + ":S|";
-                    strN = strN + tempV + tempA + tempT;
-                    nIndex++;
-                    tempV = strNV + nIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 8+Voltage [V]"].ToString() + ":V|";
-                    tempA = strNA + nIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 8+Bondforce [cN]"].ToString() + ":A|";
-                    tempT = strNT + nIndex.ToString() + ":" + dt.Rows[i]["Traceability process parameter+Process phase+Process phase 8+Force ramp [ms]"].ToString() + ":S|";
-                    strN = strN + tempV + tempA + tempT;
-                }
+                
             }
             #endregion
             string str = strP + strLv + strN;

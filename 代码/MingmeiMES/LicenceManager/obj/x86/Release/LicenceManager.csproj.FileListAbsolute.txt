@@ -31,3 +31,4 @@ F:\NpWork\others\明美\代码\MingmeiMES\LicenceManager\obj\x86\Release\Licence
 F:\NpWork\others\明美\代码\MingmeiMES\LicenceManager\obj\x86\Release\LicenceManager.csproj.GenerateResource.Cache
 F:\NpWork\others\明美\代码\MingmeiMES\LicenceManager\obj\x86\Release\LicenceManager.dll
 F:\NpWork\others\明美\代码\MingmeiMES\LicenceManager\obj\x86\Release\LicenceManager.pdb
+E:\workspace\项目\明美项目\Git_mingmei\MingMeiMES\代码\MingmeiMES\LicenceManager\obj\x86\Release\LicenceManager.csprojResolveAssemblyReference.cache

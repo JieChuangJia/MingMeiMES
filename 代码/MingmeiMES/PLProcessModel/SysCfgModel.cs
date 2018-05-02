@@ -40,6 +40,7 @@ namespace PLProcessModel
         public static string[] checkStations = null;
         public static DateTime loginTime1 = DateTime.Parse("08:00:00");
         public static DateTime loginTime2 = DateTime.Parse("20:00:00");
+        public static int batteryNumInMod = 500; // 模组里电芯数量上限
        // public static bool MesInputCheck { get; set; }
         public static bool PreStationCheck { get; set; }
 
@@ -173,7 +174,7 @@ namespace PLProcessModel
                 }
                 cfgFilePath = xmlCfgFile;
                 XElement root = XElement.Load(xmlCfgFile);
-
+             
                 XElement sysSetXE = root.Element("sysSet");
                 XElement sysParamXE = sysSetXE.Element("SysParam");
                 XElement qrCodewReqXe = sysSetXE.Element("QRCodeRequire");
@@ -190,6 +191,11 @@ namespace PLProcessModel
                         }
                         
                     }
+                }
+                if(sysSetXE.Element("WelderParam") != null)
+                {
+                    string batNum=sysSetXE.Element("WelderParam").Attribute("batteryNumInMod").Value.ToString();
+                    batteryNumInMod = int.Parse(batNum);
                 }
                 XElement runModeXE = root.Element("sysSet").Element("RunMode");
                 string simStr = runModeXE.Attribute("sim").Value.ToString().ToUpper();

@@ -80,6 +80,7 @@ namespace LineNodes
                             currentTaskDescribe = string.Format("清洗机文件：{0}不存在", cleanerSndFile);
                             return false;
                         }
+                        currentTaskDescribe = "开始写入清洗机文件";
                         System.IO.StreamWriter writter = new System.IO.StreamWriter(cleanerSndFile, false);
                         StringBuilder strBuild = new StringBuilder();
                         for (int i = 1; i < 5; i++)

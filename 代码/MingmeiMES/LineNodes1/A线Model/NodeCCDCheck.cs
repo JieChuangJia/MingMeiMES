@@ -109,7 +109,7 @@ namespace LineNodes
                             {
                                 if (!ccdDevAcc.StartDev(products, ccdDevName, ref reStr))
                                 {
-                                    this.currentTaskDescribe = "发送设备加工启动命令失败";
+                                    this.currentTaskDescribe = "发送设备加工启动命令失败:"+reStr;
                                     //logRecorder.AddDebugLog(nodeName, "发送设备加工启动命令失败");
                                   //  Console.WriteLine(nodeName + "发送设备加工启动命令失败");
                                     break;
@@ -167,7 +167,7 @@ namespace LineNodes
                         if (!ccdDevAcc.EndDev(this.ccdDevName, ref reStr))
                         {
                           //  logRecorder.AddDebugLog(nodeName, "发送设备停止命令失败");
-                            this.currentTaskDescribe = "发送设备停止命令失败";
+                            this.currentTaskDescribe = "发送设备停止命令失败:"+reStr;
                           //  Console.WriteLine(nodeName + "发送设备停止命令失败");
                             break;
                         }
@@ -186,7 +186,7 @@ namespace LineNodes
                         //List<DBAccess.Model.BatteryModuleModel> modList = modBll.GetModelList(string.Format("palletID='{0}'", this.rfidUID));
                         if (!AfterMech(modList, ref reStr))
                         {
-                            Console.WriteLine(string.Format("{0},{1}", nodeName, reStr));
+                            //Console.WriteLine(string.Format("{0},{1}", nodeName, reStr));
                             break;
                         }
                        
@@ -318,7 +318,7 @@ namespace LineNodes
                         {
                             if (!TryUnbind(this.rfidUID, ref reStr))
                             {
-                                this.currentTaskDescribe = "工装板解绑失败";
+                                this.currentTaskDescribe = "工装板解绑失败:"+reStr;
                                 break;
                             }
                         }

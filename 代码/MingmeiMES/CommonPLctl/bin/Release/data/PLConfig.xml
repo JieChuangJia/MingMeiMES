@@ -13,6 +13,7 @@
     <!--线体控制，速度，启动/停止-->
     <LineCtl addrStart="D4000" blockNum="3">线体控制</LineCtl>
     <SysParam>[{"ParamName":"C线电池包模块数量","ParamVal":"2","ParamType":"VAR_INT"}]</SysParam>
+    <WelderParam batteryNumInMod="500"> </WelderParam>
   </sysSet>
   <!--通信设备配置-->
   <CommDevCfg>

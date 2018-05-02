@@ -209,6 +209,7 @@ namespace PLProcessModel
             {
                 //获取WSDL
                 WebClient wc = new WebClient();
+               
                 Stream stream = wc.OpenRead(url + "?WSDL");
                 ServiceDescription sd = ServiceDescription.Read(stream);
                 ServiceDescriptionImporter sdi = new ServiceDescriptionImporter();
