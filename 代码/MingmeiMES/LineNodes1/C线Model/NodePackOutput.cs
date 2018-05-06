@@ -67,6 +67,22 @@ namespace LineNodes
                             break;
                         }
                         db1ValsToSnd[1] = 3;
+                     
+                        int uploadMesStatus = UploadMesData(this.rfidUID, ref reStr);
+                        if (uploadMesStatus == 0)
+                        {
+                            this.logRecorder.AddDebugLog(this.nodeName, "上传MES数据成功！" + reStr);
+                        }
+                        else if(uploadMesStatus ==1)
+                        {
+                             this.logRecorder.AddDebugLog(this.nodeName, "上传MES数据成功！,返回NG：" + reStr);
+                        }
+                        else
+                        {
+                            Console.WriteLine(this.nodeName + "上传MES数据失败！" + reStr);
+                            break;
+                            
+                        }
                         currentTaskPhase++;
                         this.currentTask.TaskPhase = this.currentTaskPhase;
                         this.ctlTaskBll.Update(this.currentTask);
@@ -74,15 +90,7 @@ namespace LineNodes
                     }
                 case 3:
                     {
-                        if(UploadMesData(this.rfidUID,ref reStr) == false)
-                        {
-                            this.logRecorder.AddDebugLog(this.nodeName, "上传MES数据失败！" + reStr);
-
-                        }
-                        else
-                        {
-                            this.logRecorder.AddDebugLog(this.nodeName, "上传MES数据成功！" + reStr);
-                        }
+                      
                         currentTaskDescribe = "流程完成";
                         this.currentTask.TaskPhase = this.currentTaskPhase;
                         this.currentTask.TaskStatus = EnumTaskStatus.已完成.ToString();
@@ -96,7 +104,7 @@ namespace LineNodes
             return true;
         }
 
-        public bool UploadMesData(string rfid,ref string reStr)
+        public int UploadMesData(string rfid,ref string reStr)
         {
             string M_AREA = "Y001";
             string M_WORKSTATION_SN = "M00100801";
@@ -110,22 +118,28 @@ namespace LineNodes
             List<DBAccess.Model.BatteryModuleModel> modelList = modBll.GetModelList(string.Format("palletID='{0}' and palletBinded=1", rfid)); //modBll.GetModelByPalletID(this.rfidUID, this.nodeName);
             if (modelList == null || modelList.Count == 0)
             {
-                return false;
+                return 2;
             }
             string barcode = modelList[0].batModuleID;
             string strJson = "";
 
             rObj = WShelper.DevDataUpload(1, M_DEVICE_SN, M_WORKSTATION_SN, barcode, M_UNION_SN, M_CONTAINER_SN, M_LEVEL, M_ITEMVALUE, ref strJson);
             reStr = rObj.RES;
-            if (rObj.RES.Contains("OK"))
+            if (rObj.RES.ToUpper().Contains("OK"))
             {
-                return true;
+                
+                return 0;
+            }
+            else if (rObj.RES.ToUpper().Contains("NG"))
+            {
+                
+                return 1;
             }
             else
             {
                 Console.WriteLine(this.nodeName + "上传MES二维码信息错误：" + rObj.RES);
-              
-                return false;
+
+                return 2;
             }
         }
     }

@@ -15,6 +15,7 @@ namespace LineNodes
     {
         private string packBarcode = "";
         private int barcodeFailCounter = 0;
+        private int readPackLabelCodeFailTimes = 0;//打码完成后，计次，当读取6次还不成功就认为读取失败
         string qrCodeIP = "192.168.0.69";//向电脑发送二维码
         private DBAccess.BLL.BatteryPackBll packBll = new DBAccess.BLL.BatteryPackBll();
         public override bool BuildCfg(System.Xml.Linq.XElement xe, ref string reStr)
@@ -57,6 +58,7 @@ namespace LineNodes
                             break;
                         }
                         barcodeFailCounter = 0;
+                        this.readPackLabelCodeFailTimes = 0;
                         this.currentTask.TaskPhase = this.currentTaskPhase;
                         this.currentTask.TaskParam = rfidUID;
                         this.ctlTaskBll.Update(this.currentTask);
@@ -88,7 +90,7 @@ namespace LineNodes
                         
                       
                         packBarcode = modList[0].batPackID;
-                        logRecorder.AddDebugLog(nodeName, string.Format("读到PACK条码:{0}", packBarcode));
+                        logRecorder.AddDebugLog(nodeName, string.Format("获取PACK条码:{0}", packBarcode));
                        
                         string qrCodeFile = string.Format(@"\\{0}\加工文件\打码内容.txt", qrCodeIP);
                         //清空文件
@@ -104,7 +106,8 @@ namespace LineNodes
                         {
                             break;
                         }
-                     
+                       //this.logRecorder.AddDebugLog(this.nodeName, "申请成功（MES->PLC）成功！数值已经更改为2");
+
                         currentTaskPhase++;
                         this.currentTask.TaskPhase = this.currentTaskPhase;
                         this.ctlTaskBll.Update(this.currentTask);
@@ -144,7 +147,7 @@ namespace LineNodes
                         //this.ctlTaskBll.Update(this.currentTask);
                         //break;
                         #endregion
-
+                        this.currentTaskDescribe = "开始扫码！";
                         if(this.db2Vals[1]!= 2)
                         {
                             break;
@@ -159,23 +162,23 @@ namespace LineNodes
                         {
                             packBarcodeNew = barcodeRW.ReadBarcode();
                         }
+
+                        if (string.IsNullOrWhiteSpace(packBarcodeNew) && this.readPackLabelCodeFailTimes<6)//读取6次不成功就任务失败
+                        {
+                            this.readPackLabelCodeFailTimes++;
+                            //packLabelStatus = false;
+                            Console.WriteLine(this.nodeName +":扫码数据为空！扫码失败！"+ "已经第"+ this.readPackLabelCodeFailTimes+"次扫码失败！");
+                            break;
+                        }
+                         
                         #region 如果所发下去的码和打完之后的码不匹配就要重新发送
 
-                        if (this.packBarcode != packBarcodeNew&&this.barcodeFailCounter<2)//如果不相等就一直启动打码
+                        if (this.packBarcode != packBarcodeNew && this.barcodeFailCounter < 2&&this.readPackLabelCodeFailTimes<6)//如果不相等两次启动打码
                         {
-                            packLabelStatus = false;
-                           this.barcodeFailCounter++;
+                            //packLabelStatus = false;
+                            this.barcodeFailCounter++;
                             this.db1ValsToSnd[2] = 3;
-                            List<DBAccess.Model.BatteryModuleModel> modList = modBll.GetBindedMods(this.rfidUID);
-                            if (modList == null || modList.Count == 0)
-                            {
-                                this.currentTaskDescribe = "获取二维码失败，请确认绑定工位是否成功绑定！";
-                                break;
-                            }
-
-
-                            packBarcode = modList[0].batPackID;
-                            logRecorder.AddDebugLog(nodeName, string.Format("读到PACK条码:{0}", packBarcode));
+                           
 
                             string qrCodeFile = string.Format(@"\\{0}\加工文件\打码内容.txt", qrCodeIP);
                             //清空文件
@@ -186,36 +189,52 @@ namespace LineNodes
                             writter.Write(strBuild.ToString());
                             writter.Flush();
                             writter.Close();
-
+                            logRecorder.AddDebugLog(nodeName, "第" + this.barcodeFailCounter + "次写入打码机数据成功：" + packBarcode);
                             if (NodeDB2Commit(2, 2, ref reStr) == false)
                             {
                                 break;
                             }
 
-
                             break;
                         }
-                        string itemValue = "";
-                        if(packLabelStatus == true)
+                       
+                        if(packBarcode ==packBarcodeNew )
                         {
-                            itemValue = "扫码结果:OK";
+                            packLabelStatus = true;
                         }
                         else
                         {
-                            itemValue = "扫码结果：NG";
+                            packLabelStatus = false;
+                        }
+
+                        string itemValue = "";
+                        if(packLabelStatus == true)
+                        {
+                            itemValue = "扫码结果:OK:";
+                        }
+                        else
+                        {
+                            itemValue = "扫码结果:NG:";
                         }
                         #endregion
+
                         this.db1ValsToSnd[2] = 2;
                         
 
                         RootObject obj = WShelper.DevDataUpload(1, "", "M00100301", this.packBarcode, "", this.rfidUID, "", itemValue, ref reStr);
-                        if (obj.RES.Contains("OK") == true)
+                        if (obj.RES.ToUpper().Contains("OK") == true)
                         {
-                            this.logRecorder.AddDebugLog(this.nodeName, "绑定上传MES成功！");
+                            this.logRecorder.AddDebugLog(this.nodeName, "绑定上传MES成功！" + obj.RES);
+                        }
+                        else if(obj.RES.ToUpper().Contains("NG") == true)
+                        {
+                            this.logRecorder.AddDebugLog(this.nodeName, "绑定上传MES成功，返回NG！" +obj.RES);
                         }
                         else
                         {
-                            this.logRecorder.AddDebugLog(this.nodeName, "绑定上传MES失败：" + obj.RES);
+                            Console.WriteLine(this.nodeName + "绑定上传MES失败：" + obj.RES);
+                            break;
+                            
                         }
                         this.currentTaskPhase++;
                         break;

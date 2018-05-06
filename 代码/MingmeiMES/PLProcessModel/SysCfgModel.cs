@@ -32,7 +32,7 @@ namespace PLProcessModel
         public static bool ManualMode1 = false;//1号房人工检测模式
         public static bool ManualMode3 = false;//1号房人工检测模式
         public static bool MesAutodownEnabled = false; //投产位是否调用MES投产
-        public static bool IsRequireMesQRCode = false; //是否向MES请求二维码
+        //public static bool OfflineMode = false; //离线模式
         public static string DB1Start = "D2000";
         public static string DB2Start = "D3000";
         public static int DB1Len = 600;
@@ -199,15 +199,7 @@ namespace PLProcessModel
                 }
                 XElement runModeXE = root.Element("sysSet").Element("RunMode");
                 string simStr = runModeXE.Attribute("sim").Value.ToString().ToUpper();
-                string qrCodeReq = qrCodewReqXe.Attribute("requireMes").Value.ToString().ToUpper();
-                if(qrCodeReq == "TRUE")
-                {
-                    IsRequireMesQRCode = true;
-                }
-                else
-                {
-                    IsRequireMesQRCode = false;
-                }
+               
                 if (simStr == "TRUE")
                 {
                     SimMode = true;

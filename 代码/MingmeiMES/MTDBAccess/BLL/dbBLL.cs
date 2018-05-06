@@ -19,9 +19,9 @@ namespace MTDBAccess.BLL
         /// <summary>
         /// 是否存在该记录
         /// </summary>
-        public bool Exists(string 测试时间, string 二维码, string 正螺丝数据, string 反螺丝数据)
+        public bool Exists(string 测试时间, string 二维码, string 正螺丝1马头结果, string 正螺丝1马头扭矩, string 正螺丝1马头角度, string 正螺丝2马头结果, string 正螺丝2马头扭矩, string 正螺丝2马头角度, string 反螺丝1马头结果, string 反螺丝1马头扭矩, string 反螺丝1马头角度, string 反螺丝2马头结果, string 反螺丝2马头扭矩, string 反螺丝2马头角度)
         {
-            return dal.Exists(测试时间, 二维码, 正螺丝数据, 反螺丝数据);
+            return dal.Exists(测试时间, 二维码, 正螺丝1马头结果, 正螺丝1马头扭矩, 正螺丝1马头角度, 正螺丝2马头结果, 正螺丝2马头扭矩, 正螺丝2马头角度, 反螺丝1马头结果, 反螺丝1马头扭矩, 反螺丝1马头角度, 反螺丝2马头结果, 反螺丝2马头扭矩, 反螺丝2马头角度);
         }
 
         /// <summary>
@@ -43,22 +43,22 @@ namespace MTDBAccess.BLL
         /// <summary>
         /// 删除一条数据
         /// </summary>
-        public bool Delete(string 测试时间, string 二维码, string 正螺丝数据, string 反螺丝数据)
+        public bool Delete(string 测试时间, string 二维码, string 正螺丝1马头结果, string 正螺丝1马头扭矩, string 正螺丝1马头角度, string 正螺丝2马头结果, string 正螺丝2马头扭矩, string 正螺丝2马头角度, string 反螺丝1马头结果, string 反螺丝1马头扭矩, string 反螺丝1马头角度, string 反螺丝2马头结果, string 反螺丝2马头扭矩, string 反螺丝2马头角度)
         {
 
-            return dal.Delete(测试时间, 二维码, 正螺丝数据, 反螺丝数据);
+            return dal.Delete(测试时间, 二维码, 正螺丝1马头结果, 正螺丝1马头扭矩, 正螺丝1马头角度, 正螺丝2马头结果, 正螺丝2马头扭矩, 正螺丝2马头角度, 反螺丝1马头结果, 反螺丝1马头扭矩, 反螺丝1马头角度, 反螺丝2马头结果, 反螺丝2马头扭矩, 反螺丝2马头角度);
         }
 
         /// <summary>
         /// 得到一个对象实体
         /// </summary>
-        public MTDBAccess.Model.dbModel GetModel(string 测试时间, string 二维码, string 正螺丝数据, string 反螺丝数据)
+        public MTDBAccess.Model.dbModel GetModel(string 测试时间, string 二维码, string 正螺丝1马头结果, string 正螺丝1马头扭矩, string 正螺丝1马头角度, string 正螺丝2马头结果, string 正螺丝2马头扭矩, string 正螺丝2马头角度, string 反螺丝1马头结果, string 反螺丝1马头扭矩, string 反螺丝1马头角度, string 反螺丝2马头结果, string 反螺丝2马头扭矩, string 反螺丝2马头角度)
         {
 
-            return dal.GetModel(测试时间, 二维码, 正螺丝数据, 反螺丝数据);
+            return dal.GetModel(测试时间, 二维码, 正螺丝1马头结果, 正螺丝1马头扭矩, 正螺丝1马头角度, 正螺丝2马头结果, 正螺丝2马头扭矩, 正螺丝2马头角度, 反螺丝1马头结果, 反螺丝1马头扭矩, 反螺丝1马头角度, 反螺丝2马头结果, 反螺丝2马头扭矩, 反螺丝2马头角度);
         }
 
-
+     
 
         /// <summary>
         /// 获得数据列表
@@ -131,9 +131,10 @@ namespace MTDBAccess.BLL
         #region  ExtensionMethod
         public MTDBAccess.Model.dbModel GetModel(string code)
         {
-            DataSet ds = dal.GetOneData("二维码='" + code + "'");
-           
-            List<MTDBAccess.Model.dbModel> dbList =DataTableToList(ds.Tables[0]);
+            
+            string sqlStr = "二维码='" + code + "'";
+            List<MTDBAccess.Model.dbModel> dbList = GetModelList(sqlStr);
+
             if(dbList!=null&&dbList.Count>0)
             {
                 return dbList[0];

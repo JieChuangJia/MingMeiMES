@@ -42,3 +42,14 @@ F:\NpWork\others\明美\代码\MingmeiMES\CreateKey\obj\x86\Release\CreateKey.Pr
 F:\NpWork\others\明美\代码\MingmeiMES\CreateKey\obj\x86\Release\CreateKey.csproj.GenerateResource.Cache
 F:\NpWork\others\明美\代码\MingmeiMES\CreateKey\obj\x86\Release\CreateKey.exe
 F:\NpWork\others\明美\代码\MingmeiMES\CreateKey\obj\x86\Release\CreateKey.pdb
+F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\CreateKey\bin\Release\CreateKey.exe.config
+F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\CreateKey\bin\Release\CreateKey.exe
+F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\CreateKey\bin\Release\CreateKey.pdb
+F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\CreateKey\bin\Release\LicenceManager.dll
+F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\CreateKey\bin\Release\LicenceManager.pdb
+F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\CreateKey\obj\x86\Release\CreateKey.csprojResolveAssemblyReference.cache
+F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\CreateKey\obj\x86\Release\CreateKey.Form1.resources
+F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\CreateKey\obj\x86\Release\CreateKey.Properties.Resources.resources
+F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\CreateKey\obj\x86\Release\CreateKey.csproj.GenerateResource.Cache
+F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\CreateKey\obj\x86\Release\CreateKey.exe
+F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\CreateKey\obj\x86\Release\CreateKey.pdb

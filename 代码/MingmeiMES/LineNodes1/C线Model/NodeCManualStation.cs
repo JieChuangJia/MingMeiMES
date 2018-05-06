@@ -35,6 +35,7 @@ namespace LineNodes
             {
                 case 1:
                     {
+                        this.currentTaskDescribe = "开始读取RFID";
                         if (!RfidReadC())
                         {
                             break;
@@ -49,7 +50,7 @@ namespace LineNodes
                     }
                 case 2:
                     {
-
+                        this.currentTaskDescribe = "开始记录过程数据";
                         db1ValsToSnd[1] = 2;//
                         if (!ProductTraceRecord())
                         {
@@ -63,40 +64,45 @@ namespace LineNodes
                     }
                 case 3:
                     {
+                        currentTaskDescribe = "开始上传MES数据";
                        List< DBAccess.Model.BatteryModuleModel > batteryModuleList = modBll.GetBindedMods(this.rfidUID);
                         if(batteryModuleList==null||batteryModuleList.Count==0)
                         {
                             Console.WriteLine(this.nodeName,"此工装板无绑定数据！");
                             break;
                         }
+                        int uploadStatus = 0;
                         if (this.nodeID == "OPC007")
                         {
-                            if (UploadToMesData(1, batteryModuleList[0].batPackID, "M00100701", ref reStr) == false)
-                            {
-                                this.logRecorder.AddDebugLog(this.nodeName, "上传MES数据失败：" + reStr);
-                            }
+                             uploadStatus = UploadToMesData(1, batteryModuleList[0].batPackID, "M00100701", ref reStr);
                         }
                         else if (this.nodeID == "OPC008")
                         {
-                            if (UploadToMesData(1, batteryModuleList[0].batPackID, "M00100401", ref reStr) == false)
-                            {
-                                this.logRecorder.AddDebugLog(this.nodeName, "上传MES数据失败：" + reStr);
-                            }
+                            uploadStatus = UploadToMesData(1, batteryModuleList[0].batPackID, "M00100401", ref reStr);
                         }
                         else if (this.nodeID == "OPC009")
                         {
-                            if (UploadToMesData(3, batteryModuleList[0].batPackID, "M00100501", ref reStr) == false)
-                            {
-                                this.logRecorder.AddDebugLog(this.nodeName, "上传MES数据失败：" + reStr);
-                            }
+                            uploadStatus = UploadToMesData(1, batteryModuleList[0].batPackID, "M00100501", ref reStr);
                         }
                         else if (this.nodeID == "OPC010")
                         {
-                            if (UploadToMesData(1, batteryModuleList[0].batPackID, "M00100701", ref reStr) == false)
-                            {
-                                this.logRecorder.AddDebugLog(this.nodeName, "上传MES数据失败：" + reStr);
-                            }
+                            uploadStatus = UploadToMesData(1, batteryModuleList[0].batPackID, "M00100701", ref reStr);
                         }
+
+                        if (uploadStatus == 0)
+                        {
+                            this.logRecorder.AddDebugLog(this.nodeName, "上传MES数据成功：" + reStr);
+                        }
+                        else if (uploadStatus == 1)
+                        {
+                            this.logRecorder.AddDebugLog(this.nodeName, "上传MES数据成功，返回NG：" + reStr);
+                        }
+                        else
+                        {
+                            Console.WriteLine(this.nodeName + "上传MES数据失败：" + reStr);
+                            break;
+                        }
+
                         this.logRecorder.AddDebugLog(this.nodeName, "上报MES数据成功：" + batteryModuleList[0].batPackID);
                        
                         currentTaskPhase++;
@@ -178,20 +184,25 @@ namespace LineNodes
             return true;
         }
 
-        private bool UploadToMesData(int flag ,string groupCode,string  workStationNum,ref string reStr)
+        private int UploadToMesData(int flag ,string groupCode,string  workStationNum,ref string reStr)
         {
             RootObject rObj = WShelper.DevDataUpload(flag, "", workStationNum, groupCode, "", "", "", "", ref reStr);
-            if (rObj.RES.Contains("OK"))
+            reStr = rObj.RES;
+            if (rObj.RES.ToUpper().Contains("OK"))
             {
-             
-                return true;
+                return 0;
+            }
+            else if (rObj.RES.ToUpper().Contains("NG"))
+            {
+                return 1;
             }
             else
             {
-                reStr = rObj.RES;
                 Console.WriteLine(this.nodeName + "上传MES二维码信息错误：" + rObj.RES);
-                return false;
+
+                return 2;
             }
+            
         }
     }
 }

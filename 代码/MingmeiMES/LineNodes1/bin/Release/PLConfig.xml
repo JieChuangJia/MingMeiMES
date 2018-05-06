@@ -3,7 +3,7 @@
   <sysSet>
     <RunMode sim="true" debugMode="True" manualMode1="True" manualMode3="True">仿真运行模式</RunMode>
     <Printer Enable="True">是否启动自动贴标</Printer>
-    <QRCodeRequire requireMes="false">是否从MES请求二维码，true是，false从本地数据库中获取</QRCodeRequire>
+    <!--<QRCodeRequire requireMes="false">是否从MES请求二维码，true是，false从本地数据库中获取</QRCodeRequire>-->
     
     <Mes LineID="L11" Enable="True" OfflineMode="False" MesAutodown="False">是否启动MES判断</Mes>
     <!--MES下线查询最长时间-->

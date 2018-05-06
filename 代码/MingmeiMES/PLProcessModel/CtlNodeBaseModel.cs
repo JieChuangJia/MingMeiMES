@@ -2242,6 +2242,7 @@ namespace PLProcessModel
                     {
                         mod.palletBinded = false;
                         mod.palletID = "";
+
                         modBll.Update(mod);
                         logRecorder.AddDebugLog(nodeName, string.Format("解绑,工装板RFID:{0},模块:{1}", rfidCode, mod.batModuleID));
                     }
@@ -2488,7 +2489,7 @@ namespace PLProcessModel
         /// <param name="qrCode">二维码</param>
         /// <param name="moduleNum">个数</param>
         /// <returns></returns>
-        protected bool AnalysisQRCode(string qrCode,ref int moduleNum)
+        protected bool AnalysisQRCode(string qrCode,ref int clNum,ref int blNum,ref string restr)
         { 
             if(qrCode.Length!=24)
             {
@@ -2497,7 +2498,13 @@ namespace PLProcessModel
             string moduleNumStr = qrCode.Substring(10, 2);
             string high = moduleNumStr.Substring(0, 1).ToLower();
             string low = moduleNumStr.Substring(1, 1).ToLower();
-            moduleNum = base31Code[high] * 31 + base31Code[low];
+            clNum = base31Code[high] * 31 + base31Code[low];
+
+            string blNumStr = qrCode.Substring(8, 2);
+            string blHigh = blNumStr.Substring(0, 1).ToLower();
+            string blLow = blNumStr.Substring(1, 1).ToLower();
+
+            blNum = base31Code[blHigh] * 31 + base31Code[blLow];
 
             return true;
 

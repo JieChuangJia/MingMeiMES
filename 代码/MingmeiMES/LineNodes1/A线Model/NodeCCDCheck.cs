@@ -162,19 +162,23 @@ namespace LineNodes
                     }
                 case 5:
                     {
+                       if(this.nodeID != "OPB007")//等于dcir工位 要等到在读取完取数据库后再发送end指令
+                       {
+                           //发送停止加工命令
+                           if (!ccdDevAcc.EndDev(this.ccdDevName, ref reStr))
+                           {
+                               //  logRecorder.AddDebugLog(nodeName, "发送设备停止命令失败");
+                               this.currentTaskDescribe = "发送设备停止命令失败:" + reStr;
+                               //  Console.WriteLine(nodeName + "发送设备停止命令失败");
+                               break;
+                           }
+                           else
+                           {
+                               logRecorder.AddDebugLog(nodeName, "发送设备停止命令成功");
+                           }
                        
-                        //发送停止加工命令
-                        if (!ccdDevAcc.EndDev(this.ccdDevName, ref reStr))
-                        {
-                          //  logRecorder.AddDebugLog(nodeName, "发送设备停止命令失败");
-                            this.currentTaskDescribe = "发送设备停止命令失败:"+reStr;
-                          //  Console.WriteLine(nodeName + "发送设备停止命令失败");
-                            break;
-                        }
-                        else
-                        {
-                            logRecorder.AddDebugLog(nodeName, "发送设备停止命令成功");
-                        }
+                       }
+                      
                         currentTaskPhase++;
                         this.currentTask.TaskPhase = this.currentTaskPhase;
                         this.ctlTaskBll.Update(this.currentTask);
@@ -214,7 +218,7 @@ namespace LineNodes
                         //    //dataList = dcirBll.GetModelListByTestTimeASC();
                         //}
                         // if(isWithMes == true)
-                        {
+                        //{
                             string M_WORKSTATION_SN = "";
                             if (this.nodeID == "OPB003")
                             {
@@ -227,11 +231,22 @@ namespace LineNodes
                             else if(this.nodeID == "OPB007")
                             {
                                 M_WORKSTATION_SN = "Y00102101";
+                                int temperatureRequire = 0;
+                                if(this.plcRW2.ReadDB("D9100",ref temperatureRequire) ==false)
+                                {
+                                    break;
+                                }
+                                if(temperatureRequire != 1)//温度读取请求
+                                {
+                                    break;
+                                }
                             }
                             else if(this.nodeID == "OPA009")
                             {
                                 M_WORKSTATION_SN = "Y00101401";
                             }
+
+                           
                             for(int i = 0;i<modList.Count;i++)
                             {
                                 int M_FLAG = 3;
@@ -262,9 +277,11 @@ namespace LineNodes
                                         break;
                                     }
                                     int val = 0;
-                                    plcRW2.ReadDB("D9000", ref val); 
-                                    M_ITEMVALUE = "DCIR值:" + dcirData.电阻值+ ":mΩ|DCIR测试放电电流1:" + dcirData.放电电流1 + ":A|DCIR测试放电电流2:" + dcirData.放电电流2 + ":A|DCIR测试放电时间:" + dcirData.放电时间
-                                     + ":s|DCIR测试静置时间:" + dcirData.静置时间 + ":s|温度:" + val.ToString() + ":℃";
+                                    float valF = (float)val / 10;
+                                    int tempValAddr = 9000 + i * 2;
+                                    string tempAddrStr = "D" + tempValAddr;
+                                    plcRW2.ReadDB(tempAddrStr, ref val); 
+                                    M_ITEMVALUE = "DCIR值:" + dcirData.电阻值+ ":mΩ|DCIR测试放电电流1:" + dcirData.放电电流1 + ":A|DCIR测试放电电流2:" + dcirData.放电电流2 + ":A|温度:" + valF.ToString() + ":℃";
                                     //M_ITEMVALUE = "DCIR值:0:mΩ|DCIR测试放电电流1:" + dataList[index].电流.ToString() + ":A|DCIR测试放电电流2:0:A|DCIR测试放电时间:0:s|DCIR测试静置时间:" + dataList[index].相对时间.ToString()+ ":s|温度:" + val.ToString() + ":℃";
                                 }
                                 else if(this.nodeID == "OPA009")
@@ -292,41 +309,55 @@ namespace LineNodes
                                         modBll.Update(mod);
                                     }
                                 }
-                                //if (rObj.RES == "OK")
-                                //{
-                                //    //Console.WriteLine(this.nodeName + "CONTROL_TYPE = STOP");
-                                //    currentTaskDescribe = M_FLAG + "," + M_WORKSTATION_SN + "," + M_ITEMVALUE + "上传成功";
-                                //}
-                                ////else
-                                ////{
-                                //currentTaskDescribe = rObj.RES + "," + M_FLAG + "," + M_WORKSTATION_SN + "," + M_ITEMVALUE + this.nodeName + rObj.CONTROL_TYPE ;
-                                //Console.WriteLine(M_ITEMVALUE);
-                                //}
-                                
+                               
                             }
         
                         }
+
+                      
                         currentTaskPhase++;
                         this.currentTask.TaskPhase = this.currentTaskPhase;
                         this.ctlTaskBll.Update(this.currentTask);
                         break;
-                    }
+                    //}
                 case 8:
-                    {
-                        // if (this.nodeID == "OPA009" || this.nodeID == "OPB007")
-                        if (this.nodeID == "OPA009")
                         {
-                            if (!TryUnbind(this.rfidUID, ref reStr))
+                            if (this.nodeID == "OPB007")//dcir工位 要等到在读取完取数据库后再发送end指令
                             {
-                                this.currentTaskDescribe = "工装板解绑失败:"+reStr;
-                                break;
+                                if (this.plcRW2.WriteDB("D9100", 2) == false)
+                                {
+                                    break;
+                                }
+                                this.logRecorder.AddDebugLog(this.nodeName, "D9100数据写入2成功！");
+                                //发送停止加工命令
+                                if (!ccdDevAcc.EndDev(this.ccdDevName, ref reStr))
+                                {
+                                    //  logRecorder.AddDebugLog(nodeName, "发送设备停止命令失败");
+                                    this.currentTaskDescribe = "发送设备停止命令失败:" + reStr;
+                                    //  Console.WriteLine(nodeName + "发送设备停止命令失败");
+                                    break;
+                                }
+                                else
+                                {
+                                    logRecorder.AddDebugLog(nodeName, "发送设备停止命令成功");
+                                }
+
                             }
+
+                           
+                            if (this.nodeID == "OPA009")
+                            {
+                                if (!TryUnbind(this.rfidUID, ref reStr))
+                                {
+                                    this.currentTaskDescribe = "工装板解绑失败:" + reStr;
+                                    break;
+                                }
+                            }
+                            currentTaskPhase++;
+                            this.currentTask.TaskPhase = this.currentTaskPhase;
+                            this.ctlTaskBll.Update(this.currentTask);
+                            break;
                         }
-                        currentTaskPhase++;
-                        this.currentTask.TaskPhase = this.currentTaskPhase;
-                        this.ctlTaskBll.Update(this.currentTask);
-                        break;
-                    }
                 case 9:
                     {
                        

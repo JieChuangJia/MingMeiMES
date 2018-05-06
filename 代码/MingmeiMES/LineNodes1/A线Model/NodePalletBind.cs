@@ -274,12 +274,13 @@ namespace LineNodes
                 string modGrade = "";
                
                 List<byte> modGradeBytes = new List<byte>();
-                for (int j = 0; j < 10; j++)
+                for (int j = 0; j < 9; j++)//原来是10，现在改为9，后一个数为数字分档
                 {
                     int indexSt = 15 + j;
                     modGradeBytes.Add((byte)(this.db2Vals[indexSt] & 0xff));
                     modGradeBytes.Add((byte)((this.db2Vals[indexSt] >> 8) & 0xff));
                 }
+                short modGradeNum = this.db2Vals[15 + 9];//分档数字
                 //字节流转换成字符串
                 modGrade = System.Text.ASCIIEncoding.UTF8.GetString(modGradeBytes.ToArray()).Trim(new char[] { '\0', '\r', '\n', '\t', ' ' });
                 //      Console.WriteLine("modGrade:" + modGrade);
@@ -369,6 +370,7 @@ namespace LineNodes
                 mod.curProcessStage = nodeName;
                 mod.asmTime = System.DateTime.Now;
                 mod.tag1 = modGrade.ToString();
+                mod.tag5 = modGradeNum.ToString();//分档数字放到tag5中np_added
                 if (this.db2Vals[0] == 1) //A通道
                 {
                     mod.tag2 = this.db2Vals[9].ToString();

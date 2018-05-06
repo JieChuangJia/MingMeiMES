@@ -2,3 +2,8 @@ E:\NpWork\others\明美\代码\MingmeiMES\MTDBAccess\bin\x86\Release\MTDBAccess.
 E:\NpWork\others\明美\代码\MingmeiMES\MTDBAccess\bin\x86\Release\MTDBAccess.pdb
 E:\NpWork\others\明美\代码\MingmeiMES\MTDBAccess\obj\x86\Release\MTDBAccess.dll
 E:\NpWork\others\明美\代码\MingmeiMES\MTDBAccess\obj\x86\Release\MTDBAccess.pdb
+F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\MTDBAccess\obj\x86\Release\MTDBAccess.csprojResolveAssemblyReference.cache
+F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\MTDBAccess\obj\x86\Release\MTDBAccess.dll
+F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\MTDBAccess\obj\x86\Release\MTDBAccess.pdb
+F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\MTDBAccess\bin\x86\Release\MTDBAccess.dll
+F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\MTDBAccess\bin\x86\Release\MTDBAccess.pdb

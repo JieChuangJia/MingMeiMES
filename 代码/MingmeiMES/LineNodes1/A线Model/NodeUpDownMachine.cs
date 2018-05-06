@@ -393,7 +393,7 @@ namespace LineNodes
         {
             string M_WORKSTATION_SN = "Y00200101";
             RootObject rObj = new RootObject();
-            if(SysCfgModel.IsRequireMesQRCode == true)
+            if(SysCfgModel.MesOfflineMode == false)
             {
                 rObj = WShelper.BarCodeRequest(M_WORKSTATION_SN);
                 if (rObj.RES.Contains("OK"))

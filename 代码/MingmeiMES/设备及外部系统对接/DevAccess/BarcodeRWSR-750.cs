@@ -13,7 +13,7 @@ namespace DevAccess
         private const string STOPREADCMD = "LOFF"; //LOFF cmd
         private const string TAILCODE = "0D";
         private const string ERROR = "ERROR";
-        private const int PROLENTH = 30; // 条码长度
+        private const int PROLENTH = 24; // 条码长度
         public SR_750Protocol()
         {
 
@@ -32,11 +32,11 @@ namespace DevAccess
 
             barcode = DataConvert.AsciiBytesToHex(recBytes).Trim();
 
-            if (barcode.Length < PROLENTH)
-            {
-                reStr = "接收数据协议长度错误！";
-                return false;
-            }
+            //if (barcode.Length < PROLENTH)
+            //{
+            //    reStr = "接收数据协议长度错误！";
+            //    return false;
+            //}
             barcode = barcode.Substring(0, PROLENTH);
             return true;
         }
