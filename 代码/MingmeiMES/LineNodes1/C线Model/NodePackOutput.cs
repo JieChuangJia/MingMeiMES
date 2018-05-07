@@ -32,6 +32,7 @@ namespace LineNodes
             {
                 case 1:
                     {
+                        currentTaskDescribe = "读取RFID！";
                         if (!RfidReadC())
                         {
                             break;
@@ -57,6 +58,23 @@ namespace LineNodes
                     }
                 case 2:
                     {
+                        currentTaskDescribe = "数据上报MES并解绑！";
+                        int uploadMesStatus = UploadMesData(this.rfidUID, ref reStr);
+                        if (uploadMesStatus == 0)
+                        {
+                            this.logRecorder.AddDebugLog(this.nodeName, "上传MES数据成功！" + reStr);
+                        }
+                        else if (uploadMesStatus == 1)
+                        {
+                            this.logRecorder.AddDebugLog(this.nodeName, "上传MES数据成功！,返回NG：" + reStr);
+                        }
+                        else
+                        {
+                            Console.WriteLine(this.nodeName + "上传MES数据失败！" + reStr);
+                            break;
+
+                        }
+
                         db1ValsToSnd[1] = 2;//
                         if (!ProductTraceRecord())
                         {
@@ -68,21 +86,7 @@ namespace LineNodes
                         }
                         db1ValsToSnd[1] = 3;
                      
-                        int uploadMesStatus = UploadMesData(this.rfidUID, ref reStr);
-                        if (uploadMesStatus == 0)
-                        {
-                            this.logRecorder.AddDebugLog(this.nodeName, "上传MES数据成功！" + reStr);
-                        }
-                        else if(uploadMesStatus ==1)
-                        {
-                             this.logRecorder.AddDebugLog(this.nodeName, "上传MES数据成功！,返回NG：" + reStr);
-                        }
-                        else
-                        {
-                            Console.WriteLine(this.nodeName + "上传MES数据失败！" + reStr);
-                            break;
-                            
-                        }
+                     
                         currentTaskPhase++;
                         this.currentTask.TaskPhase = this.currentTaskPhase;
                         this.ctlTaskBll.Update(this.currentTask);
@@ -120,11 +124,11 @@ namespace LineNodes
             {
                 return 2;
             }
-            string barcode = modelList[0].batModuleID;
+            string barcode = modelList[0].batPackID;
             string strJson = "";
 
             rObj = WShelper.DevDataUpload(1, M_DEVICE_SN, M_WORKSTATION_SN, barcode, M_UNION_SN, M_CONTAINER_SN, M_LEVEL, M_ITEMVALUE, ref strJson);
-            reStr = rObj.RES;
+            reStr = rObj.RES+"：上报模组调组条码：" +barcode;
             if (rObj.RES.ToUpper().Contains("OK"))
             {
                 
