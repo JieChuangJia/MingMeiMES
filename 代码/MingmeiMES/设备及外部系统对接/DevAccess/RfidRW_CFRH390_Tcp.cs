@@ -253,6 +253,32 @@ namespace DevAccess
             anticollCmd.Add(msbCrc);
             return anticollCmd;
         }
+        /// <summary>
+        /// 打开磁场
+        /// </summary>
+        /// <returns></returns>
+        private List<byte> GetOpenMagnetic()
+        {
+            List<byte> openMagneticCmd = new List<byte>();
+
+            byte len = 0x05;
+            byte commAdr = constReaderID;
+            byte cmd = 0x00;
+            byte state = 0x02;
+          
+            byte lsbCrc = 0;
+            byte msbCrc = 0;
+            openMagneticCmd.Add(len);
+            openMagneticCmd.Add(commAdr);
+            openMagneticCmd.Add(cmd);
+            openMagneticCmd.Add(state);
+           
+            CalcuCRC(openMagneticCmd, ref lsbCrc, ref msbCrc);
+
+            openMagneticCmd.Add(lsbCrc);
+            openMagneticCmd.Add(msbCrc);
+            return openMagneticCmd; 
+        }
         private List<byte> GetRequestCmd()
         {
             List<byte> crcSource = new List<byte>();
@@ -383,6 +409,16 @@ namespace DevAccess
                     if (reworkNum >= MAXREWORKNUM)
                     {
                         OnLog("写入请求读卡反馈数据错误！");
+                        List<byte> openMagnetic = GetOpenMagnetic();
+                        bool sendopenMagneticStatus = this.mySocket.Send(openMagnetic.ToArray(), ref restr);//打开磁场，这里不做校验了直接下发
+                        if(sendopenMagneticStatus == true)
+                        {
+                            OnLog("发送打开磁场指令成功！");
+                        }
+                        else
+                        {
+                            OnLog("发送打开磁场指令失败！");
+                        }
                         return false;
                     }
                     
