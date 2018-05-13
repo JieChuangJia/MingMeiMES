@@ -63,6 +63,7 @@ namespace CommonPL
             string dbSrc = ConfigurationManager.AppSettings["DBSource"];
             string mtdbSrc = ConfigurationManager.AppSettings["MTDBConn"];
             string dcirdbSrc = ConfigurationManager.AppSettings["DCIRDBConn"];
+            string fxjSrc = ConfigurationManager.AppSettings["FXJDBConn"];
           
             //CtlDBAccess.DBUtility.PubConstant.ConnectionString = string.Format(@"{0}Initial Catalog=ACEcams;User ID=sa;Password=123456;", dbSrc);
             string dbConn1 = string.Format(@"{0}Initial Catalog=MingmeiMES;User ID=sa;Password=123456;", dbSrc);
@@ -70,6 +71,10 @@ namespace CommonPL
 
             MTDBAccess.PubConstant.ConnectionString = @"Provider = Microsoft.ACE.OLEDB.12.0;" + mtdbSrc + ";Persist Security Info = False;";
             DCIRDBAccess.PubConstant.ConnectionString = @"Provider = Microsoft.ACE.OLEDB.12.0;" + dcirdbSrc + ";Persist Security Info = False;";
+
+            string fxjDbConn = string.Format(@"{0}Initial Catalog=HL_JBF;User ID=sa;Password=123456;", fxjSrc);
+
+            FXJDatabase.DbHelperSQL.SetConnstr(fxjDbConn);
             // string dbSrcFenxuan = ConfigurationManager.AppSettings["FenxuanDBSource"];
            // CtlDBAccess.DBUtility.PubConstant.ConnectionString2 = string.Format(@"{0}Initial Catalog=HL_LWN;User ID=sa;Password=123456;", dbSrcFenxuan);
           

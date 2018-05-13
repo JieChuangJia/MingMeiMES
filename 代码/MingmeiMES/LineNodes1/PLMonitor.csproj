@@ -148,6 +148,10 @@
       <Project>{7031e95a-cbb5-44ae-aa9a-80211309981f}</Project>
       <Name>DBAccess</Name>
     </ProjectReference>
+    <ProjectReference Include="..\FXJDatabase\FXJDatabase.csproj">
+      <Project>{1d6a8620-8efc-40ed-9412-ae9f6785cff1}</Project>
+      <Name>FXJDatabase</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ModuleAttachInterface\ModuleCrossPnP.csproj">
       <Project>{8ebcda91-8a16-46fa-84bd-784982f9eac8}</Project>
       <Name>ModuleCrossPnP</Name>

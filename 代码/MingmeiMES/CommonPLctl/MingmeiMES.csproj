@@ -177,6 +177,10 @@
       <Project>{7031e95a-cbb5-44ae-aa9a-80211309981f}</Project>
       <Name>DBAccess</Name>
     </ProjectReference>
+    <ProjectReference Include="..\FXJDatabase\FXJDatabase.csproj">
+      <Project>{1d6a8620-8efc-40ed-9412-ae9f6785cff1}</Project>
+      <Name>FXJDatabase</Name>
+    </ProjectReference>
     <ProjectReference Include="..\LicenceManager\LicenceManager.csproj">
       <Project>{785aa2aa-cc7e-408b-b61c-2dfb906d1797}</Project>
       <Name>LicenceManager</Name>

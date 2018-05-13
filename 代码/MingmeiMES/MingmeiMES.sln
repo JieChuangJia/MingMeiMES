@@ -55,6 +55,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevAccess", "设备及外�
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevInterface", "设备及外部系统对接\DevInterface\DevInterface.csproj", "{AE429508-4CB7-499E-88F0-C939496E7BEA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FXJDatabase", "FXJDatabase\FXJDatabase.csproj", "{1D6A8620-8EFC-40ED-9412-AE9F6785CFF1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -333,6 +335,18 @@ Global
 		{AE429508-4CB7-499E-88F0-C939496E7BEA}.Release|Mixed Platforms.Build.0 = Release|x86
 		{AE429508-4CB7-499E-88F0-C939496E7BEA}.Release|x64.ActiveCfg = Release|Any CPU
 		{AE429508-4CB7-499E-88F0-C939496E7BEA}.Release|x86.ActiveCfg = Release|x86
+		{1D6A8620-8EFC-40ED-9412-AE9F6785CFF1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D6A8620-8EFC-40ED-9412-AE9F6785CFF1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D6A8620-8EFC-40ED-9412-AE9F6785CFF1}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{1D6A8620-8EFC-40ED-9412-AE9F6785CFF1}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{1D6A8620-8EFC-40ED-9412-AE9F6785CFF1}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{1D6A8620-8EFC-40ED-9412-AE9F6785CFF1}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{1D6A8620-8EFC-40ED-9412-AE9F6785CFF1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D6A8620-8EFC-40ED-9412-AE9F6785CFF1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1D6A8620-8EFC-40ED-9412-AE9F6785CFF1}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{1D6A8620-8EFC-40ED-9412-AE9F6785CFF1}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{1D6A8620-8EFC-40ED-9412-AE9F6785CFF1}.Release|x64.ActiveCfg = Release|Any CPU
+		{1D6A8620-8EFC-40ED-9412-AE9F6785CFF1}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

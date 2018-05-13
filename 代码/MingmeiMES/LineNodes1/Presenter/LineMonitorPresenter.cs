@@ -51,10 +51,14 @@ namespace LineNodes
         private ThreadBaseModel mainThread = null;
         private ThreadBaseModel historyDataClearThread = null; //历史数据清理线程，最多保持15天记录
         private ThreadBaseModel devWarnMonitorThread = null;
+        private ThreadBaseModel fxjDataUploadThread = null;//分选机数据上报MES线程
+
       //  private ThreadBaseModel printerLoopThread = null; //外观检测工位，贴标队列处理线程
       
         private SysLogBll logBll = null;
         private ProduceRecordBll produceRecordBll = null;
+        FXJDatabase.tb_CheckDataonlineBLL bllFxjDataUploadToMes = null;
+
         private ProductSizeCfgBll productCfgBll = null;
 
         private DateTime lastStTime = System.DateTime.Now;
@@ -72,6 +76,7 @@ namespace LineNodes
            // mesDA = new MesDA();
             logBll = new SysLogBll();
             produceRecordBll = new ProduceRecordBll();
+            this.bllFxjDataUploadToMes = new FXJDatabase.tb_CheckDataonlineBLL();
         }
         public List<CtlDevBaseModel> GetDevModelList()
         {
@@ -242,7 +247,26 @@ namespace LineNodes
                 {
                     view.InitLineMonitor(i+1, lineList[i]);
                 }
-               
+
+
+                this.fxjDataUploadThread = new ThreadBaseModel(2, "分选机上报MES线程");
+                if(SysCfgModel.SimMode == true)
+                {
+                    this.fxjDataUploadThread.LoopInterval = 1000 * 5;//测试5秒
+                }
+                else
+                {
+                    this.fxjDataUploadThread.LoopInterval = 1000 * 60 * 5;//5分钟上报一次
+                    //this.fxjDataUploadThread.LoopInterval = 1000  * 10;//5分钟上报一次
+                }
+          
+             
+                this.fxjDataUploadThread.SetThreadRoutine(FXJDataUploadToMesHandler);
+                if (!this.fxjDataUploadThread.TaskInit(ref reStr))
+                {
+                    logRecorder.AddLog(new LogModel(objectName,"分选机线程初始化失败："+ reStr, EnumLoglevel.错误));
+
+                }
                 return true;
             }
             catch (Exception ex)
@@ -274,6 +298,7 @@ namespace LineNodes
            
             this.mainThread.TaskStart(ref reStr);
             this.historyDataClearThread.TaskStart(ref reStr);
+            this.fxjDataUploadThread.TaskStart(ref reStr);
             //this.devWarnMonitorThread.TaskStart(ref reStr);
             lastStTime = System.DateTime.Now;
             Thread.Sleep(200);
@@ -303,6 +328,7 @@ namespace LineNodes
             this.mainThread.TaskPause(ref reStr);
             this.historyDataClearThread.TaskPause(ref reStr);
             this.devWarnMonitorThread.TaskPause(ref reStr);
+            this.fxjDataUploadThread.TaskPause(ref reStr);
             return true;
         }
         public void ExitSystem()
@@ -318,6 +344,7 @@ namespace LineNodes
           // this.mesUploadThread.TaskExit(ref reStr);
             this.mainThread.TaskExit(ref reStr);
             this.historyDataClearThread.TaskExit(ref reStr);
+            this.fxjDataUploadThread.TaskExit(ref reStr);
            // this.devWarnMonitorThread.TaskExit(ref reStr);
           //  this.printerLoopThread.TaskExit(ref reStr);
         }
@@ -679,6 +706,81 @@ namespace LineNodes
                Console.WriteLine(ex.ToString());
             }
            
+        }
+        private void FXJDataUploadToMesHandler()
+        {
+            try
+            {
+                List<FXJDatabase.tb_CheckDataonlineModel> dataList = bllFxjDataUploadToMes.GetDataToUpload(1000);//每个周期最多取出来1000条数据
+                if (dataList == null || dataList.Count == 0)
+                {
+                    return;
+                }
+
+                string uploadToMesData = "";
+                string restr = "";
+                for (int i = 0; i < dataList.Count; i++)
+                {
+                    uploadToMesData = "cell电压:" + dataList[i].fltVol + ":V|cell阻值:" + dataList[i].fltResistance + ":mΩ";
+                    int uploadStatus = 0;
+                    if( dataList[i].BarCode!="00000" &&dataList[i].BarCode!="")
+                    {
+                        uploadStatus = UploadToMes(3, dataList[i].BarCode, "Y00100110", uploadToMesData, ref restr);
+                    }
+                    else
+                    {
+                        uploadStatus = UploadToMes(3,"", "Y00100110", uploadToMesData, ref restr);
+                    }
+                  
+                    if (uploadStatus == 0)
+                    {
+                        this.logRecorder.AddDebugLog("分选机电芯数据上传", "分选机电芯数据上传成功：" + uploadToMesData);//测试时使用日志,数据量大
+                     
+                        dataList[i].tf_Tag = 1;
+                        bllFxjDataUploadToMes.Update(dataList[i]);
+                    }
+                    else if (uploadStatus == 1)
+                    {
+                        this.logRecorder.AddDebugLog("分选机电芯数据上传", "分选机电芯数据上传成功，但返回NG：" + uploadToMesData + restr);
+                        dataList[i].tf_Tag = 1;
+                        bllFxjDataUploadToMes.Update(dataList[i]);
+                    }
+                    else
+                    {
+                        this.logRecorder.AddDebugLog("分选机电芯数据上传", "分选机电芯数据上传失败：" + uploadToMesData + restr);
+                    }
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                logRecorder.AddDebugLog(objectName, ex.ToString());
+
+            }
+
+
+        }
+
+        private int UploadToMes(int flag, string barcode, string workStationNum,string itemValue, ref string reStr)
+        {
+            RootObject rObj = WShelper.DevDataUpload(flag, "", workStationNum, barcode,"", "", "", itemValue, ref reStr);
+            reStr = rObj.RES;
+            if (rObj.RES.ToUpper().Contains("OK"))
+            {
+                return 0;
+            }
+            else if (rObj.RES.ToUpper().Contains("NG"))
+            {
+                return 1;
+            }
+            else
+            {
+                Console.WriteLine("上传MES二维码信息错误：" + rObj.RES);
+
+                return 2;
+            }
+
         }
         
         private void ClearLogLoop()
