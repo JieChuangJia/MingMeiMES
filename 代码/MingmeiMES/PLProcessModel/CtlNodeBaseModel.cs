@@ -12,6 +12,7 @@ using MesDBAccess.BLL;
 using DevInterface;
 using DevAccess;
 using LogInterface;
+using System.IO;
 
 namespace PLProcessModel
 {
@@ -2507,6 +2508,60 @@ namespace PLProcessModel
             blNum = base31Code[blHigh] * 31 + base31Code[blLow];
 
             return true;
+
+        }
+
+        protected void WriteTxtLog(string logFileName, string logStr)
+        {
+            try
+            {
+                string fileDir = AppDomain.CurrentDomain.BaseDirectory + @"\data\TxtLog\";
+                if (Directory.Exists(fileDir) == false)
+                {
+                    Directory.CreateDirectory(fileDir);
+                }
+                DeleteHisData(10);//保留10天数据
+                string filepath = fileDir + DateTime.Now.ToString("yyyy-MM-dd-") + logFileName + ".txt";
+                FileStream fs = null;
+                if (File.Exists(filepath) == false)
+                {
+                    fs = File.Create(filepath);
+                }
+                else
+                {
+                    fs = File.Open(filepath, FileMode.Open, FileAccess.ReadWrite);
+                }
+
+
+                StreamWriter sw = new StreamWriter(fs);
+                sw.WriteLine(logStr);//开始写入值
+                sw.Close();
+                fs.Close();
+            }
+            catch
+            {
+
+            }
+
+        }
+
+        private void DeleteHisData(int days)
+        {
+            string strFolderPath = AppDomain.CurrentDomain.BaseDirectory + @"\data\TxtLog";
+            DirectoryInfo dyInfo = new DirectoryInfo(strFolderPath);
+            if (Directory.Exists(strFolderPath) == false)
+            {
+                return;
+            }
+            //获取文件夹下所有的文件
+            foreach (FileInfo feInfo in dyInfo.GetFiles())
+            {
+                //判断文件日期是否小于今天，是则删除
+                if ((DateTime.Today - feInfo.CreationTime).TotalDays > days)
+                {
+                    feInfo.Delete();
+                }
+            }
 
         }
         #endregion

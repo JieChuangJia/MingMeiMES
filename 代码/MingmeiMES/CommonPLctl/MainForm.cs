@@ -72,7 +72,7 @@ namespace CommonPL
             MTDBAccess.PubConstant.ConnectionString = @"Provider = Microsoft.ACE.OLEDB.12.0;" + mtdbSrc + ";Persist Security Info = False;";
             DCIRDBAccess.PubConstant.ConnectionString = @"Provider = Microsoft.ACE.OLEDB.12.0;" + dcirdbSrc + ";Persist Security Info = False;";
 
-            string fxjDbConn = string.Format(@"{0}Initial Catalog=HL_JBF;User ID=sa;Password=sa;", fxjSrc);
+            string fxjDbConn = string.Format(@"{0}Initial Catalog=HL_JBF;User ID=sa;Password=123456;", fxjSrc);
 
             FXJDatabase.DbHelperSQL.SetConnstr(fxjDbConn);
             // string dbSrcFenxuan = ConfigurationManager.AppSettings["FenxuanDBSource"];

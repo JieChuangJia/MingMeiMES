@@ -269,6 +269,7 @@ namespace LineNodes
                             Console.WriteLine(rObj.RES);
                             Console.WriteLine(M_ITEMVALUE);
                             logRecorder.AddDebugLog(nodeName, "上传mes数据:" + M_ITEMVALUE);
+                            this.WriteTxtLog(modList[i].batModuleID,"上传mes数据:" + M_ITEMVALUE+"返回结果:"+rObj.RES);
                             logRecorder.AddDebugLog(nodeName, string.Format("上传MES，返回结果:{0}",rObj.RES));
                         }
                         if (isReceive == false)

@@ -257,7 +257,7 @@ namespace LineNodes
                 else
                 {
                     this.fxjDataUploadThread.LoopInterval = 1000 * 60 * 5;//5分钟上报一次
-                    //this.fxjDataUploadThread.LoopInterval = 1000  * 10;//5分钟上报一次
+                    //this.fxjDataUploadThread.LoopInterval = 1000 * 10;//5分钟上报一次
                 }
           
              
@@ -721,15 +721,16 @@ namespace LineNodes
                 string restr = "";
                 for (int i = 0; i < dataList.Count; i++)
                 {
-                    uploadToMesData = "cell电压:" + dataList[i].fltVol + ":V|cell阻值:" + dataList[i].fltResistance + ":mΩ";
+                    float vol = (float)dataList[i].fltVol / 1000;
+                    uploadToMesData = "cell电压:" + vol + ":V|cell内阻:" + dataList[i].fltResistance + ":mΩ";
                     int uploadStatus = 0;
-                    if( dataList[i].BarCode!="00000" &&dataList[i].BarCode!="")
+                    if( dataList[i].BarCode.Trim()!="00000" &&dataList[i].BarCode.Trim()!="")
                     {
                         uploadStatus = UploadToMes(3, dataList[i].BarCode, "Y00100110", uploadToMesData, ref restr);
                     }
                     else
                     {
-                        uploadStatus = UploadToMes(3,"", "Y00100110", uploadToMesData, ref restr);
+                        uploadStatus = UploadToMesProcessData("Y00100110", uploadToMesData, ref restr);
                     }
                   
                     if (uploadStatus == 0)
@@ -761,11 +762,30 @@ namespace LineNodes
 
 
         }
+        private int UploadToMesProcessData(string workStationNum,string itemValue,ref string restr)
+        {
+            RootObject rObj = WShelper.ProcParamUpload("L001","",workStationNum,"","","",itemValue,ref restr);
 
+            restr = "上传过程数据："+rObj.RES;
+            if (rObj.RES.ToUpper().Contains("OK"))
+            {
+                return 0;
+            }
+            else if (rObj.RES.ToUpper().Contains("NG"))
+            {
+                return 1;
+            }
+            else
+            {
+                Console.WriteLine("上传MES二维码过程信息错误：" + rObj.RES);
+
+                return 2;
+            }
+        }
         private int UploadToMes(int flag, string barcode, string workStationNum,string itemValue, ref string reStr)
         {
             RootObject rObj = WShelper.DevDataUpload(flag, "", workStationNum, barcode,"", "", "", itemValue, ref reStr);
-            reStr = rObj.RES;
+            reStr ="上传条码：" +barcode+"，MES返回："+ rObj.RES;
             if (rObj.RES.ToUpper().Contains("OK"))
             {
                 return 0;
