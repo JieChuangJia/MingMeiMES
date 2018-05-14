@@ -697,9 +697,9 @@ namespace LineNodes
                 if (i > dtPull.Rows.Count-1)
                 {
                     pullIndex1++;
-                    strPullSum = strPullSum + string.Format("{0}{1}:{2}|{3}{4}:{5}|", strPullSwitch1, pullIndex1, 0, strPullRe1,pullIndex1, 0);
+                    strPullSum = strPullSum + string.Format("{0}{1}:{2}:|{3}{4}:{5}:|", strPullSwitch1, pullIndex1, 0, strPullRe1,pullIndex1, 0);
                     pullIndex2++;
-                    strPullSum = strPullSum + string.Format("{0}{1}:{2}|{3}{4}:{5}|", strPullSwitch2, pullIndex2, 0, strPullRe2, pullIndex2, 0);
+                    strPullSum = strPullSum + string.Format("{0}{1}:{2}:|{3}{4}:{5}:|", strPullSwitch2, pullIndex2, 0, strPullRe2, pullIndex2, 0);
                 }
                 else
                 {
@@ -716,7 +716,7 @@ namespace LineNodes
                         {
                             pullRe = 1;
                         }
-                        strPullSum = strPullSum + string.Format("{0}{1}:{2}|{3}{4}:{5}|", strPullSwitch1, pullIndex1, pullSwitch, strPullRe1, pullIndex1, pullRe);
+                        strPullSum = strPullSum + string.Format("{0}{1}:{2}:|{3}{4}:{5}:|", strPullSwitch1, pullIndex1, pullSwitch, strPullRe1, pullIndex1, pullRe);
                     }
                     else
                     {
@@ -731,7 +731,7 @@ namespace LineNodes
                         {
                             pullRe = 1;
                         }
-                        strPullSum = strPullSum + string.Format("{0}{1}:{2}|{3}{4}:{5}|", strPullSwitch2, pullIndex2, pullSwitch, strPullRe2, pullIndex2, pullRe);
+                        strPullSum = strPullSum + string.Format("{0}{1}:{2}:|{3}{4}:{5}:|", strPullSwitch2, pullIndex2, pullSwitch, strPullRe2, pullIndex2, pullRe);
                     }
                   
                 }
