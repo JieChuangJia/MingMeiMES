@@ -1,0 +1,3 @@
+Timestamp,Event,Traceability - carrier ID,Traceability - device ID,Machine config - unique machine id,Machine config - name of the operator,Machine config - current bond program,Traceability - port number,Traceability - assembly number,Traceability - wire number,Traceability - bond number,Traceability - reference system,Traceability - integrated pull test - values available,Traceability - integrated pull test - passed,Traceability - integrated pull test - threshold
+2018-05-02T16:47:27,Bond finished,,A4080000_04GME38B15072184W0000011,BJ980-0002,admin,ceshi0415,1,1,1,1,3,FALSE,FALSE,0
+2018-05-02T16:47:28,Bond finished,,A4080000_04GME38B15072184W0000011,BJ980-0002,admin,ceshi0415,1,1,1,2,1,FALSE,FALSE,0
