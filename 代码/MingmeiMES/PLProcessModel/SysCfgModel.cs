@@ -40,7 +40,7 @@ namespace PLProcessModel
         public static string[] checkStations = null;
         public static DateTime loginTime1 = DateTime.Parse("08:00:00");
         public static DateTime loginTime2 = DateTime.Parse("20:00:00");
-        public static int batteryNumInMod = 500; // 模组里电芯数量上限
+        public static int batteryNumInMod = 361; // 模组里电芯数量上限
        // public static bool MesInputCheck { get; set; }
         public static bool PreStationCheck { get; set; }
 
