@@ -11,5 +11,7 @@ namespace PLProcessModel
         public int WarnStat { get; set; }
         public string WarnInfo { get; set; }
         public DateTime RecordTime { get; set; }
+       
+        public string MesWarnID { get; set; } //MES中定义的报警码
     }
 }

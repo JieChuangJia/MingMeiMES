@@ -200,3 +200,5 @@ F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\LineNodes1\obj\x86\Re
 F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\LineNodes1\obj\x86\Release\PLMonitor.pdb
 F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\LineNodes1\bin\Release\FXJDatabase.dll
 F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\LineNodes1\bin\Release\FXJDatabase.pdb
+E:\workspace\项目\明美项目\Git_mingmei\MingMeiMES\代码\MingmeiMES\LineNodes1\bin\Release\FXJDatabase.dll
+E:\workspace\项目\明美项目\Git_mingmei\MingMeiMES\代码\MingmeiMES\LineNodes1\bin\Release\FXJDatabase.pdb

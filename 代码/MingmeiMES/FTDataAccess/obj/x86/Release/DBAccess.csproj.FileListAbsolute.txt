@@ -24,3 +24,4 @@ F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\FTDataAccess\bin\Rele
 F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\FTDataAccess\bin\Release\DBAccess.pdb
 F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\FTDataAccess\obj\x86\Release\DBAccess.dll
 F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\FTDataAccess\obj\x86\Release\DBAccess.pdb
+E:\workspace\项目\明美项目\Git_mingmei\MingMeiMES\代码\MingmeiMES\FTDataAccess\obj\x86\Release\DBAccess.csprojResolveAssemblyReference.cache

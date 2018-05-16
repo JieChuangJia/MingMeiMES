@@ -287,3 +287,5 @@ F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\CommonPLctl\obj\x86\R
 F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\CommonPLctl\obj\x86\Release\明美MES系统.pdb
 F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\CommonPLctl\bin\Release\FXJDatabase.dll
 F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\CommonPLctl\bin\Release\FXJDatabase.pdb
+E:\workspace\项目\明美项目\Git_mingmei\MingMeiMES\代码\MingmeiMES\CommonPLctl\bin\Release\FXJDatabase.dll
+E:\workspace\项目\明美项目\Git_mingmei\MingMeiMES\代码\MingmeiMES\CommonPLctl\bin\Release\FXJDatabase.pdb

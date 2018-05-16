@@ -20,8 +20,10 @@ namespace PLProcessModel
         protected string nodeID = "";
         protected int plcID = 0;
         protected string dbStartAddr = ""; //db开始地址
+
         protected int dbBlockNum = 12;
         protected short[] dbVals = null;
+        protected string mesID = "";
         public IDictionary<string, DevWarnItemModel> devWarnList = null;
         public IDictionary<string, DevCfgItemModel> devCfgList = null;
         protected DevWarnRecordBll devWarnrecordBll = null;
@@ -30,6 +32,7 @@ namespace PLProcessModel
         public string DevName { get { return devName; }}
         public string NodeID { get { return nodeID;} }
         public int PlcID { get { return plcID; } set { plcID = value; } }
+        public string MesID { get { return mesID; } }
         public CtlDevBaseModel()
         {
             devWarnList = new Dictionary<string,DevWarnItemModel>();
@@ -43,6 +46,10 @@ namespace PLProcessModel
             //throw new NotImplementedException();
             try
             {
+                if (xe.Attribute("mesID") != null)
+                {
+                    mesID = xe.Attribute("mesID").Value.ToString();
+                }
                 this.devID=xe.Attribute("id").Value.ToString();
                 this.devName = xe.Attribute("devName").Value.ToString();
                 this.plcID = int.Parse(xe.Attribute("plcID").Value.ToString());
@@ -68,7 +75,10 @@ namespace PLProcessModel
                     {
                         warnItem.WarnInfo = strItemArray[1];
                     }
-                
+                    if(strItemArray.Length>2)
+                    {
+                        warnItem.MesWarnID = strItemArray[2];
+                    }
                     warnItem.WarnStat = 0; //初始化状态
                     warnItem.RecordTime = System.DateTime.Now;
                     this.devWarnList[warnItem.PlcAddr] = warnItem;
@@ -158,6 +168,7 @@ namespace PLProcessModel
                     devWarnrecordBll.Add(warnRecord);
                     Console.WriteLine(this.devName+":" +  warnRecord.warnInfo+"-》添加报警记录成功！");
                     warnItem.WarnStat = val;
+
                 }
             }
             return true;

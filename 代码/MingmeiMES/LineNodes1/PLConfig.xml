@@ -479,7 +479,7 @@
 
           </RelayCfg>
         </Dev>
-        <Dev id="DEVZ003" className="PLProcessModel.CtlDevBaseModel" devName="A线支架上下料机" plcID="9" addrStart="W20" blockNum="12">
+        <Dev id="DEVZ003" className="PLProcessModel.CtlDevBaseModel" devName="A线支架上下料机" mesID="Y00100101" plcID="9" addrStart="W20" blockNum="12">
           <ParamCfg>
             D8000,UINT:打标伺服自动速比;
             D8002,UINT:打标伺服手动速比;
@@ -499,11 +499,11 @@
             D8022,UINT:机器人命令结束延时;
           </ParamCfg>
           <RelayCfg>
-            W20.00:初始化超时报警;
-            W20.01:设备未初始化报警;
-            W20.02:设备手自动开关未处于自动报警;
-            W20.03:设备测试按键按下报警;
-            W20.04:急停按下报警;
+            W20.00:初始化超时报警:201AALM000;
+            W20.01:设备未初始化报警:201AALM001;
+            W20.02:设备手自动开关未处于自动报警:201AALM002;
+            W20.03:设备测试按键按下报警:201AALM003;
+            W20.04:急停按下报警:201AALM004;
             W20.05:下前顶升缸上顶报警;
             W20.06:下前顶升缸下降报警;
             W20.07:下前升降缸上升报警;
