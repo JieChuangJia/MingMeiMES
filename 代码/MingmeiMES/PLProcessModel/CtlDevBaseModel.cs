@@ -49,7 +49,7 @@ namespace PLProcessModel
             {
                 if (xe.Attribute("mesID") != null)
                 {
-                    mesID = xe.Attribute("mesID").Value.ToString();
+                    mesID = xe.Attribute("mesID").Value.ToString().Trim(new char[] { '\0', '\r', '\n', '\t', ' ' });
                 }
                 this.devID=xe.Attribute("id").Value.ToString();
                 this.devName = xe.Attribute("devName").Value.ToString();
@@ -66,7 +66,7 @@ namespace PLProcessModel
                         continue;
                     }
                     string[] strItemArray = strItem.Split(new string[] { ":" }, StringSplitOptions.RemoveEmptyEntries);
-                    if(strItemArray == null || strItemArray.Count()<1)
+                    if(strItemArray == null || strItemArray.Count()<3)
                     {
                         continue;
                     }
@@ -78,7 +78,7 @@ namespace PLProcessModel
                     }
                     if(strItemArray.Length>2)
                     {
-                        warnItem.MesWarnID = strItemArray[2];
+                        warnItem.MesWarnID = strItemArray[2].Trim(new char[] { '\0', '\r', '\n', '\t', ' ' });
                     }
                     warnItem.WarnStat = 0; //初始化状态
                     warnItem.RecordTime = System.DateTime.Now;
