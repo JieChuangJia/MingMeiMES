@@ -28,7 +28,7 @@ namespace PLProcessModel
         public static string mesLineID = "L10";
         public static bool PlcCommSynMode = true;//同步通信模式
         public static bool SimMode = false;//仿真模式
-        public static bool DebugMode = false; //调试模式，所有工位必检
+    //    public static bool DebugMode = false; //调试模式，所有工位必检
         public static bool ManualMode1 = false;//1号房人工检测模式
         public static bool ManualMode3 = false;//1号房人工检测模式
         public static bool MesAutodownEnabled = false; //投产位是否调用MES投产
@@ -88,17 +88,17 @@ namespace PLProcessModel
                 sysParamXE.Value = strJsonParam;
 
                 XElement runModeXE = root.Element("sysSet").Element("RunMode");
-                if(runModeXE.Attribute("debugMode") != null)
-                {
-                    if(DebugMode)
-                    {
-                        runModeXE.Attribute("debugMode").Value = "True";
-                    }
-                    else
-                    {
-                        runModeXE.Attribute("debugMode").Value = "False";
-                    }
-                }  
+                //if(runModeXE.Attribute("debugMode") != null)
+                //{
+                //    if(DebugMode)
+                //    {
+                //        runModeXE.Attribute("debugMode").Value = "True";
+                //    }
+                //    else
+                //    {
+                //        runModeXE.Attribute("debugMode").Value = "False";
+                //    }
+                //}  
                 if(runModeXE.Attribute("manualMode1") != null)
                 {
                     if(ManualMode1)
@@ -208,18 +208,18 @@ namespace PLProcessModel
                 {
                     SimMode = false;
                 }
-                if(runModeXE.Attribute("debugMode") != null)
-                {
-                    string debugModeStr = runModeXE.Attribute("debugMode").Value.ToString().ToUpper();
-                    if(debugModeStr == "TRUE")
-                    {
-                        DebugMode = true;
-                    }
-                    else
-                    {
-                        DebugMode = false;
-                    }
-                }
+                //if(runModeXE.Attribute("debugMode") != null)
+                //{
+                //    string debugModeStr = runModeXE.Attribute("debugMode").Value.ToString().ToUpper();
+                //    if(debugModeStr == "TRUE")
+                //    {
+                //        DebugMode = true;
+                //    }
+                //    else
+                //    {
+                //        DebugMode = false;
+                //    }
+                //}
                 if(runModeXE.Attribute("manualMode1") != null)
                 {
                     string manualModeStr = runModeXE.Attribute("manualMode1").Value.ToString().ToUpper();
