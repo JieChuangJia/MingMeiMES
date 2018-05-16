@@ -149,6 +149,10 @@ namespace LineNodes
 
                 }
                 PLNodesBll plNodeBll = new PLNodesBll();
+                foreach(CtlDevBaseModel dev in this.devList)
+                {
+                    dev.LogRecorder = logRecorder;
+                }
                 foreach (CtlNodeBaseModel node in this.nodeList)
                 {
                     this.nodeStatusList.Add(node.CurrentStat);
@@ -299,7 +303,7 @@ namespace LineNodes
             this.mainThread.TaskStart(ref reStr);
             this.historyDataClearThread.TaskStart(ref reStr);
             this.fxjDataUploadThread.TaskStart(ref reStr);
-            //this.devWarnMonitorThread.TaskStart(ref reStr);
+            this.devWarnMonitorThread.TaskStart(ref reStr);
             lastStTime = System.DateTime.Now;
             Thread.Sleep(200);
           
@@ -345,7 +349,7 @@ namespace LineNodes
             this.mainThread.TaskExit(ref reStr);
             this.historyDataClearThread.TaskExit(ref reStr);
             this.fxjDataUploadThread.TaskExit(ref reStr);
-           // this.devWarnMonitorThread.TaskExit(ref reStr);
+            this.devWarnMonitorThread.TaskExit(ref reStr);
           //  this.printerLoopThread.TaskExit(ref reStr);
         }
        

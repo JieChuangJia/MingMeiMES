@@ -479,7 +479,7 @@
 
           </RelayCfg>
         </Dev>
-        <Dev id="DEVZ003" className="PLProcessModel.CtlDevBaseModel" devName="A线支架上下料机" plcID="9" addrStart="W20" blockNum="12">
+        <Dev id="DEVZ003" className="PLProcessModel.CtlDevBaseModel" devName="A线支架上下料机" mesID="Y00100101" plcID="9" addrStart="W20" blockNum="12">
           <ParamCfg>
             D8000,UINT:打标伺服自动速比;
             D8002,UINT:打标伺服手动速比;

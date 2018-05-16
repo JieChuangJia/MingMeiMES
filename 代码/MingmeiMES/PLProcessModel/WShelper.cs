@@ -321,8 +321,6 @@ namespace PLProcessModel
         }
         #endregion
 
-        
-
         /// <summary>
         /// 设备请求条码
         /// </summary>
@@ -416,6 +414,33 @@ namespace PLProcessModel
             tail.M_ITEMVALUE = M_ITEMVALUE;
             CList.Add(tail);
             //上传参数
+            strJson = WShelper.ReturnJsonData("OK", "RUN", CList);
+            object objJson = strJson;
+            object[] addParams = new object[] { objJson };
+            object result = WShelper.InvokeWebService(url, "DxDataUploadJson", addParams);
+            string strRES = result.ToString();
+            rObj = new RootObject();
+            rObj = JsonConvert.DeserializeObject<RootObject>(strRES);
+            return rObj;
+        }
+        public static RootObject DevErrorUpload(string M_DEVICE_SN, string M_AREA, string errCode, int errStatus, ref string strJson)
+        {
+            RootObject rObj = null;
+            if (SysCfgModel.SimMode)
+            {
+                rObj = new RootObject();
+                rObj.RES = "OK";
+
+                return rObj;
+            }
+            List<ContentDetail> CList = new List<ContentDetail>();
+            ContentDetail tail = new ContentDetail();
+            tail.M_FLAG = 7;
+            tail.M_AREA = M_AREA;
+            tail.M_DEVICE_SN = M_DEVICE_SN;
+            tail.M_ERROR_CODE = errCode;
+            tail.M_ERROR_STATUS = errStatus.ToString();
+            CList.Add(tail);
             strJson = WShelper.ReturnJsonData("OK", "RUN", CList);
             object objJson = strJson;
             object[] addParams = new object[] { objJson };

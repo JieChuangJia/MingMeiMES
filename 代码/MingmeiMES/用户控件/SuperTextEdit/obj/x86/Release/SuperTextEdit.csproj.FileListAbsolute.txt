@@ -25,15 +25,6 @@ E:\tongyan\项目\明美MES\MingmeiMES20180305\MingmeiMES\用户控件\SuperText
 E:\tongyan\项目\明美MES\MingmeiMES20180305\MingmeiMES\用户控件\SuperTextEdit\obj\x86\Release\SuperTextEdit.csproj.GenerateResource.Cache
 E:\tongyan\项目\明美MES\MingmeiMES20180305\MingmeiMES\用户控件\SuperTextEdit\obj\x86\Release\SuperTextEdit.dll
 E:\tongyan\项目\明美MES\MingmeiMES20180305\MingmeiMES\用户控件\SuperTextEdit\obj\x86\Release\SuperTextEdit.pdb
-E:\workspace\项目\明美项目\Git_mingmei\MingMeiMES\代码\MingmeiMES\用户控件\SuperTextEdit\bin\Release\SuperTextEdit.dll
-E:\workspace\项目\明美项目\Git_mingmei\MingMeiMES\代码\MingmeiMES\用户控件\SuperTextEdit\bin\Release\SuperTextEdit.pdb
-E:\workspace\项目\明美项目\Git_mingmei\MingMeiMES\代码\MingmeiMES\用户控件\SuperTextEdit\bin\Release\GDICommon.dll
-E:\workspace\项目\明美项目\Git_mingmei\MingMeiMES\代码\MingmeiMES\用户控件\SuperTextEdit\bin\Release\GDICommon.pdb
-E:\workspace\项目\明美项目\Git_mingmei\MingMeiMES\代码\MingmeiMES\用户控件\SuperTextEdit\obj\x86\Release\SuperTextEdit.csprojResolveAssemblyReference.cache
-E:\workspace\项目\明美项目\Git_mingmei\MingMeiMES\代码\MingmeiMES\用户控件\SuperTextEdit\obj\x86\Release\SuperTextEdit.SuperTextEdit.resources
-E:\workspace\项目\明美项目\Git_mingmei\MingMeiMES\代码\MingmeiMES\用户控件\SuperTextEdit\obj\x86\Release\SuperTextEdit.csproj.GenerateResource.Cache
-E:\workspace\项目\明美项目\Git_mingmei\MingMeiMES\代码\MingmeiMES\用户控件\SuperTextEdit\obj\x86\Release\SuperTextEdit.dll
-E:\workspace\项目\明美项目\Git_mingmei\MingMeiMES\代码\MingmeiMES\用户控件\SuperTextEdit\obj\x86\Release\SuperTextEdit.pdb
 F:\NpWork\others\明美\代码\MingmeiMES\用户控件\SuperTextEdit\bin\Release\SuperTextEdit.dll
 F:\NpWork\others\明美\代码\MingmeiMES\用户控件\SuperTextEdit\bin\Release\SuperTextEdit.pdb
 F:\NpWork\others\明美\代码\MingmeiMES\用户控件\SuperTextEdit\bin\Release\GDICommon.dll

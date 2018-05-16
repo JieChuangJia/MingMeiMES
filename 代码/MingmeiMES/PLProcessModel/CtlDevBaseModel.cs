@@ -33,6 +33,7 @@ namespace PLProcessModel
         public string NodeID { get { return nodeID;} }
         public int PlcID { get { return plcID; } set { plcID = value; } }
         public string MesID { get { return mesID; } }
+        public LogInterface.ILogRecorder LogRecorder { get; set; }
         public CtlDevBaseModel()
         {
             devWarnList = new Dictionary<string,DevWarnItemModel>();
@@ -160,10 +161,36 @@ namespace PLProcessModel
                     warnRecord.recordID = System.Guid.NewGuid().ToString();
                     warnRecord.recordTime = System.DateTime.Now;
                     warnRecord.warnStat = val;
-                    warnRecord.warnInfo = warnItem.WarnInfo;
+                   
+                    string areaLine="L001";
+                    string reJsonStr="";
                     if(val == 0)
                     {
                         warnRecord.warnInfo += "已清除";
+                        if(!string.IsNullOrWhiteSpace(this.mesID) && !string.IsNullOrWhiteSpace(warnItem.MesWarnID))
+                        {
+                            RootObject rObj = WShelper.DevErrorUpload(mesID, areaLine, warnItem.MesWarnID, 1, ref reJsonStr);
+                            if(LogRecorder != null)
+                            {
+                                LogRecorder.AddDebugLog(devName, string.Format("报警{0}复位，上传MES，返回结果:{1}", warnItem.WarnInfo, rObj.RES));
+                            }
+                            
+                        }
+                       
+                    }
+                    else
+                    {
+                        warnRecord.warnInfo = warnItem.WarnInfo;
+                        if(!string.IsNullOrWhiteSpace(this.mesID) && !string.IsNullOrWhiteSpace(warnItem.MesWarnID))
+                        {
+                            RootObject rObj = WShelper.DevErrorUpload(mesID, areaLine, warnItem.MesWarnID, 0, ref reJsonStr);
+                            if (LogRecorder != null)
+                            {
+                                LogRecorder.AddDebugLog(devName, string.Format("报警{0}发生，上传MES，返回结果:{1}", warnItem.WarnInfo, rObj.RES));
+                            }
+                            
+                        }
+                       
                     }
                     devWarnrecordBll.Add(warnRecord);
                     Console.WriteLine(this.devName+":" +  warnRecord.warnInfo+"-》添加报警记录成功！");

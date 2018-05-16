@@ -12,16 +12,11 @@ E:\tongyan\项目\明美MES\MingmeiMES20180305\MingmeiMES\日志模块\LogInterf
 E:\tongyan\项目\明美MES\MingmeiMES20180305\MingmeiMES\日志模块\LogInterface\bin\Release\LogInterface.pdb
 E:\tongyan\项目\明美MES\MingmeiMES20180305\MingmeiMES\日志模块\LogInterface\obj\x86\Release\LogInterface.dll
 E:\tongyan\项目\明美MES\MingmeiMES20180305\MingmeiMES\日志模块\LogInterface\obj\x86\Release\LogInterface.pdb
-E:\workspace\项目\明美项目\Git_mingmei\MingMeiMES\代码\MingmeiMES\日志模块\LogInterface\bin\Release\LogInterface.dll
-E:\workspace\项目\明美项目\Git_mingmei\MingMeiMES\代码\MingmeiMES\日志模块\LogInterface\bin\Release\LogInterface.pdb
-E:\workspace\项目\明美项目\Git_mingmei\MingMeiMES\代码\MingmeiMES\日志模块\LogInterface\obj\x86\Release\LogInterface.dll
-E:\workspace\项目\明美项目\Git_mingmei\MingMeiMES\代码\MingmeiMES\日志模块\LogInterface\obj\x86\Release\LogInterface.pdb
 F:\NpWork\others\明美\代码\MingmeiMES\日志模块\LogInterface\bin\Release\LogInterface.dll
 F:\NpWork\others\明美\代码\MingmeiMES\日志模块\LogInterface\bin\Release\LogInterface.pdb
 F:\NpWork\others\明美\代码\MingmeiMES\日志模块\LogInterface\obj\x86\Release\LogInterface.dll
 F:\NpWork\others\明美\代码\MingmeiMES\日志模块\LogInterface\obj\x86\Release\LogInterface.pdb
 F:\NpWork\others\明美\代码\MingmeiMES\日志模块\LogInterface\obj\x86\Release\LogInterface.csprojResolveAssemblyReference.cache
-E:\workspace\项目\明美项目\Git_mingmei\MingMeiMES\代码\MingmeiMES\日志模块\LogInterface\obj\x86\Release\LogInterface.csprojResolveAssemblyReference.cache
 F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\日志模块\LogInterface\bin\Release\LogInterface.dll
 F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\日志模块\LogInterface\bin\Release\LogInterface.pdb
 F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\日志模块\LogInterface\obj\x86\Release\LogInterface.dll
