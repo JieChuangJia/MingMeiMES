@@ -517,11 +517,13 @@ namespace LineNodes
             DataTable dt2 = null;
             //DataTable dtTask = null;
             string taskDetail="";
-            if (!lineMonitorPresenter.GetDevRunningInfo(nodeName, ref dt1, ref dt2,ref taskDetail))
+            bool mesStop = true;
+            if (!lineMonitorPresenter.GetDevRunningInfo(nodeName, ref dt1, ref dt2,ref taskDetail,ref mesStop))
             {
                 Console.WriteLine("刷新工位息失败");
                 return;
             }
+            this.checkBoxMesRun.Checked = !mesStop;
             this.dataGridViewDevDB1.DataSource = dt1;
             for (int i = 0; i < this.dataGridViewDevDB1.Columns.Count; i++)
             {
@@ -572,6 +574,24 @@ namespace LineNodes
         private void buttonClearDevCmd_Click_1(object sender, EventArgs e)
         {
 
+        }
+        private void OnMesRun()
+        {
+            string nodeName = this.comboBoxDevList.Text;
+            string reStr="";
+            if(LinePresenter.MesRunCommit(nodeName, true, ref reStr))
+            {
+                Console.WriteLine("{0}MES停机已恢复",nodeName);
+            }
+            else
+            {
+                Console.WriteLine("{0}MES停机恢复失败,{1}", nodeName,reStr);
+            }
+            RefreshPLCComm();
+        }
+        private void buttonMesRun_Click(object sender, EventArgs e)
+        {
+            OnMesRun();
         }
     }
 }

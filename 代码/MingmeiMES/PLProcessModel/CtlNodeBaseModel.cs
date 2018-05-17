@@ -24,6 +24,7 @@ namespace PLProcessModel
     {
         protected delegate bool DelegateUploadMes(string productBarcode, string[] mesProcessSeq, ref string reStr);
         #region 私有数据
+        protected List<string> mesIDS = null;
         protected int channelIndex = 0;
         protected DBAccess.BLL.BatteryModuleBll modBll = new DBAccess.BLL.BatteryModuleBll();
         protected DBAccess.BLL.BatteryPackBll bllPack = new DBAccess.BLL.BatteryPackBll();
@@ -110,6 +111,7 @@ namespace PLProcessModel
         protected DetectCodeDefBll detectCodeDefbll = new DetectCodeDefBll();
         #endregion
         #region 属性
+        public List<string> MesIDS { get { return mesIDS; } }
         public int LineID { get; set; }
         public bool NodeEnabled { get { return nodeEnabled; } set { nodeEnabled = value; } }
         public string NodeID { get { return nodeID; } }
@@ -124,6 +126,8 @@ namespace PLProcessModel
             get { return this.plcRW2; }
             set { this.plcRW2 = value; }
         }
+        public IPlcRW PlcRWStop
+        { get; set; }
         public IrfidRW RfidRW
         {
             get { return rfidRW; }
@@ -139,7 +143,6 @@ namespace PLProcessModel
             get { return barcodeRW; }
             set { barcodeRW = value; }
         }
-
         public IBarcodeRW BarcodeRW2
         {
             get { return barcodeRW2; }
@@ -179,6 +182,8 @@ namespace PLProcessModel
         public string RfidUID { get { return rfidUID; } set { rfidUID = value; } }
         public int BarcodeID { get { return barcodeID; } set { barcodeID = value; } }
         public string WorkerID { get { return workerID; } set { workerID = value; } }
+        public bool MesStopstat { get; set; } //mes是否停机状态
+        public string MesStopAddr { get; set; }
         #endregion
         #region 公共数据
         public bool isWithMes = true;
@@ -186,6 +191,7 @@ namespace PLProcessModel
         #region 公开接口
         public CtlNodeBaseModel()
         {
+            MesStopstat = false;
             productBindBll = new OnlineProductsBll();
             mesInfoBllLocal = new LOCAL_MES_STEP_INFOBll();
             mesDetailBllLocal = new LOCAL_MES_STEP_INFO_DETAILBll();
@@ -1433,6 +1439,7 @@ namespace PLProcessModel
         /// <returns></returns>
         public virtual bool BuildCfg(XElement xe,ref string reStr)
         {
+            mesIDS = new List<string>();
             this.nodeID = xe.Attribute("id").Value;
             this.nodeName = xe.Attribute("nodeName").Value;
             XElement baseDataXE = xe.Element("BaseDatainfo");
@@ -1441,7 +1448,20 @@ namespace PLProcessModel
                 reStr = this.nodeID + "，没有BaseDatainfo节点配置信息";
                 return false;
             }
-          
+            if(xe.Attribute("mesID") != null)
+            {
+               
+                string strMesID=xe.Attribute("mesID").Value.ToString();
+                string[] mesIDArray = strMesID.Split(new string[]{","}, StringSplitOptions.RemoveEmptyEntries);
+                if(mesIDArray != null && mesIDArray.Count()>0)
+                {
+                    mesIDS.AddRange(mesIDArray);
+                }
+            }
+            if(xe.Attribute("stopAddr") != null)
+            {
+                MesStopAddr = xe.Attribute("stopAddr").Value.ToString();
+            }
             //mes nodeid，nodename
             XElement db1XE = baseDataXE.Element("DB1Addr");
             string db1StartStr = db1XE.Attribute("addrStart").Value;
@@ -1623,8 +1643,43 @@ namespace PLProcessModel
         //}
         #endregion
         #region 内部功能接口
-        
-
+        protected RootObject DevDataUpload(int M_FLAG, string M_DEVICE_SN, string M_WORKSTATION_SN, string M_SN, string M_UNION_SN, string M_CONTAINER_SN, string M_LEVEL, string M_ITEMVALUE, ref string strJson)
+        {
+            RootObject reObj = WShelper.DevDataUpload(M_FLAG, M_DEVICE_SN, M_WORKSTATION_SN, M_SN, M_UNION_SN, M_CONTAINER_SN, M_LEVEL, M_ITEMVALUE, ref strJson,"");
+            if(reObj.CONTROL_TYPE == "STOP")
+            {
+                MesStopstat = true;
+                this.currentTaskDescribe = "收到MES停机反馈";
+            }
+            //给PLC发停机指令
+            if(PlcRWStop != null)
+            {
+                PlcRWStop.WriteDB(MesStopAddr, 1);
+                Console.WriteLine("{0}收到MES停机，发送停机命令到PLC", nodeName);
+            }
+            //上传MES 停机
+            reObj = WShelper.DevDataUpload(M_FLAG, M_DEVICE_SN, M_WORKSTATION_SN, M_SN, M_UNION_SN, M_CONTAINER_SN, M_LEVEL, M_ITEMVALUE, ref strJson, "STOP");
+            return reObj;
+        }
+        protected RootObject ProcParamUpload(string M_AREA,string M_DEVICE_SN, string M_WORKSTATION_SN, string M_UNION_SN, string M_CONTAINER_SN, string M_LEVEL, string M_ITEMVALUE,ref string strJson)
+        {
+            RootObject reObj = WShelper.ProcParamUpload(M_AREA, M_DEVICE_SN, M_WORKSTATION_SN, M_UNION_SN, M_CONTAINER_SN, M_LEVEL, M_ITEMVALUE, ref strJson, "");
+            if (reObj.CONTROL_TYPE == "STOP")
+            {
+                MesStopstat = true;
+                this.currentTaskDescribe = "收到MES停机反馈";
+            }
+            //给PLC发停机指令
+           
+            if (PlcRWStop != null)
+            {
+                PlcRWStop.WriteDB(MesStopAddr, 1);
+                Console.WriteLine("{0}收到MES停机，发送停机命令到PLC", nodeName);
+            }
+            //上传MES 停机
+            reObj = WShelper.ProcParamUpload(M_AREA, M_DEVICE_SN, M_WORKSTATION_SN, M_UNION_SN, M_CONTAINER_SN, M_LEVEL, M_ITEMVALUE, ref strJson, "STOP");
+            return reObj;
+        }
         /// <summary>
         /// db1 条码赋值
         /// </summary>

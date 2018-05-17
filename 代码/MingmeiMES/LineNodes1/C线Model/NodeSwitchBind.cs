@@ -858,7 +858,7 @@ namespace LineNodes
             string barcode = modelList[0].batPackID;
             string strJson = "";
 
-            rObj = WShelper.DevDataUpload(flag, M_DEVICE_SN, M_WORKSTATION_SN, barcode, M_UNION_SN, rfid, M_LEVEL, M_ITEMVALUE, ref strJson);
+            rObj = DevDataUpload(flag, M_DEVICE_SN, M_WORKSTATION_SN, barcode, M_UNION_SN, rfid, M_LEVEL, M_ITEMVALUE, ref strJson);
             restr = rObj.RES + ":上传数据：" + M_UNION_SN;
             if (rObj.RES.ToUpper().Contains("OK"))
             {
@@ -912,7 +912,7 @@ namespace LineNodes
                     + ":°|正螺丝2角度:" + screwModel.正螺丝2马头角度 + ":°|反螺丝2角度:" + screwModel.反螺丝2马头角度 + ":°";//需要拼接螺丝数据
                 string strJson = "";
 
-                rObj = WShelper.DevDataUpload(3, M_DEVICE_SN, M_WORKSTATION_SN, barcode, M_UNION_SN, M_CONTAINER_SN, M_LEVEL, M_ITEMVALUE, ref strJson);
+                rObj = DevDataUpload(3, M_DEVICE_SN, M_WORKSTATION_SN, barcode, M_UNION_SN, M_CONTAINER_SN, M_LEVEL, M_ITEMVALUE, ref strJson);
                 reStr = rObj.RES;
 
                 if (rObj.RES.ToUpper().Contains("OK"))

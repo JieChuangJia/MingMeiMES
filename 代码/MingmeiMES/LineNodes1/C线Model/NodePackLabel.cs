@@ -221,7 +221,7 @@ namespace LineNodes
                         this.db1ValsToSnd[2] = 2;
                         
 
-                        RootObject obj = WShelper.DevDataUpload(1, "", "M00100301", this.packBarcode, "", this.rfidUID, "", itemValue, ref reStr);
+                        RootObject obj = DevDataUpload(1, "", "M00100301", this.packBarcode, "", this.rfidUID, "", itemValue, ref reStr);
                         if (obj.RES.ToUpper().Contains("OK") == true)
                         {
                             this.logRecorder.AddDebugLog(this.nodeName, "绑定上传MES成功！" + obj.RES);
@@ -283,7 +283,7 @@ namespace LineNodes
             string barcode = modelList[0].batModuleID;
             string strJson = "";
 
-            rObj = WShelper.DevDataUpload(flag, M_DEVICE_SN, M_WORKSTATION_SN, barcode, M_UNION_SN, M_CONTAINER_SN, M_LEVEL, M_ITEMVALUE, ref strJson);
+            rObj = DevDataUpload(flag, M_DEVICE_SN, M_WORKSTATION_SN, barcode, M_UNION_SN, M_CONTAINER_SN, M_LEVEL, M_ITEMVALUE, ref strJson);
             if (rObj.RES.Contains("OK"))
             {
                 return true;

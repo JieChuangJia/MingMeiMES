@@ -52,7 +52,7 @@ namespace LineNodes
         private ThreadBaseModel historyDataClearThread = null; //历史数据清理线程，最多保持15天记录
         private ThreadBaseModel devWarnMonitorThread = null;
         private ThreadBaseModel fxjDataUploadThread = null;//分选机数据上报MES线程
-
+      //  private ThreadBaseModel mesTopMonitorThread = null; //MES停机监控
       //  private ThreadBaseModel printerLoopThread = null; //外观检测工位，贴标队列处理线程
       
         private SysLogBll logBll = null;
@@ -246,7 +246,12 @@ namespace LineNodes
                 devWarnMonitorThread.LoopInterval = 1000;
                 devWarnMonitorThread.SetThreadRoutine(DevMonitorLoop);
                 devWarnMonitorThread.TaskInit(ref reStr);
-             
+
+                //mesTopMonitorThread = new ThreadBaseModel(4,"mes停机监控");
+                //mesTopMonitorThread.LoopInterval = 1000;
+                //mesTopMonitorThread.SetThreadRoutine(MesStopstatMonitor);
+                //mesTopMonitorThread.TaskInit(ref reStr);
+
                 for (int i = 0; i < lineList.Count();i++ )
                 {
                     view.InitLineMonitor(i+1, lineList[i]);
@@ -304,6 +309,7 @@ namespace LineNodes
             this.historyDataClearThread.TaskStart(ref reStr);
             this.fxjDataUploadThread.TaskStart(ref reStr);
             this.devWarnMonitorThread.TaskStart(ref reStr);
+          //  this.mesTopMonitorThread.TaskStart(ref reStr);
             lastStTime = System.DateTime.Now;
             Thread.Sleep(200);
           
@@ -333,6 +339,7 @@ namespace LineNodes
             this.historyDataClearThread.TaskPause(ref reStr);
             this.devWarnMonitorThread.TaskPause(ref reStr);
             this.fxjDataUploadThread.TaskPause(ref reStr);
+            //this.mesTopMonitorThread.TaskPause(ref reStr);
             return true;
         }
         public void ExitSystem()
@@ -350,6 +357,7 @@ namespace LineNodes
             this.historyDataClearThread.TaskExit(ref reStr);
             this.fxjDataUploadThread.TaskExit(ref reStr);
             this.devWarnMonitorThread.TaskExit(ref reStr);
+          //  this.mesTopMonitorThread.TaskExit(ref reStr);
           //  this.printerLoopThread.TaskExit(ref reStr);
         }
        
@@ -375,17 +383,41 @@ namespace LineNodes
             
             return names;
         }
-        public bool GetDevRunningInfo(string nodeName, ref DataTable db1Dt, ref DataTable db2Dt,ref string taskDetail)
+        public bool GetDevRunningInfo(string nodeName, ref DataTable db1Dt, ref DataTable db2Dt,ref string taskDetail,ref bool mesStop)
         {
+            mesStop = true;
             CtlNodeBaseModel node = GetNode(nodeName);
             if (node== null)
             {
                 return false;
             }
+            mesStop = node.MesStopstat;
             //任务
             db1Dt = node.GetDB1DataDetail();
             db2Dt = node.GetDB2DataDetail();
             taskDetail=node.GetRunningTaskDetail();
+            return true;
+        }
+        public bool MesRunCommit(string nodeName,bool mesRun,ref string reStr)
+        {
+            CtlNodeBaseModel node = GetNode(nodeName);
+            if (node == null)
+            {
+                reStr = "不存在："+nodeName;
+                return false;
+            }
+            foreach(string mesID in node.MesIDS)
+            {
+                string jsonStr="";
+                RootObject rObj = WShelper.DevStopStatUpload(6, mesID, "RUN", ref jsonStr);
+                node.LogRecorder.AddDebugLog(node.NodeName, string.Format("恢复停机，返回：{0}", rObj.RES));
+            }
+            if(!node.PlcRWStop.WriteDB(node.MesStopAddr, 2))
+            {
+                reStr = "给PLC发送恢复停机命令失败";
+                return false;
+            }
+            node.MesStopstat = false;
             return true;
         }
         public bool SimSetDB2(string nodeName,int dbItemID,int val)
@@ -768,7 +800,7 @@ namespace LineNodes
         }
         private int UploadToMesProcessData(string workStationNum,string itemValue,ref string restr)
         {
-            RootObject rObj = WShelper.ProcParamUpload("L001","",workStationNum,"","","",itemValue,ref restr);
+            RootObject rObj = WShelper.ProcParamUpload("L001","",workStationNum,"","","",itemValue,ref restr,"");
 
             restr = "上传过程数据："+rObj.RES;
             if (rObj.RES.ToUpper().Contains("OK"))
@@ -788,7 +820,7 @@ namespace LineNodes
         }
         private int UploadToMes(int flag, string barcode, string workStationNum,string itemValue, ref string reStr)
         {
-            RootObject rObj = WShelper.DevDataUpload(flag, "", workStationNum, barcode,"", "", "", itemValue, ref reStr);
+            RootObject rObj = WShelper.DevDataUpload(flag, "", workStationNum, barcode,"", "", "", itemValue, ref reStr,"");
             reStr ="上传条码：" +barcode+"，MES返回："+ rObj.RES;
             if (rObj.RES.ToUpper().Contains("OK"))
             {
@@ -833,13 +865,52 @@ namespace LineNodes
                 {
                     dev.DevWarnMonitor(ref reStr);
                 }
+
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
             }
         }
-        private bool ParsePLines(XElement lineRoot,ref string reStr)
+        //private void MesStopstatMonitor()
+        //{
+        //    try
+        //    {
+        //        string reStr = "";
+        //        foreach(CtlNodeBaseModel node in nodeList)
+        //        {
+        //            if(node.MesIDS == null || node.MesIDS.Count()<1)
+        //            {
+        //                continue;
+        //            }
+        //            foreach(string mesID in node.MesIDS)
+        //            {
+        //                if(node.MesStopstat) // 如果是停机状态不用查询
+        //                {
+        //                    continue;
+        //                }
+        //                //查询MES停机状态
+        //                string jsonStr="";
+        //                RootObject rObj = WShelper.DevStopstatQuery(mesID,ref jsonStr);
+        //                if(rObj.RES.Contains("NG"))
+        //                {
+        //                    node.LogRecorder.AddDebugLog(node.NodeName,string.Format("查询{0}停机失败，返回{1},发送json:{2}", mesID, rObj.RES,jsonStr));
+        //                    continue;
+        //                }
+        //                if(rObj.CONTROL_TYPE.ToUpper()=="STOP")
+        //                {
+        //                    node.LogRecorder.AddDebugLog(node.NodeName, string.Format("查询{0}停机状态，结果：停机,返回结果;{1}", mesID,rObj.CONTROL_TYPE));
+        //                    node.MesStopstat = true;
+        //                }
+        //            }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Console.WriteLine(ex.ToString());
+        //    }
+        //}
+        private bool ParsePLines(XElement lineRoot, ref string reStr)
         {
             lineList = new List<CtlLineBaseModel>();
             IEnumerable<XElement> lineXEList = lineRoot.Elements("Line");
@@ -849,6 +920,10 @@ namespace LineNodes
                 if(!line.ParseCfg(el,ref reStr))
                 {
                     return false;
+                }
+                foreach(CtlNodeBaseModel node in line.NodeList)
+                {
+                    node.PlcRWStop = plcRWs[node.LineID- 1];
                 }
                 lineList.Add(line);
 

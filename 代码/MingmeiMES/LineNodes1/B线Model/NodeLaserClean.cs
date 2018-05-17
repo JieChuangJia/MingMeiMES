@@ -172,7 +172,7 @@ namespace LineNodes
                                     string M_ITEMVALUE = "清洗功率:" + strArray[2] + ":W|速度:" + strArray[3]+":m/s|频率:" + strArray[4] + ":s/次";
                                     RootObject rObj = new RootObject();
                                     string strJson = "";
-                                    rObj = WShelper.DevDataUpload(M_FLAG, M_DEVICE_SN, M_WORKSTATION_SN, M_SN, M_UNION_SN, M_CONTAINER_SN, M_LEVEL, M_ITEMVALUE,ref strJson);
+                                    rObj = DevDataUpload(M_FLAG, M_DEVICE_SN, M_WORKSTATION_SN, M_SN, M_UNION_SN, M_CONTAINER_SN, M_LEVEL, M_ITEMVALUE,ref strJson);
                                     if (rObj.CONTROL_TYPE == "STOP" && rObj.RES == "OK")
                                     {
                                         Console.WriteLine(this.nodeName + "CONTROL_TYPE = STOP");

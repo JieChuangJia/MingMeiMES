@@ -735,30 +735,104 @@
             D8401,UINT:螺丝数;
           </ParamCfg>
           <RelayCfg>
-            W20.00:电批下压缸下降报警;W20.01:电批下压缸上升报警;W20.02:电批下压气缸未上升禁止移动报警;W20.03:X轴伺服驱动器报警;
-            W20.04:Y轴伺服驱动器报警;W20.05:Z轴伺服驱动器报警;W20.06:X轴未使能禁止移动;W20.07:Y轴未使能禁止移动;W20.08:Z轴未使能禁止移动;
-            W20.09:X轴回零超时报警;W20.10:Y轴回零超时报警;W20.11:Z轴回零超时报警;W20.12:X轴正极限到报警;W20.13:X轴负极限到报警;
-            W20.14:Y轴正极限到报警;W20.15:Y轴负极限到报警;
-            W21.00:Z轴正极限到报警;W21.01:Z轴负极限到报警;W21.02:待机位定位超时报警;W21.03:	螺丝机故障报警;W21.04:CCD未准备完成报警;
-            W21.05:CCD软件异常报警;W21.06:A1锁螺丝1CCD位超时报警;W21.07:A1锁螺丝2CCD位超时报警;W21.08:A1锁螺丝3CCD位超时报警;
-            W21.09:A1锁螺丝4CCD位超时报警;W21.10:A2锁螺丝1CCD位超时报警;W21.11:A2锁螺丝2CCD位超时报警;W21.12:A2锁螺丝3CCD位超时报警;
-            W21.13:A2锁螺丝4CCD位超时报警;W21.14:A1锁螺丝5CCD位超时报警;W21.15:A1锁螺丝6CCD位超时报警;
-            W22.00:A2锁螺丝5CCD位超时报警;W22.01:A2锁螺丝6CCD位超时报警;W22.05:B1锁螺丝1CCD位超时报警;W22.06:B1锁螺丝2CCD位超时报警;
-            W22.07:B1锁螺丝3CCD位超时报警;W22.08:B1锁螺丝4CCD位超时报警;W22.09:B2锁螺丝1CCD位超时报警;W22.10:B2锁螺丝2CCD位超时报警;
-            W22.11:	B2锁螺丝3CCD位超时报警;W22.12:B2锁螺丝4CCD位超时报警;W22.13:B1锁螺丝5CCD位超时报警;W22.14:B1锁螺丝6CCD位超时报警;
-            W22.15:	B2锁螺丝5CCD位超时报警;
-            W23.00:B2锁螺丝6CCD位超时报警;W23.01:急停按下报警;W23.02:有防护门未关报警;W23.03:初始化超时报警;W23.04:设备未初始化报警;
-            W23.05:设备手自动开关未处于自动报警;W23.06:设备测试按键按下报警;W23.07:自动状态不到位报警;W23.08:A4锁螺丝1CCD位超时报警;
-            W23.09:A4锁螺丝2CCD位超时报警;W23.10:A4锁螺丝3CCD位超时报警;W23.11:A4锁螺丝4CCD位超时报警;W23.12:B4锁螺丝1CCD位超时报警;
-            W23.13:B4锁螺丝2CCD位超时报警;W23.14:B4锁螺丝3CCD位超时报警;W23.15:B4锁螺丝4CCD位超时报警;W24.00:	A1锁螺丝1位超时报警;
-            W24.01:A1锁螺丝2位超时报警;W24.02:A1锁螺丝3位超时报警;W24.03:A1锁螺丝4位超时报警;W24.04:A2锁螺丝1位超时报警;W24.05:A2锁螺丝2位超时报警;
-            W24.06:A2锁螺丝3位超时报警;W24.07:A2锁螺丝4位超时报警;W24.08:A1锁螺丝5位超时报警;W24.09:A1锁螺丝6位超时报警;W24.10:A2锁螺丝5位超时报警;
-            W24.11:A2锁螺丝6位超时报警; W24.12:B1锁螺丝1位超时报警;W24.13:B1锁螺丝2位超时报警;W24.14:B1锁螺丝3位超时报警;W24.15:B1锁螺丝4位超时报警;
-            W25.00:B2锁螺丝1位超时报警;W25.01:B2锁螺丝2位超时报警;W25.02:B2锁螺丝3位超时报警;W25.03:B2锁螺丝4位超时报警;W25.04:B1锁螺丝5位超时报警;
-            W25.05:	B1锁螺丝6位超时报警;W25.06:B2锁螺丝5位超时报警;W25.07:B2锁螺丝6位超时报警;W25.08:A4锁螺丝1位超时报警;W25.09:A4锁螺丝2位超时报警;
-            W25.10:	A4锁螺丝3位超时报警;W25.11:A4锁螺丝4位超时报警;W25.12:B4锁螺丝1位超时报警;W25.13:B4锁螺丝2位超时报警;W25.14:B4锁螺丝3位超时报警;
-            W25.15:	B4锁螺丝4位超时报警;
-            W26.00:产量到报警
+            W20.00	:	电批下压缸下降报警	:	201DALM000	;
+            W20.01	:	电批下压缸上升报警	:	201DALM001	;
+            W20.02	:	电批下压气缸未上升禁止移动报警	:	201DALM002	;
+            W20.03	:	X轴伺服驱动器报警	:	201DALM003	;
+            W20.04	:	Y轴伺服驱动器报警	:	201DALM004	;
+            W20.05	:	Z轴伺服驱动器报警	:	201DALM005	;
+            W20.06	:	X轴未使能禁止移动	:	201DALM006	;
+            W20.07	:	Y轴未使能禁止移动	:	201DALM007	;
+            W20.08	:	Z轴未使能禁止移动	:	201DALM008	;
+            W20.09	:	X轴回零超时报警	:	201DALM009	;
+            W20.10	:	Y轴回零超时报警	:	201DALM010	;
+            W20.11	:	Z轴回零超时报警	:	201DALM011	;
+            W20.12	:	X轴正极限到报警	:	201DALM012	;
+            W20.13	:	X轴负极限到报警	:	201DALM013	;
+            W20.14	:	Y轴正极限到报警	:	201DALM014	;
+            W20.15	:	Y轴负极限到报警	:	201DALM015	;
+            W21.00	:	Z轴正极限到报警	:	201DALM016	;
+            W21.01	:	Z轴负极限到报警	:	201DALM017	;
+            W21.02	:	待机位定位超时报警	:	201DALM018	;
+            W21.03	:	螺丝机故障报警	:	201DALM019	;
+            W21.04	:	CCD未准备完成报警	:	201DALM020	;
+            W21.05	:	CCD软件异常报警	:	201DALM021	;
+            W21.06	:	A1锁螺丝1CCD位超时报警	:	201DALM022	;
+            W21.07	:	A1锁螺丝2CCD位超时报警	:	201DALM023	;
+            W21.08	:	A1锁螺丝3CCD位超时报警	:	201DALM024	;
+            W21.09	:	A1锁螺丝4CCD位超时报警	:	201DALM025	;
+            W21.10	:	A2锁螺丝1CCD位超时报警	:	201DALM026	;
+            W21.11	:	A2锁螺丝2CCD位超时报警	:	201DALM027	;
+            W21.12	:	A2锁螺丝3CCD位超时报警	:	201DALM028	;
+            W21.13	:	A2锁螺丝4CCD位超时报警	:	201DALM029	;
+            W21.14	:	A1锁螺丝5CCD位超时报警	:	201DALM030	;
+            W21.15	:	A1锁螺丝6CCD位超时报警	:	201DALM031	;
+            W22.00	:	A2锁螺丝5CCD位超时报警	:	201DALM032	;
+            W22.01	:	A2锁螺丝6CCD位超时报警	:	201DALM033	;
+            W22.02	:	备用	:	201DALM034	;
+            W22.03	:	备用	:	201DALM035	;
+            W22.04	:	备用	:	201DALM036	;
+            W22.05	:	B1锁螺丝1CCD位超时报警	:	201DALM037	;
+            W22.06	:	B1锁螺丝2CCD位超时报警	:	201DALM038	;
+            W22.07	:	B1锁螺丝3CCD位超时报警	:	201DALM039	;
+            W22.08	:	B1锁螺丝4CCD位超时报警	:	201DALM040	;
+            W22.09	:	B2锁螺丝1CCD位超时报警	:	201DALM041	;
+            W22.10	:	B2锁螺丝2CCD位超时报警	:	201DALM042	;
+            W22.11	:	B2锁螺丝3CCD位超时报警	:	201DALM043	;
+            W22.12	:	B2锁螺丝4CCD位超时报警	:	201DALM044	;
+            W22.13	:	B1锁螺丝5CCD位超时报警	:	201DALM045	;
+            W22.14	:	B1锁螺丝6CCD位超时报警	:	201DALM046	;
+            W22.15	:	B2锁螺丝5CCD位超时报警	:	201DALM047	;
+            W23.00	:	B2锁螺丝6CCD位超时报警	:	201DALM048	;
+            W23.01	:	急停按下报警	:	201DALM049	;
+            W23.02	:	有防护门未关报警	:	201DALM050	;
+            W23.03	:	初始化超时报警	:	201DALM051	;
+            W23.04	:	设备未初始化报警	:	201DALM052	;
+            W23.05	:	设备手自动开关未处于自动报警	:	201DALM053	;
+            W23.06	:	设备测试按键按下报警	:	201DALM054	;
+            W23.07	:	自动状态不到位报警	:	201DALM055	;
+            W23.08	:	A4锁螺丝1CCD位超时报警	:	201DALM056	;
+            W23.09	:	A4锁螺丝2CCD位超时报警	:	201DALM057	;
+            W23.10	:	A4锁螺丝3CCD位超时报警	:	201DALM058	;
+            W23.11	:	A4锁螺丝4CCD位超时报警	:	201DALM059	;
+            W23.12	:	B4锁螺丝1CCD位超时报警	:	201DALM060	;
+            W23.13	:	B4锁螺丝2CCD位超时报警	:	201DALM061	;
+            W23.14	:	B4锁螺丝3CCD位超时报警	:	201DALM062	;
+            W23.15	:	B4锁螺丝4CCD位超时报警	:	201DALM063	;
+            W24.00	:	A1锁螺丝1位超时报警	:	201DALM064	;
+            W24.01	:	A1锁螺丝2位超时报警	:	201DALM065	;
+            W24.02	:	A1锁螺丝3位超时报警	:	201DALM066	;
+            W24.03	:	A1锁螺丝4位超时报警	:	201DALM067	;
+            W24.04	:	A2锁螺丝1位超时报警	:	201DALM068	;
+            W24.05	:	A2锁螺丝2位超时报警	:	201DALM069	;
+            W24.06	:	A2锁螺丝3位超时报警	:	201DALM070	;
+            W24.07	:	A2锁螺丝4位超时报警	:	201DALM071	;
+            W24.08	:	A1锁螺丝5位超时报警	:	201DALM072	;
+            W24.09	:	A1锁螺丝6位超时报警	:	201DALM073	;
+            W24.10	:	A2锁螺丝5位超时报警	:	201DALM074	;
+            W24.11	:	A2锁螺丝6位超时报警	:	201DALM075	;
+            W24.12	:	B1锁螺丝1位超时报警	:	201DALM076	;
+            W24.13	:	B1锁螺丝2位超时报警	:	201DALM077	;
+            W24.14	:	B1锁螺丝3位超时报警	:	201DALM078	;
+            W24.15	:	B1锁螺丝4位超时报警	:	201DALM079	;
+            W25.00	:	B2锁螺丝1位超时报警	:	201DALM080	;
+            W25.01	:	B2锁螺丝2位超时报警	:	201DALM081	;
+            W25.02	:	B2锁螺丝3位超时报警	:	201DALM082	;
+            W25.03	:	B2锁螺丝4位超时报警	:	201DALM083	;
+            W25.04	:	B1锁螺丝5位超时报警	:	201DALM084	;
+            W25.05	:	B1锁螺丝6位超时报警	:	201DALM085	;
+            W25.06	:	B2锁螺丝5位超时报警	:	201DALM086	;
+            W25.07	:	B2锁螺丝6位超时报警	:	201DALM087	;
+            W25.08	:	A4锁螺丝1位超时报警	:	201DALM088	;
+            W25.09	:	A4锁螺丝2位超时报警	:	201DALM089	;
+            W25.10	:	A4锁螺丝3位超时报警	:	201DALM090	;
+            W25.11	:	A4锁螺丝4位超时报警	:	201DALM091	;
+            W25.12	:	B4锁螺丝1位超时报警	:	201DALM092	;
+            W25.13	:	B4锁螺丝2位超时报警	:	201DALM093	;
+            W25.14	:	B4锁螺丝3位超时报警	:	201DALM094	;
+            W25.15	:	B4锁螺丝4位超时报警	:	201DALM095	;
+            W26.00	:	产量到报警	:	201DALM096	;
+
 
 
           </RelayCfg>
@@ -1024,7 +1098,7 @@
         </Dev>
       </DevCfg>
       <NodeCfg>
-        <Node id="OPZ001" nodeName="支线电芯入支架" className="LineNodes.NodeBatteryAsm">
+        <Node id="OPZ001" nodeName="支线电芯入支架"  className="LineNodes.NodeBatteryAsm">
           <BaseDatainfo plcID="4" ccdDevName="电池极性检测">
             <DB1Addr addrStart="D2000" blockNum="10">DB1数据区地址信息</DB1Addr>
             <DB2Addr addrStart="D3000" blockNum="10">DB2数据区地址信息</DB2Addr>
@@ -1038,55 +1112,55 @@
           </BaseDatainfo>
           <DevContain></DevContain>
         </Node>-->
-        <Node id="OPA010" nodeName="A线上下支架机" className="LineNodes.NodeUpDownMachine">
+        <Node id="OPA010" nodeName="A线上下支架机" mesID="Y00100101" stopAddr="D4000" className="LineNodes.NodeUpDownMachine">
           <BaseDatainfo plcID="9"  plcID2="1" rfid="33,34"  >
             <DB1Addr addrStart="D9100" blockNum="10">DB1数据区地址信息</DB1Addr>
             <DB2Addr addrStart="D9000" blockNum="10">DB2数据区地址信息</DB2Addr>
           </BaseDatainfo>
         </Node>
-        <Node id="OPA011" nodeName="A线点胶机1" className="LineNodes.NodeDianjiao">
+        <Node id="OPA011" nodeName="A线点胶机1" mesID="Y00100201" stopAddr="D4002" className="LineNodes.NodeDianjiao">
           <BaseDatainfo plcID="1"  rfid="35,36"  >
             <DB1Addr addrStart="D2160" blockNum="10">DB1数据区地址信息</DB1Addr>
             <DB2Addr addrStart="D3160" blockNum="10">DB2数据区地址信息</DB2Addr>
           </BaseDatainfo>
         </Node>
-        <Node id="OPA012" nodeName="A线点胶机2" className="LineNodes.NodeDianjiao">
+        <Node id="OPA012" nodeName="A线点胶机2" mesID="Y00100201" stopAddr="D4004" className="LineNodes.NodeDianjiao">
           <BaseDatainfo plcID="1"  rfid="37,38"  >
             <DB1Addr addrStart="D2170" blockNum="10">DB1数据区地址信息</DB1Addr>
             <DB2Addr addrStart="D3170" blockNum="10">DB2数据区地址信息</DB2Addr>
           </BaseDatainfo>
         </Node>
-        <Node id="OPA013" nodeName="A线人工工位1" className="LineNodes.NodeManualStation">
+        <Node id="OPA013" nodeName="A线人工工位1" mesID="Y00100501" stopAddr="D4008" className="LineNodes.NodeManualStation">
           <BaseDatainfo plcID="1"  rfid="39,40"  >
             <DB1Addr addrStart="D2180" blockNum="10">DB1数据区地址信息</DB1Addr>
             <DB2Addr addrStart="D3180" blockNum="10">DB2数据区地址信息</DB2Addr>
           </BaseDatainfo>
         </Node>
-        <Node id="OPA014" nodeName="A线人工工位2" className="LineNodes.NodeManualStation">
+        <Node id="OPA014" nodeName="A线人工工位2" mesID="Y00101001" stopAddr="D4018" className="LineNodes.NodeManualStation">
           <BaseDatainfo plcID="1"  rfid="41,42"  >
             <DB1Addr addrStart="D2190" blockNum="10">DB1数据区地址信息</DB1Addr>
             <DB2Addr addrStart="D3190" blockNum="10">DB2数据区地址信息</DB2Addr>
           </BaseDatainfo>
         </Node>
-        <Node id="OPA015" nodeName="A线人工工位3" className="LineNodes.NodeManualStation">
+        <Node id="OPA015" nodeName="A线人工工位3" mesID="Y00101301" stopAddr="D4024" className="LineNodes.NodeManualStation">
           <BaseDatainfo plcID="1"  rfid="43,44"  >
             <DB1Addr addrStart="D2200" blockNum="10">DB1数据区地址信息</DB1Addr>
             <DB2Addr addrStart="D3200" blockNum="10">DB2数据区地址信息</DB2Addr>
           </BaseDatainfo>
         </Node>
-        <Node id="OPA016" nodeName="A线烘烤工位1" className="LineNodes.BakeStation">
+        <Node id="OPA016" nodeName="A线烘烤工位1" mesID="Y00100901" stopAddr="D4016" className="LineNodes.BakeStation">
           <BaseDatainfo plcID="1"   >
             <DB1Addr addrStart="D2210" blockNum="10">DB1数据区地址信息</DB1Addr>
             <DB2Addr addrStart="D3210" blockNum="10">DB2数据区地址信息</DB2Addr>
           </BaseDatainfo>
         </Node>
-        <Node id="OPA017" nodeName="A线烘烤工位2" className="LineNodes.BakeStation">
+        <Node id="OPA017" nodeName="A线烘烤工位2" mesID="Y00101201" stopAddr="D4022" className="LineNodes.BakeStation">
           <BaseDatainfo plcID="1" >
             <DB1Addr addrStart="D2220" blockNum="10">DB1数据区地址信息</DB1Addr>
             <DB2Addr addrStart="D3220" blockNum="10">DB2数据区地址信息</DB2Addr>
           </BaseDatainfo>
         </Node>
-        <Node id="OPA004" nodeName="A线模组-工装板绑定" className="LineNodes.NodePalletBind">
+        <Node id="OPA004" nodeName="A线模组-工装板绑定" mesID="Y00100301,Y00100401" stopAddr="D4006" className="LineNodes.NodePalletBind">
           <BaseDatainfo plcID="8" rfid="1,2" ccd="7" ccdDevName="A线绑定">
             <DB1Addr addrStart="D2050" blockNum="10">DB1数据区地址信息</DB1Addr>
             <DB2Addr addrStart="D3000" blockNum="55">DB2数据区地址信息</DB2Addr>
@@ -1098,31 +1172,31 @@
             <DB2Addr addrStart="D3105" blockNum="5">DB2数据区地址信息</DB2Addr>
           </BaseDatainfo>
         </Node>-->
-        <Node id="OPA005" nodeName="A线锁螺丝" className="LineNodes.NodeScrewLock">
+        <Node id="OPA005" nodeName="A线锁螺丝" mesID="Y00100601" stopAddr="D4010" className="LineNodes.NodeScrewLock">
           <BaseDatainfo plcID="1" plcID2="10" rfid="3,4" ccd="1" ccdDevName="A线锁螺丝机">
             <DB1Addr addrStart="D2100" blockNum="10">DB1数据区地址信息</DB1Addr>
             <DB2Addr addrStart="D3100" blockNum="10">DB2数据区地址信息</DB2Addr>
           </BaseDatainfo>
         </Node>
-        <Node id="OPA006" nodeName="A线UV固化" className="LineNodes.NodeUV">
+        <Node id="OPA006" nodeName="A线UV固化" mesID="Y00100701" stopAddr="D4012" className="LineNodes.NodeUV">
           <BaseDatainfo plcID="1" plcID2="11" rfid="5,6">
             <DB1Addr addrStart="D2110" blockNum="10">DB1数据区地址信息</DB1Addr>
             <DB2Addr addrStart="D3110" blockNum="10">DB2数据区地址信息</DB2Addr>
           </BaseDatainfo>
         </Node>
-        <Node id="OPA007" nodeName="A线3号点胶" className="LineNodes.NodeDianjiao">
+        <Node id="OPA007" nodeName="A线3号点胶" mesID="Y00100801" stopAddr="D4014" className="LineNodes.NodeDianjiao">
           <BaseDatainfo plcID="1" rfid="7,8">
             <DB1Addr addrStart="D2120" blockNum="10">DB1数据区地址信息</DB1Addr>
             <DB2Addr addrStart="D3120" blockNum="10">DB2数据区地址信息</DB2Addr>
           </BaseDatainfo>
         </Node>
-        <Node id="OPA008" nodeName="A线4号点胶" className="LineNodes.NodeDianjiao">
+        <Node id="OPA008" nodeName="A线4号点胶" mesID="Y00101101" stopAddr="D4020" className="LineNodes.NodeDianjiao">
           <BaseDatainfo plcID="1" rfid="9,10">
             <DB1Addr addrStart="D2130" blockNum="10">DB1数据区地址信息</DB1Addr>
             <DB2Addr addrStart="D3130" blockNum="10">DB2数据区地址信息</DB2Addr>
           </BaseDatainfo>
         </Node>
-        <Node id="OPA009" nodeName="A线载流片检测" className="LineNodes.NodeCCDCheck">
+        <Node id="OPA009" nodeName="A线载流片检测" mesID="Y00101401" stopAddr="D4026" className="LineNodes.NodeCCDCheck">
           <BaseDatainfo plcID="1" plcID2="13" rfid="11,12" ccd="3" ccdDevName="载流片检测">
             <DB1Addr addrStart="D2140" blockNum="10">DB1数据区地址信息</DB1Addr>
             <DB2Addr addrStart="D3140" blockNum="10">DB2数据区地址信息</DB2Addr>
@@ -1444,55 +1518,55 @@
         </Dev>
       </DevCfg>
       <NodeCfg>
-        <Node id="OPB001" nodeName="B线模组-工装板绑定" className="LineNodes.NodePalletBind">
+        <Node id="OPB001" nodeName="B线模组-工装板绑定" stopAddr="D4028" className="LineNodes.NodePalletBind">
           <BaseDatainfo plcID="5" rfid="13" barScanner="3">
             <DB1Addr addrStart="D2050" blockNum="10">DB1数据区地址信息</DB1Addr>
             <DB2Addr addrStart="D3000" blockNum="10">DB2数据区地址信息</DB2Addr>
           </BaseDatainfo>
         </Node>
-        <Node id="OPB002" nodeName="B线1号激光清洗" className="LineNodes.NodeLaserClean">
+        <Node id="OPB002" nodeName="B线1号激光清洗" mesID="Y00101501" stopAddr="D40310" className="LineNodes.NodeLaserClean">
           <BaseDatainfo plcID="2" rfid="14,15">
             <DB1Addr addrStart="D2060" blockNum="10">DB1数据区地址信息</DB1Addr>
             <DB2Addr addrStart="D3040" blockNum="10">DB2数据区地址信息</DB2Addr>
           </BaseDatainfo>
         </Node>
-        <Node id="OPB003" nodeName="B线1号胶外溢检查" className="LineNodes.NodeCCDCheck">
+        <Node id="OPB003" nodeName="B线1号胶外溢检查" mesID="Y00101601" stopAddr="D4032" className="LineNodes.NodeCCDCheck">
           <BaseDatainfo plcID="2" plcID2="16" rfid="16,17" ccd="4" ccdDevName="溢胶1">
             <DB1Addr addrStart="D2070" blockNum="10">DB1数据区地址信息</DB1Addr>
             <DB2Addr addrStart="D3050" blockNum="10">DB2数据区地址信息</DB2Addr>
           </BaseDatainfo>
         </Node>
-        <Node id="OPB004" nodeName="B线1#铝丝焊" className="LineNodes.NodeWeld">
+        <Node id="OPB004" nodeName="B线1#铝丝焊" mesID="Y00101701" stopAddr="D4034" className="LineNodes.NodeWeld">
           <BaseDatainfo plcID="2" rfid="18,19">
             <DB1Addr addrStart="D2080" blockNum="10">DB1数据区地址信息</DB1Addr>
             <DB2Addr addrStart="D3060" blockNum="10">DB2数据区地址信息</DB2Addr>
           </BaseDatainfo>
         </Node>
-        <Node id="OPB005" nodeName="B线2号激光清洗" className="LineNodes.NodeLaserClean">
+        <Node id="OPB005" nodeName="B线2号激光清洗" mesID="Y00101801" stopAddr="D4036" className="LineNodes.NodeLaserClean">
           <BaseDatainfo plcID="2" rfid="20,21">
             <DB1Addr addrStart="D2090" blockNum="10">DB1数据区地址信息</DB1Addr>
             <DB2Addr addrStart="D3070" blockNum="10">DB2数据区地址信息</DB2Addr>
           </BaseDatainfo>
         </Node>
-        <Node id="OPB006" nodeName="B线2号胶外溢检查" className="LineNodes.NodeCCDCheck">
+        <Node id="OPB006" nodeName="B线2号胶外溢检查" mesID="Y00101901" stopAddr="D4038" className="LineNodes.NodeCCDCheck">
           <BaseDatainfo plcID="2" plcID2="17" rfid="22,23" ccd="5" ccdDevName="溢胶2">
             <DB1Addr addrStart="D2100" blockNum="10">DB1数据区地址信息</DB1Addr>
             <DB2Addr addrStart="D3080" blockNum="10">DB2数据区地址信息</DB2Addr>
           </BaseDatainfo>
         </Node>
-        <Node id="OPB008" nodeName="B线2#铝丝焊接" className="LineNodes.NodeWeld">
+        <Node id="OPB008" nodeName="B线2#铝丝焊接" mesID="Y00102001" stopAddr="D4040" className="LineNodes.NodeWeld">
           <BaseDatainfo plcID="2" rfid="24,25">
             <DB1Addr addrStart="D2120" blockNum="10">DB1数据区地址信息</DB1Addr>
             <DB2Addr addrStart="D3100" blockNum="10">DB2数据区地址信息</DB2Addr>
           </BaseDatainfo>
         </Node>
-        <Node id="OPB007" nodeName="B线DCIR检查" className="LineNodes.NodeCCDCheck">
+        <Node id="OPB007" nodeName="B线DCIR检查" mesID="Y00102101" stopAddr="D4042" className="LineNodes.NodeCCDCheck">
           <BaseDatainfo plcID="2" plcID2="18" rfid="26,27" ccd="6" ccdDevName="B线DCIR">
             <DB1Addr addrStart="D2110" blockNum="10">DB1数据区地址信息</DB1Addr>
             <DB2Addr addrStart="D3090" blockNum="10">DB2数据区地址信息</DB2Addr>
           </BaseDatainfo>
         </Node>
-        <Node id="OPB009" nodeName="B线末端机器人" className="LineNodes.NodeTailRobot">
+        <Node id="OPB009" nodeName="B线末端机器人" stopAddr="D4044" className="LineNodes.NodeTailRobot">
           <BaseDatainfo plcID="2" plcID2="19" rfid="45">
             <DB1Addr addrStart="D2130" blockNum="10">DB1数据区地址信息</DB1Addr>
             <DB2Addr addrStart="D3200" blockNum="10">DB2数据区地址信息</DB2Addr>
@@ -1904,64 +1978,64 @@
         </Dev>
       </DevCfg>
       <NodeCfg>
-        <Node id="OPC006" nodeName="C线上下绝缘板安装" className="LineNodes.NodeScrewLock">
+        <Node id="OPC006" nodeName="C线上下绝缘板安装" mesID="Y00102201" stopAddr="D4046" className="LineNodes.NodeScrewLock">
           <BaseDatainfo plcID="2" plcID2="20" rfid="46">
             <DB1Addr addrStart="D2140" blockNum="10">DB1数据区地址信息</DB1Addr>
             <DB2Addr addrStart="D3300" blockNum="10">DB2数据区地址信息</DB2Addr>
           </BaseDatainfo>
         </Node>
-        <Node id="OPC001" nodeName="C线模块堆叠" className="LineNodes.NodeSwitchBind">
+        <Node id="OPC001" nodeName="C线模块堆叠" mesID="Y00102201" stopAddr="D4048" className="LineNodes.NodeSwitchBind">
           <BaseDatainfo plcID="3" barScanner="4" barScanner2="6"  plcID2="21" rfid="28">
             <DB1Addr addrStart="D2000" blockNum="20">DB1数据区地址信息</DB1Addr>
             <DB2Addr addrStart="D3000" blockNum="20">DB2数据区地址信息</DB2Addr>
           </BaseDatainfo>
         </Node>
-        <Node id="OPC007" nodeName="C线安装打带侧板" className="LineNodes.NodeCManualStation">
+        <Node id="OPC007" nodeName="C线安装打带侧板" stopAddr="D4050" className="LineNodes.NodeCManualStation">
           <BaseDatainfo plcID="3" rfid="47">
             <DB1Addr addrStart="D2070" blockNum="10">DB1数据区地址信息</DB1Addr>
             <DB2Addr addrStart="D3070" blockNum="10">DB2数据区地址信息</DB2Addr>
           </BaseDatainfo>
         </Node>
-        <Node id="OPC002" nodeName="C线捆扎打带" className="LineNodes.NodePackFasten">
+        <Node id="OPC002" nodeName="C线捆扎打带" mesID="M00100201" stopAddr="D4052" className="LineNodes.NodePackFasten">
           <BaseDatainfo plcID="6" rfid="29" plcID2="24">
             <DB1Addr addrStart="D2020" blockNum="10">DB1数据区地址信息</DB1Addr>
             <DB2Addr addrStart="D3020" blockNum="10">DB2数据区地址信息</DB2Addr>
           </BaseDatainfo>
         </Node>
-        <Node id="OPC003" nodeName="C线PACK打码" className="LineNodes.NodePackLabel">
+        <Node id="OPC003" nodeName="C线PACK打码" mesID="M00100301" stopAddr="D4054" className="LineNodes.NodePackLabel">
           <BaseDatainfo plcID="7" barScanner="5" rfid="30">
             <DB1Addr addrStart="D2030" blockNum="10">DB1数据区地址信息</DB1Addr>
             <DB2Addr addrStart="D3030" blockNum="10">DB2数据区地址信息</DB2Addr>
           </BaseDatainfo>
         </Node>
-        <Node id="OPC008" nodeName="C线安装连接线" className="LineNodes.NodeCManualStation">
+        <Node id="OPC008" nodeName="C线安装连接线" mesID="M00100401" stopAddr="D4056" className="LineNodes.NodeCManualStation">
           <BaseDatainfo plcID="3" rfid="48">
             <DB1Addr addrStart="D2080" blockNum="10">DB1数据区地址信息</DB1Addr>
             <DB2Addr addrStart="D3080" blockNum="10">DB2数据区地址信息</DB2Addr>
           </BaseDatainfo>
         </Node>
-        <Node id="OPC009" nodeName="C线电压采集线及安装测试" className="LineNodes.NodeCManualStation">
+        <Node id="OPC009" nodeName="C线电压采集线及安装测试" mesID="M00100501" stopAddr="D4058" className="LineNodes.NodeCManualStation">
           <BaseDatainfo plcID="3" rfid="49">
             <DB1Addr addrStart="D2090" blockNum="10">DB1数据区地址信息</DB1Addr>
             <DB2Addr addrStart="D3090" blockNum="10">DB2数据区地址信息</DB2Addr>
           </BaseDatainfo>
         </Node>
         
-        <Node id="OPC004" nodeName="C线模组焊接" className="LineNodes.NodePackWeld">
+        <Node id="OPC004" nodeName="C线模组焊接" mesID="M00100601" stopAddr="D4060" className="LineNodes.NodePackWeld">
           <BaseDatainfo plcID="3" rfid="31" plcID2="22">
             <DB1Addr addrStart="D2040" blockNum="10">DB1数据区地址信息</DB1Addr>
             <DB2Addr addrStart="D3040" blockNum="10">DB2数据区地址信息</DB2Addr>
           </BaseDatainfo>
         </Node>
 
-        <Node id="OPC010" nodeName="C线安装侧板2" className="LineNodes.NodeCManualStation">
+        <Node id="OPC010" nodeName="C线安装侧板2" mesID="M00100701" stopAddr="D4062" className="LineNodes.NodeCManualStation">
           <BaseDatainfo plcID="3" rfid="50">
             <DB1Addr addrStart="D2100" blockNum="10">DB1数据区地址信息</DB1Addr>
             <DB2Addr addrStart="D3100" blockNum="10">DB2数据区地址信息</DB2Addr>
           </BaseDatainfo>
         </Node>
 
-        <Node id="OPC005" nodeName="C线机器人出料" className="LineNodes.NodePackOutput">
+        <Node id="OPC005" nodeName="C线机器人出料" mesID="M00100801" stopAddr="D4064" className="LineNodes.NodePackOutput">
           <BaseDatainfo plcID="3" rfid="32" plcID2="23">
             <DB1Addr addrStart="D2050" blockNum="10">DB1数据区地址信息</DB1Addr>
             <DB2Addr addrStart="D3050" blockNum="10">DB2数据区地址信息</DB2Addr>

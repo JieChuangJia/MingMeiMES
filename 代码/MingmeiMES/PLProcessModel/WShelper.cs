@@ -178,6 +178,7 @@ namespace PLProcessModel
             /// 预留字段4
             /// </summary>
             public string M_MARK4 { get; set; }
+            public string CONTROL_TYPE { get; set; }
         }
 
         #endregion
@@ -349,7 +350,7 @@ namespace PLProcessModel
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public static RootObject DevDataUpload(int M_FLAG, string M_DEVICE_SN, string M_WORKSTATION_SN, string M_SN, string M_UNION_SN, string M_CONTAINER_SN, string M_LEVEL, string M_ITEMVALUE, ref string strJson)
+        public static RootObject DevDataUpload(int M_FLAG, string M_DEVICE_SN, string M_WORKSTATION_SN, string M_SN, string M_UNION_SN, string M_CONTAINER_SN, string M_LEVEL, string M_ITEMVALUE, ref string strJson, string CONTROL_TYPE)
         {
             RootObject rObj = null;
             if(SysCfgModel.SimMode)
@@ -369,6 +370,7 @@ namespace PLProcessModel
             tail.M_CONTAINER_SN = M_CONTAINER_SN;
             tail.M_LEVEL = M_LEVEL;
             tail.M_ITEMVALUE = M_ITEMVALUE;
+            tail.CONTROL_TYPE = CONTROL_TYPE;
             CList.Add(tail);
             //上传参数
             strJson = WShelper.ReturnJsonData("OK", "RUN", CList);
@@ -392,7 +394,7 @@ namespace PLProcessModel
        /// <param name="M_LEVEL"></param>
        /// <param name="M_ITEMVALUE"></param>
        /// <returns></returns>
-        public static RootObject ProcParamUpload(string M_AREA,string M_DEVICE_SN, string M_WORKSTATION_SN, string M_UNION_SN, string M_CONTAINER_SN, string M_LEVEL, string M_ITEMVALUE,ref string strJson)
+        public static RootObject ProcParamUpload(string M_AREA, string M_DEVICE_SN, string M_WORKSTATION_SN, string M_UNION_SN, string M_CONTAINER_SN, string M_LEVEL, string M_ITEMVALUE, ref string strJson, string CONTROL_TYPE)
         {
             RootObject rObj = null;
             if (SysCfgModel.SimMode)
@@ -412,6 +414,7 @@ namespace PLProcessModel
             tail.M_CONTAINER_SN = M_CONTAINER_SN;
             tail.M_LEVEL = M_LEVEL;
             tail.M_ITEMVALUE = M_ITEMVALUE;
+            tail.CONTROL_TYPE = CONTROL_TYPE;
             CList.Add(tail);
             //上传参数
             strJson = WShelper.ReturnJsonData("OK", "RUN", CList);
@@ -440,6 +443,57 @@ namespace PLProcessModel
             tail.M_DEVICE_SN = M_DEVICE_SN;
             tail.M_ERROR_CODE = errCode;
             tail.M_ERROR_STATUS = errStatus.ToString();
+            CList.Add(tail);
+            strJson = WShelper.ReturnJsonData("OK", "RUN", CList);
+            object objJson = strJson;
+            object[] addParams = new object[] { objJson };
+            object result = WShelper.InvokeWebService(url, "DxDataUploadJson", addParams);
+            string strRES = result.ToString();
+            rObj = new RootObject();
+            rObj = JsonConvert.DeserializeObject<RootObject>(strRES);
+            return rObj;
+        }
+        //public static RootObject DevStopstatQuery(string stationID,ref string strJson)
+        //{
+        //    RootObject rObj = null;
+        //    if (SysCfgModel.SimMode)
+        //    {
+        //        rObj = new RootObject();
+        //        rObj.RES = "OK";
+        //        rObj.CONTROL_TYPE = "RUN";
+        //        return rObj;
+        //    }
+        //    List<ContentDetail> CList = new List<ContentDetail>();
+        //    ContentDetail tail = new ContentDetail();
+        //    tail.M_DEVICE_SN = "";
+        //    tail.M_WORKSTATION_SN = stationID;
+        //    tail.M_FLAG = 1;
+        //    CList.Add(tail);
+        //    strJson = WShelper.ReturnJsonData("OK", "RUN", CList);
+        //    object objJson = strJson;
+        //    object[] addParams = new object[] { objJson };
+        //    object result = WShelper.InvokeWebService(url, "DxDataUploadJson", addParams);
+        //    string strRES = result.ToString();
+        //    rObj = new RootObject();
+        //    rObj = JsonConvert.DeserializeObject<RootObject>(strRES);
+        //    return rObj;
+        //}
+        public static RootObject DevStopStatUpload(int M_FLAG,string stationID, string stat, ref string strJson)
+        {
+            RootObject rObj = null;
+            if (SysCfgModel.SimMode)
+            {
+                rObj = new RootObject();
+                rObj.RES = "OK";
+
+                return rObj;
+            }
+            List<ContentDetail> CList = new List<ContentDetail>();
+            ContentDetail tail = new ContentDetail();
+            tail.M_FLAG = M_FLAG;
+            tail.M_DEVICE_SN = "";
+            tail.M_WORKSTATION_SN = stationID;
+            tail.CONTROL_TYPE = stat;
             CList.Add(tail);
             strJson = WShelper.ReturnJsonData("OK", "RUN", CList);
             object objJson = strJson;

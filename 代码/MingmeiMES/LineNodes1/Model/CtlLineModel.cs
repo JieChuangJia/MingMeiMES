@@ -224,6 +224,7 @@ namespace LineNodes
                             if(this.lineName == "A线")
                             {
                                 ctlNode.LineID = 1;
+                                
                             }
                             else if(this.lineName == "B线")
                             {

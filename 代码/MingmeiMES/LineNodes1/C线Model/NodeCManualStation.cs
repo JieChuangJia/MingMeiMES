@@ -186,7 +186,7 @@ namespace LineNodes
 
         private int UploadToMesData(int flag ,string groupCode,string  workStationNum,ref string reStr)
         {
-            RootObject rObj = WShelper.DevDataUpload(flag, "", workStationNum, groupCode, "", "", "", "", ref reStr);
+            RootObject rObj = DevDataUpload(flag, "", workStationNum, groupCode, "", "", "", "", ref reStr);
             reStr = rObj.RES;
             if (rObj.RES.ToUpper().Contains("OK"))
             {

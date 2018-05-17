@@ -137,7 +137,7 @@ namespace LineNodes
                         this.currentTaskDescribe = "开始上传MES点胶机过程参数";
                       
                         string strJson = "";
-                        rObj = WShelper.ProcParamUpload(M_AREA, M_DEVICE_SN, M_WORKSTATION_SN, M_UNION_SN, M_CONTAINER_SN, M_LEVEL, M_ITEMVALUE, ref strJson);
+                        rObj = ProcParamUpload(M_AREA, M_DEVICE_SN, M_WORKSTATION_SN, M_UNION_SN, M_CONTAINER_SN, M_LEVEL, M_ITEMVALUE, ref strJson);
                         logRecorder.AddDebugLog(nodeName, string.Format("点胶机结果{0}上传MES，返回{1}", mesItemStr, rObj.RES));
                         this.currentTaskDescribe = string.Format("点胶机结果{0}上传MES，返回{1}", mesItemStr, rObj.RES);
                         this.db1ValsToSnd[2] = 3;
@@ -275,7 +275,7 @@ namespace LineNodes
                         this.currentTaskDescribe = "开始上传MES点胶机过程参数";
 
                         string strJson = "";
-                        rObj = WShelper.ProcParamUpload(M_AREA, M_DEVICE_SN, M_WORKSTATION_SN, M_UNION_SN, M_CONTAINER_SN, M_LEVEL, M_ITEMVALUE, ref strJson);
+                        rObj = ProcParamUpload(M_AREA, M_DEVICE_SN, M_WORKSTATION_SN, M_UNION_SN, M_CONTAINER_SN, M_LEVEL, M_ITEMVALUE, ref strJson);
                         logRecorder.AddDebugLog(nodeName, string.Format("点胶机结果{0}上传MES，返回{1}", mesItemStr, rObj.RES));
                         this.currentTaskDescribe = string.Format("点胶机结果{0}上传MES，返回{1}", mesItemStr, rObj.RES);
                         currentTaskPhase++;

@@ -125,7 +125,7 @@ namespace LineNodes
                         {
                             string M_SN = mod.batModuleID;
                             RootObject rObj = new RootObject();
-                            rObj = WShelper.DevDataUpload(M_FLAG, M_DEVICE_SN, M_WORKSTATION_SN, M_SN, M_UNION_SN, M_CONTAINER_SN, M_LEVEL, M_ITEMVALUE, ref strJson);
+                            rObj = DevDataUpload(M_FLAG, M_DEVICE_SN, M_WORKSTATION_SN, M_SN, M_UNION_SN, M_CONTAINER_SN, M_LEVEL, M_ITEMVALUE, ref strJson);
                             logRecorder.AddDebugLog(nodeName, string.Format("模组{0}UV结果{1}上传MES，返回{2}", M_SN,mesItemVal, rObj.RES));
                             this.currentTaskDescribe = string.Format("模组{0}UV结果{1}上传MES，返回{2}", M_SN, mesItemVal, rObj.RES);
                         }

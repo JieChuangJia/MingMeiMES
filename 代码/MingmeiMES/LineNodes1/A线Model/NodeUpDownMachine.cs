@@ -201,13 +201,13 @@ namespace LineNodes
                         {
                             barcode = M_SN;
                             M_FLAG = 3;
-                            rObj = WShelper.DevDataUpload(M_FLAG, M_DEVICE_SN, M_WORKSTATION_SN, barcode, M_UNION_SN, M_CONTAINER_SN, M_LEVEL, M_ITEMVALUE, ref strJson);
+                            rObj = DevDataUpload(M_FLAG, M_DEVICE_SN, M_WORKSTATION_SN, barcode, M_UNION_SN, M_CONTAINER_SN, M_LEVEL, M_ITEMVALUE, ref strJson);
                         }
                         else if(this.db2Vals[1] == 2)
                         {
                             barcode = "";
                             M_FLAG = 6;
-                            rObj = WShelper.ProcParamUpload(M_AREA, M_DEVICE_SN, M_WORKSTATION_SN, M_UNION_SN, M_CONTAINER_SN, M_LEVEL, M_ITEMVALUE, ref strJson);
+                            rObj = ProcParamUpload(M_AREA, M_DEVICE_SN, M_WORKSTATION_SN, M_UNION_SN, M_CONTAINER_SN, M_LEVEL, M_ITEMVALUE, ref strJson);
                         }
                        // LogRecorder.AddDebugLog(nodeName, rObj.RES);
                         logRecorder.AddDebugLog(nodeName, string.Format("打码结果{0}上传MES，返回{1}", checkResult,rObj.RES));
@@ -355,7 +355,7 @@ namespace LineNodes
             string M_ITEMVALUE = "扫码结果:" + checkResult;
             RootObject rObj = new RootObject();
             string strJson = "";
-            rObj = WShelper.DevDataUpload(M_FLAG, M_DEVICE_SN, M_WORKSTATION_SN, M_SN, M_UNION_SN, M_CONTAINER_SN, M_LEVEL, M_ITEMVALUE,ref strJson);
+            rObj = DevDataUpload(M_FLAG, M_DEVICE_SN, M_WORKSTATION_SN, M_SN, M_UNION_SN, M_CONTAINER_SN, M_LEVEL, M_ITEMVALUE,ref strJson);
             LogRecorder.AddDebugLog(nodeName, rObj.RES);
             //if (rObj.RES.Contains("NG"))
             //{

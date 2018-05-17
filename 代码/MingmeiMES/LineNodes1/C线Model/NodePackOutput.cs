@@ -127,7 +127,7 @@ namespace LineNodes
             string barcode = modelList[0].batPackID;
             string strJson = "";
 
-            rObj = WShelper.DevDataUpload(1, M_DEVICE_SN, M_WORKSTATION_SN, barcode, M_UNION_SN, M_CONTAINER_SN, M_LEVEL, M_ITEMVALUE, ref strJson);
+            rObj = DevDataUpload(1, M_DEVICE_SN, M_WORKSTATION_SN, barcode, M_UNION_SN, M_CONTAINER_SN, M_LEVEL, M_ITEMVALUE, ref strJson);
             reStr = rObj.RES+"：上报模组调组条码：" +barcode;
             if (rObj.RES.ToUpper().Contains("OK"))
             {
