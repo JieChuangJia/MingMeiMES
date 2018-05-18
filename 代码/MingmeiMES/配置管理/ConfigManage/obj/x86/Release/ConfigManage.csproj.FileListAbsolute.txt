@@ -200,3 +200,12 @@ F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\配置管理\ConfigMa
 F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\配置管理\ConfigManage\obj\x86\Release\ConfigManage.csproj.GenerateResource.Cache
 F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\配置管理\ConfigManage\obj\x86\Release\ConfigManage.dll
 F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\配置管理\ConfigManage\obj\x86\Release\ConfigManage.pdb
+F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\配置管理\ConfigManage\bin\Release\PLConfig.xml
+F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\配置管理\ConfigManage\bin\Release\PLMonitor.dll
+F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\配置管理\ConfigManage\bin\Release\DCIRDBAccess.dll
+F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\配置管理\ConfigManage\bin\Release\MTDBAccess.dll
+F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\配置管理\ConfigManage\bin\Release\FXJDatabase.dll
+F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\配置管理\ConfigManage\bin\Release\PLMonitor.pdb
+F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\配置管理\ConfigManage\bin\Release\DCIRDBAccess.pdb
+F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\配置管理\ConfigManage\bin\Release\MTDBAccess.pdb
+F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\配置管理\ConfigManage\bin\Release\FXJDatabase.pdb

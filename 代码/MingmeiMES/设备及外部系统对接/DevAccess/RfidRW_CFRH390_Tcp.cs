@@ -146,7 +146,7 @@ namespace DevAccess
                     {
                         while (reworkNum < MAXREWORKNUM)
                         {
-                            if (CheckAnticollCmd(this.recBuffer.ToArray(), ref barCode) == false)
+                            if (CheckAnticollCmd(this.recBuffer, ref barCode) == false)
                             {
                                 reworkNum++;
                                 OnLog("读卡接受" + reworkNum + "次，接收反馈数据：" + DataConvert.ByteToHexStr(this.recBuffer.ToArray()));
@@ -304,29 +304,36 @@ namespace DevAccess
             }
             return crcSource;
         }
-        private bool CheckAnticollCmd(byte[] checkQeqCmd,ref string barCode)
+        private bool CheckAnticollCmd(List<byte> checkQeqCmd,ref string barCode)
         {
             try
             {
-                if (checkQeqCmd == null || checkQeqCmd.Length < 3)
+                if (checkQeqCmd == null || checkQeqCmd.Count < 3)
                 {
 
                     return false;
                 }
                 int startIndex = 0;
-                if (checkQeqCmd.Length > 9)
+                if (checkQeqCmd.Count > 9)
                 {
-                    for (int i = 0; i < checkQeqCmd.Length; i++)
+                    for (int i = 0; i < checkQeqCmd.Count; i++)
                     {
-                        if (checkQeqCmd[i] == 8 && checkQeqCmd.Length >= (i + 9))
+                        if (checkQeqCmd[i] == 8 && checkQeqCmd.Count >= (i + 9))
                         {
                             startIndex += i;
                             break;
                         }
                     }
                 }
-                if (checkQeqCmd[startIndex] == 0x08 && checkQeqCmd[startIndex + 2] == 0x00 && checkQeqCmd.Length >= startIndex + 8)
+
+                if (checkQeqCmd[startIndex] == 0x08 && checkQeqCmd[startIndex + 2] == 0x00 && checkQeqCmd.Count >= startIndex + 8)
                 {
+                    List<byte> crcList = checkQeqCmd.GetRange(startIndex, 7);
+                    if (CRCCheck(crcList, checkQeqCmd[startIndex + 7], checkQeqCmd[startIndex + 8]) == false)
+                    {
+                        this.OnLog("防冲突CRC校验失败！");
+                        return false;
+                    }
                     //3-6序列号
                     List<byte> codeList = new List<byte>();
                     codeList.Add(checkQeqCmd[startIndex + 3]);
@@ -338,7 +345,7 @@ namespace DevAccess
                 }
                 else
                 {
-                    //this.printLog("读卡错误，接受数据：" + checkQeqCmd[0].ToString() + "-" + checkQeqCmd[1].ToString() + "-" + checkQeqCmd[2].ToString());
+                    this.OnLog("读卡错误，接受数据：" + checkQeqCmd[0].ToString() + "-" + checkQeqCmd[1].ToString() + "-" + checkQeqCmd[2].ToString());
                     return false;
                 }
             }
@@ -350,15 +357,35 @@ namespace DevAccess
             }
             
         }
-        private bool CheckRequestCmd(byte[] checkQeqCmd)
+        private bool CRCCheck(List<byte> crcSouce, byte lsb, byte msb)
         {
-            if(checkQeqCmd == null||checkQeqCmd.Length<3)
+            byte lsb_temp = 0;
+            byte msb_temp = 0;
+            CalcuCRC(crcSouce, ref lsb_temp,ref msb_temp);
+            if(lsb== lsb_temp&&msb == msb_temp)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        private bool CheckRequestCmd(List<byte> checkQeqCmd)
+        {
+            if(checkQeqCmd == null||checkQeqCmd.Count<7)
             {
                 this.OnLog("结束数据长度为空或者小于1");
                 return false;
             }
             if(checkQeqCmd[0] == 0x06&&checkQeqCmd[2] == 0x00)
             {
+                List<byte> crcList = checkQeqCmd.GetRange(0, 5);
+                if (CRCCheck(crcList, checkQeqCmd[5], checkQeqCmd[6]) == false)
+                {
+                    this.OnLog("请求CRC校验失败！");
+                    return false;
+                }
                 return true;
             }
             else
@@ -393,7 +420,7 @@ namespace DevAccess
                 {
                     while (reworkNum < MAXREWORKNUM)
                     {
-                        if (CheckRequestCmd(this.recBuffer.ToArray()) == false)
+                        if (CheckRequestCmd(this.recBuffer) == false)
                         {
                             reworkNum++;
                             OnLog("请求读卡"+reworkNum+"次，接收反馈数据：" + DataConvert.ByteToHexStr(this.recBuffer.ToArray()));

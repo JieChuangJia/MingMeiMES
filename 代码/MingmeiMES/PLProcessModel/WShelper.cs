@@ -182,9 +182,28 @@ namespace PLProcessModel
         }
 
         #endregion
+
+    public enum EnumUploadStatus
+    {
+        待上传,
+        已上传,
+        用户拒绝上传
+    }
+    public enum EnumUpLoadDataType
+    {
+        数据上报,
+        过程数据
+    }
+    public enum EnumQRCodeType
+    {
+        模块,
+        模组
+    }
     public class WShelper
     {
         public static string url = "http://172.20.1.7:9012/MesFrameWork.asmx";
+        private static FTDataAccess.BLL.OfflineDataBLL bllOfflineData = new FTDataAccess.BLL.OfflineDataBLL();//离线数据对象
+        private static DBAccess.BLL.QRCodeBLL bllQrCode = new DBAccess.BLL.QRCodeBLL();
 
         /// < summary>           
         /// 动态调用web服务         
@@ -325,24 +344,45 @@ namespace PLProcessModel
         /// <summary>
         /// 设备请求条码
         /// </summary>
-        public static RootObject BarCodeRequest(string M_WORKSTATION_SN)
+        public static RootObject BarCodeRequest(string M_WORKSTATION_SN,EnumQRCodeType qrcodeType)
         {
-        
+
             List<ContentDetail> CList = new List<ContentDetail>();
             ContentDetail tail = new ContentDetail();
             tail.M_FLAG = 11;
-           // tail.M_WORKSTATION_SN = "Y00100101";
-            tail.M_WORKSTATION_SN =M_WORKSTATION_SN;
+            // tail.M_WORKSTATION_SN = "Y00100101";
+            tail.M_WORKSTATION_SN = M_WORKSTATION_SN;
             CList.Add(tail);
             //上传参数
             string strJson = WShelper.ReturnJsonData("OK", "RUN", CList);
             object objJson = strJson;
             object[] addParams = new object[] { objJson };
-            object result = WShelper.InvokeWebService(url, "DxDataUploadJson", addParams);
-            string strRES = result.ToString();
-            RootObject rObj = new RootObject();
-            rObj = JsonConvert.DeserializeObject<RootObject>(strRES);
-            return rObj;
+            if (SysCfgModel.MesOfflineMode == true)//离线模式将上报数据存储到数据库
+            {
+                RootObject rObj = new RootObject();
+                DBAccess.Model.QRCodeModel qrCode = bllQrCode.RequireQrCode(qrcodeType.ToString());
+                if (qrCode == null)
+                {
+                    rObj.RES = "离线条码申请失败！";
+                    return rObj;
+                }
+                else
+                {
+                    rObj.M_COMENT[0].M_SN = qrCode.QRCode;
+                    rObj.RES = "OK！离线条码申请成功：" + qrCode.QRCode;
+                    return rObj;
+                }
+
+            }
+            else
+            {
+                object result = WShelper.InvokeWebService(url, "DxDataUploadJson", addParams);
+                string strRES = result.ToString();
+                RootObject rObj = new RootObject();
+                rObj = JsonConvert.DeserializeObject<RootObject>(strRES);
+                return rObj;
+            }
+
         }
 
         /// <summary>
@@ -376,11 +416,29 @@ namespace PLProcessModel
             strJson = WShelper.ReturnJsonData("OK", "RUN", CList);
             object objJson = strJson;
             object[] addParams = new object[] { objJson };
-            object result = WShelper.InvokeWebService(url, "DxDataUploadJson", addParams);
-            string strRES = result.ToString();
-            rObj = new RootObject();
-            rObj = JsonConvert.DeserializeObject<RootObject>(strRES);
-            return rObj;
+            if(SysCfgModel.MesOfflineMode == true)//离线模式将上报数据存储到数据库
+            {
+                FTDataAccess.Model.OfflineDataModel offlineModel = new FTDataAccess.Model.OfflineDataModel();
+                offlineModel.OfflineDataID = Guid.NewGuid().ToString();
+                offlineModel.IsUpLoad = EnumUploadStatus.待上传.ToString();
+                offlineModel.DataType = EnumUpLoadDataType.数据上报.ToString();
+                offlineModel.WorkStationID = M_WORKSTATION_SN;
+                offlineModel.UploadJsonData = strJson;
+                offlineModel.CreateTime = DateTime.Now;
+                bllOfflineData.Add(offlineModel);
+                rObj = new RootObject();
+                rObj.RES = "OK";                
+                return rObj;
+            }
+            else
+            {
+                object result = WShelper.InvokeWebService(url, "DxDataUploadJson", addParams);
+                string strRES = result.ToString();
+                rObj = new RootObject();
+                rObj = JsonConvert.DeserializeObject<RootObject>(strRES);
+                return rObj;
+            }
+         
         }
        /// <summary>
        /// 过程参数上传
@@ -420,11 +478,28 @@ namespace PLProcessModel
             strJson = WShelper.ReturnJsonData("OK", "RUN", CList);
             object objJson = strJson;
             object[] addParams = new object[] { objJson };
-            object result = WShelper.InvokeWebService(url, "DxDataUploadJson", addParams);
-            string strRES = result.ToString();
-            rObj = new RootObject();
-            rObj = JsonConvert.DeserializeObject<RootObject>(strRES);
-            return rObj;
+               if (SysCfgModel.MesOfflineMode == true)//离线模式将上报数据存储到数据库
+            {
+                FTDataAccess.Model.OfflineDataModel offlineModel = new FTDataAccess.Model.OfflineDataModel();
+                offlineModel.OfflineDataID = Guid.NewGuid().ToString();
+                offlineModel.IsUpLoad = EnumUploadStatus.待上传.ToString();
+                offlineModel.DataType = EnumUpLoadDataType.过程数据.ToString();
+                offlineModel.WorkStationID = M_WORKSTATION_SN;
+                offlineModel.CreateTime = DateTime.Now;
+                offlineModel.UploadJsonData = strJson;
+                bllOfflineData.Add(offlineModel);
+                rObj = new RootObject();
+                rObj.RES = "OK";
+                return rObj;
+            }
+            else
+            {
+                object result = WShelper.InvokeWebService(url, "DxDataUploadJson", addParams);
+                string strRES = result.ToString();
+                rObj = new RootObject();
+                rObj = JsonConvert.DeserializeObject<RootObject>(strRES);
+                return rObj;
+            }
         }
         public static RootObject DevErrorUpload(string M_DEVICE_SN, string M_AREA, string errCode, int errStatus, ref string strJson)
         {
@@ -478,6 +553,35 @@ namespace PLProcessModel
         //    rObj = JsonConvert.DeserializeObject<RootObject>(strRES);
         //    return rObj;
         //}
+/// </summary>
+        /// <param name="jsonStr">格式化的json串</param>
+        /// <param name="restr"></param>
+        /// <returns>0上传成功，1上传成功，单返回NG，2传输失败</returns>
+        public static int UploadDataToMes(string jsonStr,ref string restr)
+        {
+            RootObject rObj = new RootObject();
+
+            object objJson = jsonStr;
+            object[] addParams = new object[] { objJson };
+
+            object result = WShelper.InvokeWebService(url, "DxDataUploadJson", addParams);
+            string strRES = result.ToString();
+            rObj = new RootObject();
+            rObj = JsonConvert.DeserializeObject<RootObject>(strRES);
+            restr = rObj.RES;
+            if(rObj.RES.ToUpper().Contains("OK")== true)
+            {
+                return 0;
+            }
+            else if(rObj.RES.ToUpper().Contains("NG")== true)
+            {
+                return 1;
+            }
+            else
+            {
+                return 2;
+            }
+        }
         public static RootObject DevStopStatUpload(int M_FLAG,string stationID, string stat, ref string strJson)
         {
             RootObject rObj = null;

@@ -140,9 +140,9 @@ namespace DBAccess.BLL
 
         #endregion  BasicMethod
         #region  ExtensionMethod
-        public QRCodeModel RequireQrCode()
+        public QRCodeModel RequireQrCode(string qrCodeType)
         {
-            string sqlStr = "PintStatus ='待打印'";
+            string sqlStr = "PintStatus ='待打印' and QRType ='" + qrCodeType+"'";
             List<QRCodeModel> qrCodeList = GetModelList(sqlStr);
             if(qrCodeList!= null && qrCodeList.Count>0)
             {
@@ -153,6 +153,20 @@ namespace DBAccess.BLL
                 return null;
             }
 
+        }
+        public DataTable GetQrCodeData(string qrType,string qrStatus)
+        {
+
+            string sqlStr = "QRType='" + qrType + "' and PintStatus='" + qrStatus + "'";
+            DataSet ds = GetList(sqlStr);
+            if (ds != null && ds.Tables.Count > 0)
+            {
+                return ds.Tables[0];
+            }
+            else
+            {
+                return null;
+            }
         }
         #endregion  ExtensionMethod
     }

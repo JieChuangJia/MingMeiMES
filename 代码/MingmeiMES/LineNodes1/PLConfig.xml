@@ -1519,7 +1519,7 @@
       </DevCfg>
       <NodeCfg>
         <Node id="OPB001" nodeName="B线模组-工装板绑定" stopAddr="D4028" className="LineNodes.NodePalletBind">
-          <BaseDatainfo plcID="5" rfid="13" barScanner="3">
+          <BaseDatainfo plcID="2" plcID2="5" rfid="13" barScanner="3">
             <DB1Addr addrStart="D2050" blockNum="10">DB1数据区地址信息</DB1Addr>
             <DB2Addr addrStart="D3000" blockNum="10">DB2数据区地址信息</DB2Addr>
           </BaseDatainfo>

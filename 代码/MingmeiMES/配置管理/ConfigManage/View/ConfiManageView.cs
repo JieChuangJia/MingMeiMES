@@ -36,7 +36,7 @@ namespace ConfigManage
            // workerResView = new WorkerResView("操作员登录");
         //    sysDefineView = new SysDefineView("系统维护");
           //  detectCodeView = new DetectCodeCfgView("不良代码配置");
-          //  mesOfflineView = new MesOfflineView("MES离线模式");
+            mesOfflineView = new MesOfflineView("MES离线设置");
 			plcSettingView = new PLCSettingView("设备参数");
         }
 		public void SetDevList(List<CtlDevBaseModel> devList)
@@ -66,6 +66,9 @@ namespace ConfigManage
             sysSetItem.Click += LoadView_MenuHandler;
             ToolStripItem devCfg = rootMenuItem.DropDownItems.Add("设备参数");
             devCfg.Click += LoadView_MenuHandler;
+
+            ToolStripItem mesOfflineSet = rootMenuItem.DropDownItems.Add("MES离线设置");
+            mesOfflineSet.Click += LoadView_MenuHandler;
         }
         public override void SetParent(/*Control parentContainer, Form parentForm, */IParentModule parentPnP)
         {
@@ -134,6 +137,16 @@ namespace ConfigManage
                             break;
                         }
                         this.parentPNP.AttachModuleView(this.workerResView);
+                        break;
+                    }
+                case "MES离线设置":
+                    {
+                        if (parentPNP.RoleID >= 3)
+                        {
+                            Console.WriteLine("请切换到管理员用户");
+                            break;
+                        }
+                        this.parentPNP.AttachModuleView(this.mesOfflineView);
                         break;
                     }
                 //case "系统维护":

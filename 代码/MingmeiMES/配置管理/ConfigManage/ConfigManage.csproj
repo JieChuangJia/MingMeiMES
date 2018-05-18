@@ -167,6 +167,10 @@
       <Project>{7031e95a-cbb5-44ae-aa9a-80211309981f}</Project>
       <Name>DBAccess</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\LineNodes1\PLMonitor.csproj">
+      <Project>{2c9e7c14-1ed2-440d-abf4-db6052010180}</Project>
+      <Name>PLMonitor</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\ModuleAttachInterface\ModuleCrossPnP.csproj">
       <Project>{8ebcda91-8a16-46fa-84bd-784982f9eac8}</Project>
       <Name>ModuleCrossPnP</Name>

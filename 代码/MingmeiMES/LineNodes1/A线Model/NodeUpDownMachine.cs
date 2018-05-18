@@ -395,11 +395,11 @@ namespace LineNodes
             RootObject rObj = new RootObject();
             if(SysCfgModel.MesOfflineMode == false)
             {
-                rObj = WShelper.BarCodeRequest(M_WORKSTATION_SN);
+                rObj = WShelper.BarCodeRequest(M_WORKSTATION_SN,EnumQRCodeType.模块);
                 if (rObj.RES.Contains("OK"))
                 {
                     M_SN = rObj.M_COMENT[0].M_SN;
-                    reStr = this.nodeName + "模块条码请求成功";
+                    reStr = this.nodeName + "模块条码请求成功:"+M_SN;
                     return true;
                 }
                 else

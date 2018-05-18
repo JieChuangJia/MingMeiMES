@@ -52,7 +52,9 @@ namespace LineNodes
         private ThreadBaseModel historyDataClearThread = null; //历史数据清理线程，最多保持15天记录
         private ThreadBaseModel devWarnMonitorThread = null;
         private ThreadBaseModel fxjDataUploadThread = null;//分选机数据上报MES线程
-      //  private ThreadBaseModel mesTopMonitorThread = null; //MES停机监控
+        private ThreadBaseModel offlineDataUploadThread = null;//离线数据上报MES线程
+        private OfflineDataBLL bllOfflineData = null;
+        public static bool uploadOfflineDataToMesSwitch = false;//上传离线数据至MES锁
       //  private ThreadBaseModel printerLoopThread = null; //外观检测工位，贴标队列处理线程
       
         private SysLogBll logBll = null;
@@ -76,6 +78,7 @@ namespace LineNodes
            // mesDA = new MesDA();
             logBll = new SysLogBll();
             produceRecordBll = new ProduceRecordBll();
+            bllOfflineData = new OfflineDataBLL();
             this.bllFxjDataUploadToMes = new FXJDatabase.tb_CheckDataonlineBLL();
         }
         public List<CtlDevBaseModel> GetDevModelList()
@@ -106,21 +109,21 @@ namespace LineNodes
                 //this.printerRWs = new List<IPrinterInfoDev>();
                 this.plcRWs = new List<IPlcRW>();
                 this.ccdRWs = new List<MingmeiDeviceAcc>();
-             
+
                 string xmlCfgFile = System.AppDomain.CurrentDomain.BaseDirectory + @"data/PLConfig.xml";
                 if (!File.Exists(xmlCfgFile))
                 {
                     reStr = "系统配置文件：" + xmlCfgFile + " 不存在!";
                     return false;
                 }
-                if (!PLProcessModel.SysCfgModel.LoadCfg(xmlCfgFile,ref reStr))
+                if (!PLProcessModel.SysCfgModel.LoadCfg(xmlCfgFile, ref reStr))
                 {
                     return false;
                 }
-                
+
                 XElement root = XElement.Load(xmlCfgFile);
                 //1 解析通信设备信息
- 
+
                 XElement commDevXERoot = root.Element("CommDevCfg");
                 if (!ParseCommDevCfg(commDevXERoot, ref reStr))
                 {
@@ -258,8 +261,8 @@ namespace LineNodes
                 }
 
 
-                this.fxjDataUploadThread = new ThreadBaseModel(2, "分选机上报MES线程");
-                if(SysCfgModel.SimMode == true)
+                this.fxjDataUploadThread = new ThreadBaseModel(4, "分选机上报MES线程");
+                if (SysCfgModel.SimMode == true)
                 {
                     this.fxjDataUploadThread.LoopInterval = 1000 * 5;//测试5秒
                 }
@@ -276,6 +279,22 @@ namespace LineNodes
                     logRecorder.AddLog(new LogModel(objectName,"分选机线程初始化失败："+ reStr, EnumLoglevel.错误));
 
                 }
+
+                offlineDataUploadThread = new ThreadBaseModel(5, "离线数据上报MES线程");
+                if (SysCfgModel.SimMode == true)
+                {
+                    this.offlineDataUploadThread.LoopInterval = 1000 * 5;//测试5秒
+                }
+                else
+                {
+                    this.offlineDataUploadThread.LoopInterval = 1000 * 60 * 5;//5分钟上报间隔
+                }
+                this.offlineDataUploadThread.SetThreadRoutine(OfflineDataUploadMesHandler);
+                if (!this.offlineDataUploadThread.TaskInit(ref reStr))
+                {
+                    logRecorder.AddLog(new LogModel(objectName, "离线数据上报MES线程：" + reStr, EnumLoglevel.错误));
+                }
+
                 return true;
             }
             catch (Exception ex)
@@ -309,6 +328,7 @@ namespace LineNodes
             this.historyDataClearThread.TaskStart(ref reStr);
             this.fxjDataUploadThread.TaskStart(ref reStr);
             this.devWarnMonitorThread.TaskStart(ref reStr);
+			this.offlineDataUploadThread.TaskStart(ref reStr);
           //  this.mesTopMonitorThread.TaskStart(ref reStr);
             lastStTime = System.DateTime.Now;
             Thread.Sleep(200);
@@ -339,7 +359,7 @@ namespace LineNodes
             this.historyDataClearThread.TaskPause(ref reStr);
             this.devWarnMonitorThread.TaskPause(ref reStr);
             this.fxjDataUploadThread.TaskPause(ref reStr);
-            //this.mesTopMonitorThread.TaskPause(ref reStr);
+            this.offlineDataUploadThread.TaskPause(ref reStr);
             return true;
         }
         public void ExitSystem()
@@ -357,6 +377,7 @@ namespace LineNodes
             this.historyDataClearThread.TaskExit(ref reStr);
             this.fxjDataUploadThread.TaskExit(ref reStr);
             this.devWarnMonitorThread.TaskExit(ref reStr);
+			this.offlineDataUploadThread.TaskExit(ref reStr);
           //  this.mesTopMonitorThread.TaskExit(ref reStr);
           //  this.printerLoopThread.TaskExit(ref reStr);
         }
@@ -742,6 +763,47 @@ namespace LineNodes
                Console.WriteLine(ex.ToString());
             }
            
+        }
+        /// <summary>
+        /// 离线数据上报MES线程
+        /// </summary>
+        private void OfflineDataUploadMesHandler()
+        {
+            try
+            {
+                if(SysCfgModel.MesOfflineMode == true)
+                {
+                    return;
+                }
+                if(uploadOfflineDataToMesSwitch ==false)
+                {
+                    return;
+                }
+                string restr ="";
+                List<FTDataAccess.Model.OfflineDataModel> offlineData = bllOfflineData.GetDataByUploadStatus(EnumUploadStatus.待上传.ToString());
+                if(offlineData==null|| offlineData.Count==0)
+                {
+                    uploadOfflineDataToMesSwitch = false;//上传数据完成后复位
+                    return;
+                }
+                foreach(OfflineDataModel offline in offlineData)
+                {
+                    int uploadStatus =WShelper.UploadDataToMes(offline.UploadJsonData,ref restr);
+                    if(uploadStatus==0||uploadStatus ==1)
+                    {
+                        offline.IsUpLoad = EnumUploadStatus.已上传.ToString();
+                        bllOfflineData.Update(offline);
+                    }
+                    else//上传失败
+                    { }
+                }
+              
+
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine("离线数据上传MES错误：" + ex.Message);
+            }
         }
         private void FXJDataUploadToMesHandler()
         {

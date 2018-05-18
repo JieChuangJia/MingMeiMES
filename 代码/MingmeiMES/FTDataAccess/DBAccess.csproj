@@ -61,6 +61,7 @@
     <Compile Include="Bll\BatteryModuleBll.cs" />
     <Compile Include="Bll\BatteryPackBll.cs" />
     <Compile Include="Bll\CDevWarnRecordBll.cs" />
+    <Compile Include="Bll\OfflineDataBLL.cs" />
     <Compile Include="Bll\QRCodeBLL.cs" />
     <Compile Include="Bll\ControlTaskBll.cs" />
     <Compile Include="Bll\DetectCodeDefBll.cs" />
@@ -83,6 +84,7 @@
     <Compile Include="Bll\workerResBll.cs" />
     <Compile Include="Dal\BatteryModuleDal.cs" />
     <Compile Include="Dal\BatteryPackDal.cs" />
+    <Compile Include="Dal\OfflineDataDAL.cs" />
     <Compile Include="Dal\QRCodeDAL.cs" />
     <Compile Include="Dal\ControlTaskDal.cs" />
     <Compile Include="Dal\DetectCodeDefDal.cs" />
@@ -107,6 +109,7 @@
     <Compile Include="DBUtility\PubConstant.cs" />
     <Compile Include="Model\BatteryModuleModel.cs" />
     <Compile Include="Model\BatteryPackModel.cs" />
+    <Compile Include="Model\OfflineDataModel.cs" />
     <Compile Include="Model\QRCodeModel.cs" />
     <Compile Include="Model\ControlTaskModel.cs" />
     <Compile Include="Model\DetectCodeDefModel.cs" />

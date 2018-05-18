@@ -21,3 +21,4 @@ F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\日志模块\LogInter
 F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\日志模块\LogInterface\bin\Release\LogInterface.pdb
 F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\日志模块\LogInterface\obj\x86\Release\LogInterface.dll
 F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\日志模块\LogInterface\obj\x86\Release\LogInterface.pdb
+F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\日志模块\LogInterface\obj\x86\Release\LogInterface.csprojResolveAssemblyReference.cache
