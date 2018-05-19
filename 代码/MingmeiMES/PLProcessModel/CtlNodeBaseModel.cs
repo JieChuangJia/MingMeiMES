@@ -1646,7 +1646,8 @@ namespace PLProcessModel
         protected RootObject DevDataUpload(int M_FLAG, string M_DEVICE_SN, string M_WORKSTATION_SN, string M_SN, string M_UNION_SN, string M_CONTAINER_SN, string M_LEVEL, string M_ITEMVALUE, ref string strJson)
         {
             RootObject reObj = WShelper.DevDataUpload(M_FLAG, M_DEVICE_SN, M_WORKSTATION_SN, M_SN, M_UNION_SN, M_CONTAINER_SN, M_LEVEL, M_ITEMVALUE, ref strJson,"");
-            if(reObj.CONTROL_TYPE == "STOP")
+            logRecorder.AddDebugLog(nodeName, string.Format("上传MES数据，返回：CONTROL_TYPE={0}", reObj.CONTROL_TYPE));
+            if(reObj.CONTROL_TYPE.ToUpper() == "STOP")
             {
                 MesStopstat = true;
                 this.currentTaskDescribe = "收到MES停机反馈";
@@ -1667,7 +1668,8 @@ namespace PLProcessModel
         protected RootObject ProcParamUpload(string M_AREA,string M_DEVICE_SN, string M_WORKSTATION_SN, string M_UNION_SN, string M_CONTAINER_SN, string M_LEVEL, string M_ITEMVALUE,ref string strJson)
         {
             RootObject reObj = WShelper.ProcParamUpload(M_AREA, M_DEVICE_SN, M_WORKSTATION_SN, M_UNION_SN, M_CONTAINER_SN, M_LEVEL, M_ITEMVALUE, ref strJson, "");
-            if (reObj.CONTROL_TYPE == "STOP")
+            logRecorder.AddDebugLog(nodeName, string.Format("上传MES过程参数，返回：CONTROL_TYPE={0}", reObj.CONTROL_TYPE));
+            if (reObj.CONTROL_TYPE.ToUpper() == "STOP")
             {
                 MesStopstat = true;
                 this.currentTaskDescribe = "收到MES停机反馈";
