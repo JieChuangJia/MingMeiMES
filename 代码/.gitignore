@@ -1,0 +1,11 @@
+/文档/文档/设计文档/设计
+/代码/ECAMS/ECAMS/bin/Release/*.dll
+obj
+*.dll
+*.pdb
+*.cache
+*.scc
+*.vssscc
+*.rar
+*.exe
+
