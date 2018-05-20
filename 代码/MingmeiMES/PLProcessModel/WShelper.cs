@@ -413,7 +413,7 @@ namespace PLProcessModel
             tail.CONTROL_TYPE = CONTROL_TYPE;
             CList.Add(tail);
             //上传参数
-            strJson = WShelper.ReturnJsonData("OK", "RUN", CList);
+            strJson = WShelper.ReturnJsonData("OK", CONTROL_TYPE, CList);
             object objJson = strJson;
             object[] addParams = new object[] { objJson };
             if(SysCfgModel.MesOfflineMode == true)//离线模式将上报数据存储到数据库
@@ -475,7 +475,7 @@ namespace PLProcessModel
             tail.CONTROL_TYPE = CONTROL_TYPE;
             CList.Add(tail);
             //上传参数
-            strJson = WShelper.ReturnJsonData("OK", "RUN", CList);
+            strJson = WShelper.ReturnJsonData("OK", CONTROL_TYPE, CList);
             object objJson = strJson;
             object[] addParams = new object[] { objJson };
                if (SysCfgModel.MesOfflineMode == true)//离线模式将上报数据存储到数据库
@@ -519,7 +519,7 @@ namespace PLProcessModel
             tail.M_ERROR_CODE = errCode;
             tail.M_ERROR_STATUS = errStatus.ToString();
             CList.Add(tail);
-            strJson = WShelper.ReturnJsonData("OK", "RUN", CList);
+            strJson = WShelper.ReturnJsonData("OK", "", CList);
             object objJson = strJson;
             object[] addParams = new object[] { objJson };
             object result = WShelper.InvokeWebService(url, "DxDataUploadJson", addParams);
