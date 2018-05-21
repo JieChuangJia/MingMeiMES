@@ -143,7 +143,7 @@ namespace LineNodes
                         if (ccdDataDic == null || ccdDataDic.Keys.Count() < 1)
                         {
                            // logRecorder.AddDebugLog(nodeName, string.Format("获取CCD{0}数据失败,{1}", ccdDevName, reStr));
-                            this.currentTaskDescribe = "获取CCD数据失败，返回产品数据为空";
+                            this.currentTaskDescribe = "获取CCD数据失败，返回产品数据为空:"+reStr;
                             //Console.WriteLine("{0},获取CCD{1}数据失败,{2}", nodeName, ccdDevName, reStr);
                             
                             break;

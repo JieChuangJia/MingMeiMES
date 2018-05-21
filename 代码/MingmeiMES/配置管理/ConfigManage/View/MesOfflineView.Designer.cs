@@ -32,6 +32,7 @@
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.bt_ChangeMode = new System.Windows.Forms.Button();
             this.cb_OfflineDataStatus = new System.Windows.Forms.ComboBox();
             this.label6 = new System.Windows.Forms.Label();
             this.rb_OfflineMode = new System.Windows.Forms.RadioButton();
@@ -57,7 +58,6 @@
             this.bt_AddQR = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.dgv_CodeList = new System.Windows.Forms.DataGridView();
-            this.bt_ChangeMode = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -126,6 +126,16 @@
             this.panel1.Size = new System.Drawing.Size(899, 74);
             this.panel1.TabIndex = 50;
             // 
+            // bt_ChangeMode
+            // 
+            this.bt_ChangeMode.Location = new System.Drawing.Point(206, 11);
+            this.bt_ChangeMode.Name = "bt_ChangeMode";
+            this.bt_ChangeMode.Size = new System.Drawing.Size(75, 23);
+            this.bt_ChangeMode.TabIndex = 57;
+            this.bt_ChangeMode.Text = "应用";
+            this.bt_ChangeMode.UseVisualStyleBackColor = true;
+            this.bt_ChangeMode.Click += new System.EventHandler(this.bt_ChangeMode_Click);
+            // 
             // cb_OfflineDataStatus
             // 
             this.cb_OfflineDataStatus.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -158,7 +168,6 @@
             this.rb_OfflineMode.TabStop = true;
             this.rb_OfflineMode.Text = "离线模式";
             this.rb_OfflineMode.UseVisualStyleBackColor = true;
-          
             this.rb_OfflineMode.MouseDown += new System.Windows.Forms.MouseEventHandler(this.rb_OfflineMode_MouseDown);
             // 
             // label1
@@ -196,7 +205,6 @@
             this.rb_OnlineMode.TabStop = true;
             this.rb_OnlineMode.Text = "在线模式";
             this.rb_OnlineMode.UseVisualStyleBackColor = true;
-            
             this.rb_OnlineMode.MouseDown += new System.Windows.Forms.MouseEventHandler(this.rb_OnlineMode_MouseDown);
             // 
             // bt_QueryOffline
@@ -289,9 +297,9 @@
             this.cb_QrStatus.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cb_QrStatus.FormattingEnabled = true;
             this.cb_QrStatus.Items.AddRange(new object[] {
-            "待打印",
-            "已打印"});
-            this.cb_QrStatus.Location = new System.Drawing.Point(303, 37);
+            "待申请",
+            "已申请"});
+            this.cb_QrStatus.Location = new System.Drawing.Point(312, 37);
             this.cb_QrStatus.Name = "cb_QrStatus";
             this.cb_QrStatus.Size = new System.Drawing.Size(121, 20);
             this.cb_QrStatus.TabIndex = 58;
@@ -299,11 +307,11 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(231, 41);
+            this.label5.Location = new System.Drawing.Point(217, 41);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(65, 12);
+            this.label5.Size = new System.Drawing.Size(89, 12);
             this.label5.TabIndex = 57;
-            this.label5.Text = "二维码状态";
+            this.label5.Text = "二维码申请状态";
             // 
             // bt_QueryQR
             // 
@@ -359,7 +367,7 @@
             // 
             this.tb_QrCode.Location = new System.Drawing.Point(89, 9);
             this.tb_QrCode.Name = "tb_QrCode";
-            this.tb_QrCode.Size = new System.Drawing.Size(335, 21);
+            this.tb_QrCode.Size = new System.Drawing.Size(344, 21);
             this.tb_QrCode.TabIndex = 51;
             // 
             // bt_AddQR
@@ -397,16 +405,6 @@
             this.dgv_CodeList.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgv_CodeList.Size = new System.Drawing.Size(893, 350);
             this.dgv_CodeList.TabIndex = 0;
-            // 
-            // bt_ChangeMode
-            // 
-            this.bt_ChangeMode.Location = new System.Drawing.Point(206, 11);
-            this.bt_ChangeMode.Name = "bt_ChangeMode";
-            this.bt_ChangeMode.Size = new System.Drawing.Size(75, 23);
-            this.bt_ChangeMode.TabIndex = 57;
-            this.bt_ChangeMode.Text = "应用";
-            this.bt_ChangeMode.UseVisualStyleBackColor = true;
-            this.bt_ChangeMode.Click += new System.EventHandler(this.bt_ChangeMode_Click);
             // 
             // MesOfflineView
             // 

@@ -142,7 +142,7 @@ namespace LineNodes
                             {
                                 if (!ccdDevAcc.StartDev(products, ccdDevName, ref reStr))
                                 {
-                                    this.currentTaskDescribe = "发送设备加工启动命令失败";
+                                    this.currentTaskDescribe = "发送设备加工启动命令失败:"+reStr;
                                     //Console.WriteLine(string.Format("{0}发送设备加工启动命令失败,{1}", nodeName, reStr));
                                     break;
                                 }

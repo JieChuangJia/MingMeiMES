@@ -390,7 +390,7 @@ namespace LineNodes
                         {
                             if (ModuleCodeRequire(ref this.mesReqGroupCode, ref reStr) == false)
                             {
-                                Console.WriteLine(this.nodeName + "请求模组二维码失败!" );
+                                Console.WriteLine(this.nodeName + "请求模组二维码失败!"+reStr );
                                 break;
                             }
                             else
@@ -793,38 +793,23 @@ namespace LineNodes
         /// <returns></returns>
         private bool ModuleCodeRequire(ref string M_SN, ref string reStr)
         {
-            if (SysCfgModel.MesOfflineMode == false)
+
+            string M_WORKSTATION_SN = "M00100101";
+            RootObject rObj = new RootObject();
+            rObj = WShelper.BarCodeRequest(M_WORKSTATION_SN, EnumQRCodeType.模组);
+            if (rObj.RES.Contains("OK"))
             {
-                string M_WORKSTATION_SN = "M00100101";
-                RootObject rObj = new RootObject();
-                rObj = WShelper.BarCodeRequest(M_WORKSTATION_SN,EnumQRCodeType.模组);
-                if (rObj.RES.Contains("OK"))
-                {
-                    M_SN = rObj.M_COMENT[0].M_SN;
-                    reStr = this.nodeName + "模组条码请求成功:"+M_SN;
-                    return true;
-                }
-                else
-                {
-                    M_SN = "";
-                    reStr = this.nodeName + "模组条码请求失败!" + rObj.RES;
-                    return false;
-                }
+                M_SN = rObj.M_COMENT[0].M_SN;
+                reStr = this.nodeName + "模组条码请求成功:" + M_SN+rObj.RES;
+                return true;
             }
             else
             {
-                //DBAccess.Model.QRCodeModelModel qrCode = bllQrCode.RequireQrCode();
-                //if(qrCode == null)
-                //{
-                //    reStr = this.nodeName + "当前系统中已经没有可申请的模组二维码!";
-                //    return false;
-                //}
-                //M_SN = qrCode.QRCode;
-
-                M_SN = "123456789202345678988043";//4个
+                M_SN = "";
+                reStr = this.nodeName + "模组条码请求失败!" + rObj.RES;
+                return false;
             }
-            return true;
-      
+
         }
 
         /// <summary>

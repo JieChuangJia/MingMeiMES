@@ -114,10 +114,15 @@ namespace LineNodes
                         this.currentTaskDescribe = string.Format("{0}开始从MES申请模块码", nodeName);
                         if (!ModuleCodeRequire(ref M_SN, ref reStr))
                         {
-                            LogRecorder.AddDebugLog(nodeName, "ModuleCodeRequire FALSE" + "," + reStr);
+                            Console.WriteLine(this.nodeName + "请求模块二维码失败!"+reStr);
+                            //LogRecorder.AddDebugLog(nodeName, "ModuleCodeRequire FALSE" + "," + reStr);
                             this.db1ValsToSnd[0] = 3;
-                            this.currentTaskDescribe = "从MES申请模块码失败" + reStr;
+                            this.currentTaskDescribe = "申请模块码失败" + reStr;
                             break;
+                        }
+                        else
+                        {
+                            this.logRecorder.AddDebugLog(this.nodeName, "请求模块二维码成功!" + reStr);
                         }
                         if(!plcRW.WriteDB("D9000", 0))
                         {
@@ -126,14 +131,19 @@ namespace LineNodes
                             plcRW.ConnectPLC(ref reStr);
                             break;
                         }
-                        LogRecorder.AddDebugLog(nodeName, "从MES申请到模块码:" + M_SN);
-                        this.currentTaskDescribe = "从MES申请到模块码:" + M_SN;
+                        LogRecorder.AddDebugLog(nodeName, "申请到模块码:" + M_SN);
+                        this.currentTaskDescribe = "申请到模块码:" + M_SN;
                         currentTaskPhase++;
                         break;
                     }
                 case 2:
                     {
+                        if(this.db2Vals[1] != 0)
+                        {
+                            break;
+                        }
                         this.db1ValsToSnd[1] = 1;
+
                         //写条码到文件
                         string modCodeFile = "";
                         modCodeFile = string.Format(@"\\{0}\打标文件\加工文件\打码内容.txt", machionIP);
@@ -389,32 +399,25 @@ namespace LineNodes
         /// 模组条码请求
         /// </summary>
         /// <returns></returns>
-        private bool ModuleCodeRequire(ref string M_SN,ref string reStr)
+        private bool ModuleCodeRequire(ref string M_SN, ref string reStr)
         {
             string M_WORKSTATION_SN = "Y00200101";
             RootObject rObj = new RootObject();
-            if(SysCfgModel.MesOfflineMode == false)
+
+            rObj = WShelper.BarCodeRequest(M_WORKSTATION_SN, EnumQRCodeType.模块);
+            if (rObj.RES.Contains("OK"))
             {
-                rObj = WShelper.BarCodeRequest(M_WORKSTATION_SN,EnumQRCodeType.模块);
-                if (rObj.RES.Contains("OK"))
-                {
-                    M_SN = rObj.M_COMENT[0].M_SN;
-                    reStr = this.nodeName + "模块条码请求成功:"+M_SN;
-                    return true;
-                }
-                else
-                {
-                    M_SN = "";
-                    reStr = this.nodeName + "模块条码请求失败!" + rObj.RES;
-                    return false;
-                }
+                M_SN = rObj.M_COMENT[0].M_SN;
+                reStr = this.nodeName + "模块条码请求成功:" + M_SN + rObj.RES;
+                return true;
             }
             else
             {
-                M_SN = "123456789201345678999013";
-                return true;
+                M_SN = "";
+                reStr = this.nodeName + "模块条码请求失败!" + rObj.RES;
+                return false;
             }
-          
+
         }
     }
 }

@@ -199,6 +199,12 @@ namespace PLProcessModel
         模块,
         模组
     }
+
+    public enum EnumQrCodeApplyStatus
+    {
+        待申请,
+        已申请
+    }
     public class WShelper
     {
         public static string url = "http://172.20.1.7:9012/MesFrameWork.asmx";
@@ -368,8 +374,13 @@ namespace PLProcessModel
                 }
                 else
                 {
-                    rObj.M_COMENT[0].M_SN = qrCode.QRCode;
+                    ContentDetail offlienTail = new ContentDetail();
+                    offlienTail.M_SN = qrCode.QRCode;
+                    rObj.M_COMENT =  new List<ContentDetail>();
+                    rObj.M_COMENT.Add(offlienTail);
                     rObj.RES = "OK！离线条码申请成功：" + qrCode.QRCode;
+                    qrCode.PintStatus=EnumQrCodeApplyStatus.已申请.ToString();
+                    bllQrCode.Update(qrCode);
                     return rObj;
                 }
 
@@ -424,7 +435,7 @@ namespace PLProcessModel
                 offlineModel.DataType = EnumUpLoadDataType.数据上报.ToString();
                 offlineModel.WorkStationID = M_WORKSTATION_SN;
                 offlineModel.UploadJsonData = strJson;
-                offlineModel.CreateTime = DateTime.Now;
+                offlineModel.CreateTime =DateTime.Parse( DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
                 bllOfflineData.Add(offlineModel);
                 rObj = new RootObject();
                 rObj.RES = "OK";                
@@ -485,7 +496,7 @@ namespace PLProcessModel
                 offlineModel.IsUpLoad = EnumUploadStatus.待上传.ToString();
                 offlineModel.DataType = EnumUpLoadDataType.过程数据.ToString();
                 offlineModel.WorkStationID = M_WORKSTATION_SN;
-                offlineModel.CreateTime = DateTime.Now;
+                offlineModel.CreateTime = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
                 offlineModel.UploadJsonData = strJson;
                 bllOfflineData.Add(offlineModel);
                 rObj = new RootObject();

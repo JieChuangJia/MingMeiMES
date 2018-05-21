@@ -142,7 +142,7 @@ namespace DBAccess.BLL
         #region  ExtensionMethod
         public QRCodeModel RequireQrCode(string qrCodeType)
         {
-            string sqlStr = "PintStatus ='待打印' and QRType ='" + qrCodeType+"'";
+            string sqlStr = "PintStatus ='待申请' and QRType ='" + qrCodeType+"'";
             List<QRCodeModel> qrCodeList = GetModelList(sqlStr);
             if(qrCodeList!= null && qrCodeList.Count>0)
             {

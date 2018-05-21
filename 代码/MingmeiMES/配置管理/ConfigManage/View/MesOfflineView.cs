@@ -79,7 +79,7 @@ namespace ConfigManage
             }
 
             QRCodeModel qrCodeModel = new QRCodeModel();
-            qrCodeModel.PintStatus = "待打印";
+            qrCodeModel.PintStatus = "待申请";
             qrCodeModel.QRCode = qrCode;
             qrCodeModel.QRType = codeType;
             bllQrCode.Add(qrCodeModel);
@@ -127,6 +127,7 @@ namespace ConfigManage
                 if (DialogResult.Yes == MessageBox.Show("您是否要上传MES离线数据？", "信息提示", MessageBoxButtons.YesNo))
                 {
                     LineNodes.LineMonitorPresenter.uploadOfflineDataToMesSwitch = true;
+                    MessageBox.Show("在线模式切换成功！");
                 }
                 else//更新数据为用户拒绝上传
                 {
@@ -134,7 +135,12 @@ namespace ConfigManage
                 }
             }
             else
-            { }
+            {
+                string restr = "";
+                SysCfgModel.MesOfflineMode = true;
+                SysCfgModel.SaveCfg(ref  restr);
+                MessageBox.Show("离线模式切换成功！");
+            }
         }
      
     }
