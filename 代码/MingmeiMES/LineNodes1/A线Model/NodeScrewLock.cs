@@ -275,7 +275,7 @@ namespace LineNodes
             else
             {
                // Console.WriteLine(this.nodeName + "上传MES锁螺丝数据错误：" + rObj.RES);
-                
+                logRecorder.AddDebugLog(nodeName, string.Format("上传MES返回{0}", rObj.RES));
                 return false;
             }
         

@@ -1647,16 +1647,18 @@ namespace PLProcessModel
         {
             RootObject reObj = WShelper.DevDataUpload(M_FLAG, M_DEVICE_SN, M_WORKSTATION_SN, M_SN, M_UNION_SN, M_CONTAINER_SN, M_LEVEL, M_ITEMVALUE, ref strJson,"");
             logRecorder.AddDebugLog(nodeName, string.Format("上传MES数据，返回：CONTROL_TYPE={0}", reObj.CONTROL_TYPE));
-            if(reObj.CONTROL_TYPE.ToUpper() == "STOP")
+            if(reObj.CONTROL_TYPE.ToUpper().Contains("STOP"))
             {
                 MesStopstat = true;
                 this.currentTaskDescribe = "收到MES停机反馈";
                 //给PLC发停机指令
                 if (PlcRWStop != null)
                 {
+                    
                     bool re= PlcRWStop.WriteDB(MesStopAddr, 1);
+                    logRecorder.AddDebugLog(nodeName, string.Format("收到MES停机，发送停机命令到PLC,发送结果:{0}", re));
                     //Console.WriteLine("{0}收到MES停机，发送停机命令到PLC", nodeName);
-                    logRecorder.AddDebugLog(nodeName, string.Format("收到MES停机，发送停机命令到PLC,发送结果:{01}",re));
+
                 }
                 //上传MES 停机
                 reObj = WShelper.DevDataUpload(M_FLAG, M_DEVICE_SN, M_WORKSTATION_SN, M_SN, M_UNION_SN, M_CONTAINER_SN, M_LEVEL, M_ITEMVALUE, ref strJson, "STOP");
