@@ -207,9 +207,22 @@ namespace PLProcessModel
             int blockNum = this.dicCommuDataDB1.Count();
             if (!SysCfgModel.SimMode)
             {
+                string reStr = "";
                 short[] vals = null;
+                int readTimes = 0;
+                bool readStatus= plcRW.ReadMultiDB(db1StartAddr, blockNum, ref vals);
+                while (readStatus == false && readTimes<5)
+                {
+                    readTimes++;
+                    plcRW.CloseConnect();
+                    if (!plcRW.ConnectPLC(ref reStr))
+                    {
+                        Console.WriteLine("重连PLC{0}失败", (plcRW as OmlPlcRW).PlcRole);
+                    }
+                    readStatus = plcRW.ReadMultiDB(db1StartAddr, blockNum, ref vals);
+                }
                 //同步通信
-                if (!plcRW.ReadMultiDB(db1StartAddr, blockNum, ref vals))
+                if (readStatus ==false)
                 {
                     // refreshStatusOK = false;
                     ThrowErrorStat(this.nodeName + "读PLC数据(DB1）失败", EnumNodeStatus.设备故障);
@@ -280,17 +293,23 @@ namespace PLProcessModel
                         //this.db2StartAddr = "D3000";//test
                         short[] vals = null;
                         //同步通信
-                      
-                        if (!plcRW.ReadMultiDB(db2StartAddr, blockNum, ref vals))
+                        bool readStatus = plcRW.ReadMultiDB(db2StartAddr, blockNum, ref vals);
+                        int readTimes=0;
+                        while (readStatus == false && readTimes<5)
                         {
-                            // refreshStatusOK = false;
-                            ThrowErrorStat(this.nodeName + "读PLC数据(DB2）失败", EnumNodeStatus.设备故障);
                             plcRW.CloseConnect();
-                            if(!plcRW.ConnectPLC(ref reStr))
+                            if (!plcRW.ConnectPLC(ref reStr))
                             {
                                 Console.WriteLine("重连PLC{0}失败", (plcRW as OmlPlcRW).PlcRole);
                             }
-                           // logRecorder.AddDebugLog(this.nodeName, "读PLC数据(DB2）失败");
+                            readStatus = plcRW.ReadMultiDB(db2StartAddr, blockNum, ref vals);
+                        }
+
+                        if (readStatus == false)
+                        {
+                            // refreshStatusOK = false;
+                            ThrowErrorStat(this.nodeName + "读PLC数据(DB2）失败", EnumNodeStatus.设备故障);
+                            
                             return false;
                         }
                         else
@@ -299,8 +318,6 @@ namespace PLProcessModel
                             {
                                 this.currentStat.Status = EnumNodeStatus.设备空闲;
                             }
-
- 
                         }
                         for (int i = 0; i < blockNum; i++)
                         {
@@ -1408,14 +1425,21 @@ namespace PLProcessModel
             try
             {
                 int commID = addrIndex + 1;
+                int commitTimes =0;
                 PLCDataDef commObj = dicCommuDataDB2[commID];
                 if (!SysCfgModel.SimMode)
                 {
-                    bool re = plcRW.WriteDB(commObj.DataAddr, val);
-                    plcRW.CloseConnect();
-                    
-                    plcRW.ConnectPLC(ref reStr);
-                    reStr = "发送数据失败，尝试重新连接,"+reStr;
+                    bool re = false;
+                    while (re == false && commitTimes<5)//5次失败才认为失败
+                    {
+                        commitTimes++;
+                        re = plcRW.WriteDB(commObj.DataAddr, val);
+                        plcRW.CloseConnect();
+
+                        plcRW.ConnectPLC(ref reStr);
+                        reStr = "发送数据失败，尝试重新连接," + reStr;
+                       
+                    }
                     return re;
                 }
                 else
