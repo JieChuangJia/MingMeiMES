@@ -796,7 +796,20 @@ namespace LineNodes
 
             string M_WORKSTATION_SN = "M00100101";
             RootObject rObj = new RootObject();
-            rObj = WShelper.BarCodeRequest(M_WORKSTATION_SN, EnumQRCodeType.模组);
+            string jsonStr = "";
+            rObj = WShelper.BarCodeRequest(M_WORKSTATION_SN, EnumQRCodeType.模组,"",ref jsonStr);
+            if(rObj.CONTROL_TYPE.ToUpper().Contains("STOP"))
+            {
+                //停机
+                if (PlcRWStop != null)
+                {
+                    bool re = PlcRWStop.WriteDB(MesStopAddr, 1);
+                    logRecorder.AddDebugLog(nodeName, string.Format("收到MES停机，发送停机命令到PLC,发送结果:{0}", re));
+                }
+                rObj = WShelper.BarCodeRequest(M_WORKSTATION_SN, EnumQRCodeType.模组, "STOP", ref jsonStr);
+                logRecorder.AddDebugLog(nodeName, string.Format("上传MES停机，返回结果{0}，发送Json{1}", rObj.RES, jsonStr));
+                return false;
+            }
             if (rObj.RES.Contains("OK"))
             {
                 M_SN = rObj.M_COMENT[0].M_SN;

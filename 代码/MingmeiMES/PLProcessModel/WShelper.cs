@@ -350,7 +350,7 @@ namespace PLProcessModel
         /// <summary>
         /// 设备请求条码
         /// </summary>
-        public static RootObject BarCodeRequest(string M_WORKSTATION_SN,EnumQRCodeType qrcodeType)
+        public static RootObject BarCodeRequest(string M_WORKSTATION_SN, EnumQRCodeType qrcodeType, string CONTROL_TYPE,ref string jsonStr)
         {
 
             List<ContentDetail> CList = new List<ContentDetail>();
@@ -360,7 +360,7 @@ namespace PLProcessModel
             tail.M_WORKSTATION_SN = M_WORKSTATION_SN;
             CList.Add(tail);
             //上传参数
-            string strJson = WShelper.ReturnJsonData("OK", "RUN", CList);
+            string strJson = WShelper.ReturnJsonData("OK", CONTROL_TYPE, CList);
             object objJson = strJson;
             object[] addParams = new object[] { objJson };
             if (SysCfgModel.MesOfflineMode == true)//离线模式将上报数据存储到数据库
@@ -391,6 +391,7 @@ namespace PLProcessModel
                 string strRES = result.ToString();
                 RootObject rObj = new RootObject();
                 rObj = JsonConvert.DeserializeObject<RootObject>(strRES);
+                jsonStr = strRES;
                 return rObj;
             }
 

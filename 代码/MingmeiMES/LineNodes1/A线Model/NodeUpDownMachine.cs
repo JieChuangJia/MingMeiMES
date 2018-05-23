@@ -402,19 +402,42 @@ namespace LineNodes
         private bool ModuleCodeRequire(ref string M_SN, ref string reStr)
         {
             string M_WORKSTATION_SN = "Y00200101";
-            RootObject rObj = new RootObject();
-
-            rObj = WShelper.BarCodeRequest(M_WORKSTATION_SN, EnumQRCodeType.模块);
-            if (rObj.RES.Contains("OK"))
+            RootObject reObj = new RootObject();
+            string strJson = "";
+            reObj = WShelper.BarCodeRequest(M_WORKSTATION_SN, EnumQRCodeType.模块,"",ref strJson);
+            if (reObj.CONTROL_TYPE.ToUpper() == "STOP")
             {
-                M_SN = rObj.M_COMENT[0].M_SN;
-                reStr = this.nodeName + "模块条码请求成功:" + M_SN + rObj.RES;
+                //停机
+                if (PlcRWStop != null)
+                {
+                    bool re = PlcRWStop.WriteDB(MesStopAddr, 1);
+                    logRecorder.AddDebugLog(nodeName, string.Format("收到MES停机，发送停机命令到PLC,发送结果:{0}", re));
+                }
+                ////上传MES 停机
+                //string M_AREA = "Y001";
+              
+                //string M_DEVICE_SN = "";
+                //// string M_SN = modCode;
+                //string M_UNION_SN = "";
+                //string M_CONTAINER_SN = "";
+                //string M_LEVEL = "";
+                //string M_ITEMVALUE = "扫码结果:" + "NG";
+                
+                //reObj = WShelper.ProcParamUpload(M_AREA, M_DEVICE_SN, M_WORKSTATION_SN, M_UNION_SN, M_CONTAINER_SN, M_LEVEL, M_ITEMVALUE, ref strJson, "STOP");
+                reObj = WShelper.BarCodeRequest(M_WORKSTATION_SN, EnumQRCodeType.模块, "STOP",ref strJson);
+                logRecorder.AddDebugLog(nodeName, string.Format("上传MES停机，返回结果{0}，发送Json{1}", reObj.RES, strJson));
+                return false;
+            }
+            if (reObj.RES.Contains("OK"))
+            {
+                M_SN = reObj.M_COMENT[0].M_SN;
+                reStr = this.nodeName + "模块条码请求成功:" + M_SN + reObj.RES;
                 return true;
             }
             else
             {
                 M_SN = "";
-                reStr = this.nodeName + "模块条码请求失败!" + rObj.RES;
+                reStr = this.nodeName + "模块条码请求失败!" + reObj.RES;
                 return false;
             }
 
