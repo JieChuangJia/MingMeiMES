@@ -277,6 +277,7 @@ namespace PLProcessModel
                 if(str== "TRUE")
                 {
                     MesOfflineMode = true;
+
                 }
                 else
                 {

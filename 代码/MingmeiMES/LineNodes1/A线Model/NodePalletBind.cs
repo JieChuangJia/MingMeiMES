@@ -677,6 +677,7 @@ namespace LineNodes
             //{
             //    return false;
             //}
+          
             for (int i = 0; i < modelList.Count; i++)
             {
                 //1 极性检测上传
@@ -703,11 +704,15 @@ namespace LineNodes
                 string  M_WORKSTATION_SN = "Y00100301";
                 //M_LEVEL = "档位:" + modelList[i].tag1 + ":";
                 M_LEVEL = modelList[i].tag1; //档位直接填值
+              
                 rObj = DevDataUpload(1, M_DEVICE_SN, M_WORKSTATION_SN, M_SN, M_UNION_SN, M_CONTAINER_SN, M_LEVEL, "", ref strJson);
+                
                 logRecorder.AddDebugLog(nodeName, string.Format("模组{0} 档位{1}上传MES，返回{2},发送json{3}", M_SN, M_LEVEL, rObj.RES,strJson));
+               
                 this.currentTaskDescribe = string.Format("模组{0}档位{1}上传MES，返回{2}", M_SN, M_ITEMVALUE, rObj.RES);
                 if(rObj.RES.ToUpper() == "OK")
                 {
+                  
                     Thread.Sleep(300);
                     //2 传数据
                     M_WORKSTATION_SN = "Y00100401";
@@ -716,7 +721,6 @@ namespace LineNodes
                     this.currentTaskDescribe = string.Format("模组{0}极性检测{1}上传MES，返回{2}", M_SN, M_ITEMVALUE, rObj.RES);
                 }
               
-
                 //if (rObj.CONTROL_TYPE == "STOP" && rObj.RES == "OK")
                 //{
                 //    Console.WriteLine(this.nodeName + "CONTROL_TYPE = STOP");

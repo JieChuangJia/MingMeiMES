@@ -29,7 +29,8 @@ namespace PLProcessModel
             /// <summary>
             /// 返回值，停机时返回STOP，正常运行时返回RUN
             /// </summary>
-            public string CONTROL_TYPE { get; set; }
+            private string control_Type = "";
+            public string CONTROL_TYPE { get { return this.control_Type; } set { this.control_Type = value; } }
 
             /// <summary>
             /// 交互数据类
@@ -178,7 +179,8 @@ namespace PLProcessModel
             /// 预留字段4
             /// </summary>
             public string M_MARK4 { get; set; }
-            public string CONTROL_TYPE { get; set; }
+            private string control_Type = "";
+            public string CONTROL_TYPE { get { return this.control_Type; } set { this.control_Type = value; } }
         }
 
         #endregion
@@ -350,7 +352,7 @@ namespace PLProcessModel
         /// <summary>
         /// 设备请求条码
         /// </summary>
-        public static RootObject BarCodeRequest(string M_WORKSTATION_SN,EnumQRCodeType qrcodeType)
+        public static RootObject BarCodeRequest(string M_WORKSTATION_SN, EnumQRCodeType qrcodeType, string CONTROL_TYPE,ref string jsonStr)
         {
 
             List<ContentDetail> CList = new List<ContentDetail>();
@@ -360,7 +362,7 @@ namespace PLProcessModel
             tail.M_WORKSTATION_SN = M_WORKSTATION_SN;
             CList.Add(tail);
             //上传参数
-            string strJson = WShelper.ReturnJsonData("OK", "RUN", CList);
+            string strJson = WShelper.ReturnJsonData("OK", CONTROL_TYPE, CList);
             object objJson = strJson;
             object[] addParams = new object[] { objJson };
             if (SysCfgModel.MesOfflineMode == true)//离线模式将上报数据存储到数据库
@@ -369,6 +371,11 @@ namespace PLProcessModel
                 DBAccess.Model.QRCodeModel qrCode = bllQrCode.RequireQrCode(qrcodeType.ToString());
                 if (qrCode == null)
                 {
+                    ContentDetail offlienTail = new ContentDetail();
+                    offlienTail.M_SN = "";
+                    rObj.M_COMENT = new List<ContentDetail>();
+                    rObj.M_COMENT.Add(offlienTail);
+                    rObj.CONTROL_TYPE = "";
                     rObj.RES = "离线条码申请失败！";
                     return rObj;
                 }
@@ -378,6 +385,7 @@ namespace PLProcessModel
                     offlienTail.M_SN = qrCode.QRCode;
                     rObj.M_COMENT =  new List<ContentDetail>();
                     rObj.M_COMENT.Add(offlienTail);
+                    rObj.CONTROL_TYPE = "";
                     rObj.RES = "OK！离线条码申请成功：" + qrCode.QRCode;
                     qrCode.PintStatus=EnumQrCodeApplyStatus.已申请.ToString();
                     bllQrCode.Update(qrCode);
@@ -391,6 +399,7 @@ namespace PLProcessModel
                 string strRES = result.ToString();
                 RootObject rObj = new RootObject();
                 rObj = JsonConvert.DeserializeObject<RootObject>(strRES);
+                jsonStr = strRES;
                 return rObj;
             }
 
@@ -489,7 +498,7 @@ namespace PLProcessModel
             strJson = WShelper.ReturnJsonData("OK", CONTROL_TYPE, CList);
             object objJson = strJson;
             object[] addParams = new object[] { objJson };
-               if (SysCfgModel.MesOfflineMode == true)//离线模式将上报数据存储到数据库
+            if (SysCfgModel.MesOfflineMode == true)//离线模式将上报数据存储到数据库
             {
                 FTDataAccess.Model.OfflineDataModel offlineModel = new FTDataAccess.Model.OfflineDataModel();
                 offlineModel.OfflineDataID = Guid.NewGuid().ToString();

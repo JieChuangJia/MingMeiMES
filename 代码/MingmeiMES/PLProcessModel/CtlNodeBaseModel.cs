@@ -1670,9 +1670,22 @@ namespace PLProcessModel
         protected RootObject DevDataUpload(int M_FLAG, string M_DEVICE_SN, string M_WORKSTATION_SN, string M_SN, string M_UNION_SN, string M_CONTAINER_SN, string M_LEVEL, string M_ITEMVALUE, ref string strJson)
         {
             RootObject reObj = WShelper.DevDataUpload(M_FLAG, M_DEVICE_SN, M_WORKSTATION_SN, M_SN, M_UNION_SN, M_CONTAINER_SN, M_LEVEL, M_ITEMVALUE, ref strJson,"");
-            logRecorder.AddDebugLog(nodeName, string.Format("上传MES数据，返回：CONTROL_TYPE={0}", reObj.CONTROL_TYPE));
+            if (SysCfgModel.MesOfflineMode == true)
+            {
+                logRecorder.AddDebugLog(nodeName, "离线模式，加工数据保存本地成功！" + reObj.RES);
+            }
+            else
+            {
+                logRecorder.AddDebugLog(nodeName, string.Format("上传MES数据，返回：CONTROL_TYPE={0}", reObj.CONTROL_TYPE));
+            }
+            if (reObj.CONTROL_TYPE == null)
+            {
+                return reObj;
+            }
+          
             if(reObj.CONTROL_TYPE.ToUpper().Contains("STOP"))
             {
+                
                 MesStopstat = true;
                 this.currentTaskDescribe = "收到MES停机反馈";
                 //给PLC发停机指令
@@ -1684,17 +1697,26 @@ namespace PLProcessModel
                     //Console.WriteLine("{0}收到MES停机，发送停机命令到PLC", nodeName);
 
                 }
+                
                 //上传MES 停机
                 reObj = WShelper.DevDataUpload(M_FLAG, M_DEVICE_SN, M_WORKSTATION_SN, M_SN, M_UNION_SN, M_CONTAINER_SN, M_LEVEL, M_ITEMVALUE, ref strJson, "STOP");
                 logRecorder.AddDebugLog(nodeName, string.Format("上传MES停机，返回结果{0}，发送Json{1}",reObj.RES,strJson));
             }
-            
+           
             return reObj;
         }
         protected RootObject ProcParamUpload(string M_AREA,string M_DEVICE_SN, string M_WORKSTATION_SN, string M_UNION_SN, string M_CONTAINER_SN, string M_LEVEL, string M_ITEMVALUE,ref string strJson)
         {
             RootObject reObj = WShelper.ProcParamUpload(M_AREA, M_DEVICE_SN, M_WORKSTATION_SN, M_UNION_SN, M_CONTAINER_SN, M_LEVEL, M_ITEMVALUE, ref strJson, "");
-            logRecorder.AddDebugLog(nodeName, string.Format("上传MES过程参数，返回：CONTROL_TYPE={0}", reObj.CONTROL_TYPE));
+            if (SysCfgModel.MesOfflineMode == true)
+            {
+                logRecorder.AddDebugLog(nodeName, "离线模式，加工数据保存本地成功！" + reObj.RES);
+            }
+            else
+            {
+                logRecorder.AddDebugLog(nodeName, string.Format("上传MES过程参数，返回：CONTROL_TYPE={0}", reObj.CONTROL_TYPE));
+            }
+          
             if (reObj.CONTROL_TYPE.ToUpper() == "STOP")
             {
                 MesStopstat = true;
