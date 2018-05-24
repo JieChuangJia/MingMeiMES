@@ -89,7 +89,7 @@ namespace ConfigManage
 
         private void bt_QueryOffline_Click(object sender, EventArgs e)
         {
-            IniWorkStationItem();
+           
             RefreshOfflineData();
         }
         private void RefreshOfflineData()
@@ -105,6 +105,7 @@ namespace ConfigManage
             {
                 return;
             }
+            this.cb_StationNum.Items.Add("所有");
             for(int i=0;i<workStation.Count;i++)
             {
                 this.cb_StationNum.Items.Add(workStation[i]);

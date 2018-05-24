@@ -179,7 +179,12 @@ namespace FTDataAccess.BLL
         {
             string stStr = st.ToString("yyyy-MM-dd 0:00:00");
             string edStr = ed.ToString("yyyy-MM-dd 23:59:59");
-            string sqlStr = "CreateTime>='" + stStr + "' and CreateTime<='" + edStr + "' and  IsUpLoad ='" + uploadStatus + "' and WorkStationID='" +workStation+"'";
+               string sqlStr = "CreateTime>='" + stStr + "' and CreateTime<='" + edStr + "' and  IsUpLoad ='" + uploadStatus + "'";
+            if(workStation != "所有")
+            {
+                sqlStr += " and WorkStationID='" +workStation+"'";
+            }
+           
             DataSet ds = GetList(sqlStr);
             if(ds!=null && ds.Tables.Count>0)
             {
