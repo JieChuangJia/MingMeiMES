@@ -100,6 +100,10 @@ namespace LineNodes
                     {
                         this.logRecorder.AddDebugLog(this.nodeName, "上传MES数据成功，返回NG：" + reStr);
                     }
+                    else if(uploadStatus == 3)//空板放行
+                    {
+                        this.logRecorder.AddDebugLog(this.nodeName, "空板直接放行！" +this.rfidUID);
+                    }
                     else
                     {
                         currentTaskDescribe = "上传MES数据失败：" + reStr;
@@ -150,7 +154,7 @@ namespace LineNodes
                 if (modelList == null || modelList.Count == 0)
                 {
                     restr = "工装板绑定数据为空："+ rfid;
-                    return 2;
+                    return 3;
                 }
                 string barcode = modelList[0].batModuleID;
                 string strJson = "";

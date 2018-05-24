@@ -3,6 +3,7 @@ using System.Data;
 using System.Text;
 using System.Data.SqlClient;
 using FTDataAccess.DBUtility;
+using System.Collections.Generic;
  
 namespace FTDataAccess.DAL
 {
@@ -391,7 +392,14 @@ namespace FTDataAccess.DAL
 
         #endregion  Method
         #region  MethodEx
-
+        public DataSet GetDistinctWorkStation()
+        {
+            StringBuilder strSql = new StringBuilder();
+            strSql.Append("select distinct WorkStationID FROM OfflineData  ");
+         
+           
+            return DbHelperSQL.Query(strSql.ToString());
+        }
         #endregion  MethodEx
     }
 }

@@ -175,11 +175,11 @@ namespace FTDataAccess.BLL
             }
         }
 
-        public DataTable GetOfflineDataByStatus(DateTime st,DateTime ed,string uploadStatus)
+        public DataTable GetOfflineDataByStatus(DateTime st,DateTime ed,string uploadStatus,string workStation)
         {
             string stStr = st.ToString("yyyy-MM-dd 0:00:00");
             string edStr = ed.ToString("yyyy-MM-dd 23:59:59");
-            string sqlStr = "CreateTime>='" + stStr + "' and CreateTime<='"+edStr+"' and  IsUpLoad ='" + uploadStatus+"'";
+            string sqlStr = "CreateTime>='" + stStr + "' and CreateTime<='" + edStr + "' and  IsUpLoad ='" + uploadStatus + "' and WorkStationID='" +workStation+"'";
             DataSet ds = GetList(sqlStr);
             if(ds!=null && ds.Tables.Count>0)
             {
@@ -189,6 +189,21 @@ namespace FTDataAccess.BLL
             {
                 return null;
             }
+        }
+
+        public List<string> GetDistinctWorkStation()
+        {
+            List<string> workStation = new List<string>();
+            DataSet ds = dal.GetDistinctWorkStation();
+            if(ds!= null&&ds.Tables.Count>0)
+            {
+                for(int i=0;i<ds.Tables[0].Rows.Count;i++)
+                {
+                       workStation.Add(ds.Tables[0].Rows[i][0].ToString());
+                }
+             
+            }
+            return workStation;
         }
         #endregion  ExtensionMethod
     }

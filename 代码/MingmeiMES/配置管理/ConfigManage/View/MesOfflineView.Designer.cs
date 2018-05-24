@@ -32,6 +32,8 @@
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.cb_StationNum = new System.Windows.Forms.ComboBox();
+            this.label7 = new System.Windows.Forms.Label();
             this.bt_ChangeMode = new System.Windows.Forms.Button();
             this.cb_OfflineDataStatus = new System.Windows.Forms.ComboBox();
             this.label6 = new System.Windows.Forms.Label();
@@ -110,6 +112,8 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.cb_StationNum);
+            this.panel1.Controls.Add(this.label7);
             this.panel1.Controls.Add(this.bt_ChangeMode);
             this.panel1.Controls.Add(this.cb_OfflineDataStatus);
             this.panel1.Controls.Add(this.label6);
@@ -125,6 +129,23 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(899, 74);
             this.panel1.TabIndex = 50;
+            // 
+            // cb_StationNum
+            // 
+            this.cb_StationNum.FormattingEnabled = true;
+            this.cb_StationNum.Location = new System.Drawing.Point(646, 43);
+            this.cb_StationNum.Name = "cb_StationNum";
+            this.cb_StationNum.Size = new System.Drawing.Size(160, 20);
+            this.cb_StationNum.TabIndex = 59;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(584, 47);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(53, 12);
+            this.label7.TabIndex = 58;
+            this.label7.Text = "工作中心";
             // 
             // bt_ChangeMode
             // 
@@ -144,7 +165,7 @@
             "待上传",
             "已上传",
             "用户拒绝上传"});
-            this.cb_OfflineDataStatus.Location = new System.Drawing.Point(469, 43);
+            this.cb_OfflineDataStatus.Location = new System.Drawing.Point(454, 43);
             this.cb_OfflineDataStatus.Name = "cb_OfflineDataStatus";
             this.cb_OfflineDataStatus.Size = new System.Drawing.Size(121, 20);
             this.cb_OfflineDataStatus.TabIndex = 56;
@@ -152,7 +173,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(380, 47);
+            this.label6.Location = new System.Drawing.Point(368, 47);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(77, 12);
             this.label6.TabIndex = 55;
@@ -181,7 +202,7 @@
             // 
             // dtp_StartDate
             // 
-            this.dtp_StartDate.Location = new System.Drawing.Point(75, 43);
+            this.dtp_StartDate.Location = new System.Drawing.Point(72, 43);
             this.dtp_StartDate.Name = "dtp_StartDate";
             this.dtp_StartDate.Size = new System.Drawing.Size(108, 21);
             this.dtp_StartDate.TabIndex = 53;
@@ -189,7 +210,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(195, 47);
+            this.label2.Location = new System.Drawing.Point(189, 47);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(53, 12);
             this.label2.TabIndex = 54;
@@ -209,7 +230,7 @@
             // 
             // bt_QueryOffline
             // 
-            this.bt_QueryOffline.Location = new System.Drawing.Point(602, 42);
+            this.bt_QueryOffline.Location = new System.Drawing.Point(815, 42);
             this.bt_QueryOffline.Name = "bt_QueryOffline";
             this.bt_QueryOffline.Size = new System.Drawing.Size(75, 23);
             this.bt_QueryOffline.TabIndex = 50;
@@ -219,7 +240,7 @@
             // 
             // dtp_EndDate
             // 
-            this.dtp_EndDate.Location = new System.Drawing.Point(260, 43);
+            this.dtp_EndDate.Location = new System.Drawing.Point(251, 43);
             this.dtp_EndDate.Name = "dtp_EndDate";
             this.dtp_EndDate.Size = new System.Drawing.Size(108, 21);
             this.dtp_EndDate.TabIndex = 51;
@@ -465,6 +486,8 @@
         private System.Windows.Forms.ComboBox cb_OfflineDataStatus;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Button bt_ChangeMode;
+        private System.Windows.Forms.ComboBox cb_StationNum;
+        private System.Windows.Forms.Label label7;
 
     }
 }

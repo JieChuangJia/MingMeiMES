@@ -65,28 +65,28 @@ namespace LineNodes
                 case 3:
                     {
                         currentTaskDescribe = "开始上传MES数据";
-                       List< DBAccess.Model.BatteryModuleModel > batteryModuleList = modBll.GetBindedMods(this.rfidUID);
-                        if(batteryModuleList==null||batteryModuleList.Count==0)
-                        {
-                            Console.WriteLine(this.nodeName,"此工装板无绑定数据！");
-                            break;
-                        }
+                       //List< DBAccess.Model.BatteryModuleModel > batteryModuleList = modBll.GetBindedMods(this.rfidUID);
+                       // if(batteryModuleList==null||batteryModuleList.Count==0)
+                       // {
+                       //     Console.WriteLine(this.nodeName,"此工装板无绑定数据！");
+                       //     break;
+                       // }
                         int uploadStatus = 0;
                         if (this.nodeID == "OPC007")
                         {
-                             uploadStatus = UploadToMesData(1, batteryModuleList[0].batPackID, "M00100701", ref reStr);
+                             uploadStatus = UploadToMesData(1, "M00100701", ref reStr);
                         }
                         else if (this.nodeID == "OPC008")
                         {
-                            uploadStatus = UploadToMesData(1, batteryModuleList[0].batPackID, "M00100401", ref reStr);
+                            uploadStatus = UploadToMesData(1,  "M00100401", ref reStr);
                         }
                         else if (this.nodeID == "OPC009")
                         {
-                            uploadStatus = UploadToMesData(1, batteryModuleList[0].batPackID, "M00100501", ref reStr);
+                            uploadStatus = UploadToMesData(1, "M00100501", ref reStr);
                         }
                         else if (this.nodeID == "OPC010")
                         {
-                            uploadStatus = UploadToMesData(1, batteryModuleList[0].batPackID, "M00100701", ref reStr);
+                            uploadStatus = UploadToMesData(1, "M00100701", ref reStr);
                         }
 
                         if (uploadStatus == 0)
@@ -97,13 +97,15 @@ namespace LineNodes
                         {
                             this.logRecorder.AddDebugLog(this.nodeName, "上传MES数据成功，返回NG：" + reStr);
                         }
+                        else if(uploadStatus == 3)//空板直接放行
+                        { }
                         else
                         {
                             Console.WriteLine(this.nodeName + "上传MES数据失败：" + reStr);
                             break;
                         }
 
-                        this.logRecorder.AddDebugLog(this.nodeName, "上报MES数据成功：" + batteryModuleList[0].batPackID);
+                        this.logRecorder.AddDebugLog(this.nodeName, "上报MES数据成功：" + reStr);
                        
                         currentTaskPhase++;
                         this.currentTask.TaskPhase = this.currentTaskPhase;
@@ -184,9 +186,16 @@ namespace LineNodes
             return true;
         }
 
-        private int UploadToMesData(int flag ,string groupCode,string  workStationNum,ref string reStr)
+        private int UploadToMesData(int flag ,string  workStationNum,ref string reStr)
         {
-            RootObject rObj = DevDataUpload(flag, "", workStationNum, groupCode, "", "", "", "", ref reStr);
+            List<DBAccess.Model.BatteryModuleModel> batteryModuleList = modBll.GetBindedMods(this.rfidUID);
+            if (batteryModuleList == null || batteryModuleList.Count == 0)
+            {
+                Console.WriteLine(this.nodeName, "此工装板无绑定数据！");
+                return 3;
+            }
+
+            RootObject rObj = DevDataUpload(flag, "", workStationNum, batteryModuleList[0].batPackID, "", "", "", "", ref reStr);
             reStr = rObj.RES;
             if (rObj.RES.ToUpper().Contains("OK"))
             {

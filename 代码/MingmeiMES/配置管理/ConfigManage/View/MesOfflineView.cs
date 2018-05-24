@@ -38,6 +38,7 @@ namespace ConfigManage
             {
                 this.rb_OnlineMode.Checked = true;
             }
+            IniWorkStationItem();
             this.dtp_StartDate.Value.AddDays(-5);
             this.cb_OfflineDataStatus.SelectedIndex = 0;
             this.cb_QrStatus.SelectedIndex = 0;
@@ -88,12 +89,30 @@ namespace ConfigManage
 
         private void bt_QueryOffline_Click(object sender, EventArgs e)
         {
+            IniWorkStationItem();
             RefreshOfflineData();
         }
         private void RefreshOfflineData()
         {
-            DataTable dt = bllOfflineData.GetOfflineDataByStatus(this.dtp_StartDate.Value, this.dtp_EndDate.Value, this.cb_OfflineDataStatus.Text.Trim());
+            DataTable dt = bllOfflineData.GetOfflineDataByStatus(this.dtp_StartDate.Value, this.dtp_EndDate.Value, this.cb_OfflineDataStatus.Text.Trim(),this.cb_StationNum.Text.Trim());
             this.dgv_OfflineData.DataSource = dt;
+        }
+        private void IniWorkStationItem()
+        {
+            this.cb_StationNum.Items.Clear();
+            List<string> workStation = bllOfflineData .GetDistinctWorkStation();
+            if(workStation == null)
+            {
+                return;
+            }
+            for(int i=0;i<workStation.Count;i++)
+            {
+                this.cb_StationNum.Items.Add(workStation[i]);
+            }
+            if(this.cb_StationNum.Items.Count>0)
+            {
+                this.cb_StationNum.SelectedIndex = 0;
+            }
         }
         private void bt_QueryQR_Click(object sender, EventArgs e)
         {

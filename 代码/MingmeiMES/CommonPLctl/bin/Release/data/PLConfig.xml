@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ProcessCfg>
   <sysSet>
-    <RunMode sim="false" debugMode="True" manualMode1="True" manualMode3="True">仿真运行模式</RunMode>
+    <RunMode sim="true" debugMode="True" manualMode1="True" manualMode3="True">仿真运行模式</RunMode>
     <Printer Enable="True">是否启动自动贴标</Printer>
     <QRCodeRequire requireMes="false">是否从MES请求二维码，true是，false从本地数据库中获取</QRCodeRequire>
     
