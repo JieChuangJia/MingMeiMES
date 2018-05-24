@@ -1524,7 +1524,7 @@
             <DB2Addr addrStart="D3000" blockNum="10">DB2数据区地址信息</DB2Addr>
           </BaseDatainfo>
         </Node>
-        <Node id="OPB002" nodeName="B线1号激光清洗" mesID="Y00101501" stopAddr="D40310" className="LineNodes.NodeLaserClean">
+        <Node id="OPB002" nodeName="B线1号激光清洗" mesID="Y00101501" stopAddr="D4030" className="LineNodes.NodeLaserClean">
           <BaseDatainfo plcID="2" rfid="14,15">
             <DB1Addr addrStart="D2060" blockNum="10">DB1数据区地址信息</DB1Addr>
             <DB2Addr addrStart="D3040" blockNum="10">DB2数据区地址信息</DB2Addr>
