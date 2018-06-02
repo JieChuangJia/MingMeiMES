@@ -844,11 +844,11 @@ namespace LineNodes
 
                         db1ValsToSnd[0] = 2;//读到RFID
                         db1ValsToSnd[1] = 0;//绑定计数
-                        //if (!TryUnbind(rfidUID, ref reStr))
-                        //{
-                        //    logRecorder.AddDebugLog(nodeName, "解绑RFID:" + rfidUID + "失败," + reStr);
-                        //    break;
-                        //}
+                        if (!TryUnbind(rfidUID, ref reStr))
+                        {
+                            logRecorder.AddDebugLog(nodeName, "解绑RFID:" + rfidUID + "失败," + reStr);
+                            break;
+                        }
                         bindModeCt = 0;
                         this.currentStat.Status = EnumNodeStatus.设备使用中;
                         currentTaskPhase++;
