@@ -209,3 +209,5 @@ F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\配置管理\ConfigMa
 F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\配置管理\ConfigManage\bin\Release\DCIRDBAccess.pdb
 F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\配置管理\ConfigManage\bin\Release\MTDBAccess.pdb
 F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\配置管理\ConfigManage\bin\Release\FXJDatabase.pdb
+F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\配置管理\ConfigManage\bin\Release\ALineScrewDB.dll
+F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\配置管理\ConfigManage\bin\Release\ALineScrewDB.pdb

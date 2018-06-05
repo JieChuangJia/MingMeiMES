@@ -238,3 +238,5 @@ F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\CommonPLctl\obj\x86\R
 F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\CommonPLctl\obj\x86\Release\明美MES系统.pdb
 F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\CommonPLctl\bin\Release\FXJDatabase.dll
 F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\CommonPLctl\bin\Release\FXJDatabase.pdb
+F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\CommonPLctl\bin\Release\ALineScrewDB.dll
+F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\CommonPLctl\bin\Release\ALineScrewDB.pdb

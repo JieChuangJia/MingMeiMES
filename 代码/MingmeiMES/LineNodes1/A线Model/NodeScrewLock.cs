@@ -16,7 +16,7 @@ namespace LineNodes
         protected System.DateTime devOpenSt = DateTime.Now;
         protected DBAccess.BLL.BatteryModuleBll modBll = new DBAccess.BLL.BatteryModuleBll();
         private MTDBAccess.BLL.dbBLL blldb = new MTDBAccess.BLL.dbBLL();//码头螺丝数据
-     
+        private ALineScrewDB.BLL.dbBLL bllScrewDb = new ALineScrewDB.BLL.dbBLL();//A线锁螺丝数据库
         //protected string ccdDevName = "A线锁螺丝机";
          public override bool BuildCfg(System.Xml.Linq.XElement xe, ref string reStr)
         {
@@ -160,39 +160,119 @@ namespace LineNodes
                     }
                 case 4:
                     {
+                        #region 原来上传MES逻辑
+                        //System.DateTime cur = System.DateTime.Now;
+                        //TimeSpan ts = cur - devOpenSt;
+                        //if (ts.TotalSeconds < 30)
+                        //{
+                        //    break;
+                        //}
+                        //IDictionary<string, string> ccdDataDic = ccdDevAcc.GetData(ccdDevName, ref reStr);
+                        //if (ccdDataDic == null || ccdDataDic.Keys.Count() < 1)
+                        //{
+                        //    //Console.WriteLine(string.Format("{0}获取CCD{1}数据失败,{2}",nodeName,ccdDevName,reStr));
+                        //    this.currentTaskDescribe = string.Format("获取CCD{0}数据失败,{1}", ccdDevName, reStr);
+                        //    break;
+                        //}
+                        //foreach (string keyStr in ccdDataDic.Keys)
+                        //{
+                        //    string str = string.Format("CCD数据，产品ID:{0}，数据：{1}", keyStr, ccdDataDic[keyStr]);
+                        //    logRecorder.AddDebugLog(nodeName, str);
+                        //    AddProcessRecord(keyStr, "模块", "检测数据", string.Format("读取到{0}检测数据", ccdDevName), ccdDataDic[keyStr]);
+                        //    string upLoadMesScrewData = "";
+                        //    if (GetScrewData(ccdDataDic[keyStr], ref upLoadMesScrewData) == false)
+                        //    {
 
-                        System.DateTime cur = System.DateTime.Now;
-                        TimeSpan ts = cur - devOpenSt;
-                        if (ts.TotalSeconds < 30)
+                        //        logRecorder.AddDebugLog(nodeName, "CCD数据格式错误！无法转换为MES需要格式！");
+                        //        continue;
+                        //    }
+                        //    if (UploadMesScrewData(keyStr, upLoadMesScrewData) == false)
+                        //    {
+                        //        logRecorder.AddDebugLog(nodeName, "上传MES锁螺丝数据失败！");
+                        //        continue;
+                        //    }
+                        //    logRecorder.AddDebugLog(nodeName, "上传MES锁螺丝数据成功！");
+                        //}
+                        #endregion
+                        int readDataApply = 0;
+                        Console.WriteLine("Screw0");
+                        if(this.plcRW2.ReadDB("D9000",ref readDataApply)==false)
+                        {
+                            Console.WriteLine("Screw1");
+                            break;
+                        }
+                        Console.WriteLine("Screw2");
+                        if(readDataApply !=1)
                         {
                             break;
                         }
-                        IDictionary<string, string> ccdDataDic = ccdDevAcc.GetData(ccdDevName, ref reStr);
-                        if (ccdDataDic == null || ccdDataDic.Keys.Count() < 1)
+                        Console.WriteLine("Screw3");
+                        //==更改为读取数据库形式，根据模块条码获取数据，判断所有条码的数据上传成功后执行下一步======//
+                        bool isScrewCpt = true;//所有螺丝加工完成标识
+                         List<DBAccess.Model.BatteryModuleModel> modList = modBll.GetModelList(string.Format("palletID='{0}' and palletBinded=1", this.rfidUID));
+                         Console.WriteLine("Screw4");
+                         foreach (DBAccess.Model.BatteryModuleModel module in modList)
+                         {
+                             ALineScrewDB.dbModel screwModel = bllScrewDb.GetModelByModuleID(module.batModuleID);
+                             if (screwModel == null)
+                             {
+                                 continue;
+                             }
+                             Console.WriteLine("Screw5");
+
+                             if (screwModel.UpLoad == false)
+                             {
+                                 isScrewCpt = false;
+                             }
+
+                             if (screwModel.UpLoad == true)
+                             {
+                                 continue;
+                             }
+                             Console.WriteLine("Screw6");
+                             string mesScrewData = "螺丝1扭矩:" + screwModel.螺丝1马头扭矩 + ":Nm|螺丝2扭矩:" + screwModel.螺丝2马头扭矩 + ":Nm|螺丝3扭矩:"
+                                 + screwModel.螺丝3马头扭矩 + ":Nm|螺丝4扭矩:" + screwModel.螺丝4马头扭矩 + ":Nm|螺丝1角度:" + screwModel.螺丝1马头角度
+                                 + ":°|螺丝2角度:" + screwModel.螺丝2马头角度 + ":°|螺丝3角度:" + screwModel.螺丝3马头角度 + ":°|螺丝4角度:"
+                                 + screwModel.螺丝4马头角度 + ":°";
+
+                             int status = UploadMesScrewData(module.batModuleID, mesScrewData,ref reStr);
+                             if (status == 0)
+                             {
+                                 Console.WriteLine("Screw7");
+                                 if (this.plcRW2.WriteDB("D9000", 2) == false)
+                                 {
+                                     break;
+                                 }
+                                 logRecorder.AddDebugLog(nodeName, "上传MES锁螺丝数据成功！数据：" + mesScrewData +"返回："+ reStr);
+                             }
+                             else if (status == 1)
+                             {
+                                 Console.WriteLine("Screw8");
+                                 logRecorder.AddDebugLog(nodeName, "上传MES锁螺丝数据成功，但返回NG！" + reStr);
+                                 if (this.plcRW2.WriteDB("D9000", 3) == false)
+                                 {
+                                     break;
+                                 }
+                             }
+                             else
+                             {
+                                 Console.WriteLine("Screw9");
+                                 //Console.WriteLine();
+                                 logRecorder.AddDebugLog(nodeName, "上传MES锁螺丝数据失败！" + reStr);
+                                 continue;
+                             }
+                             screwModel.UpLoad =true;
+                             bllScrewDb.Update(screwModel);
+
+                              
+                         }
+                        //========================================================================================//
+                        if(isScrewCpt == false)
                         {
-                            //Console.WriteLine(string.Format("{0}获取CCD{1}数据失败,{2}",nodeName,ccdDevName,reStr));
-                            this.currentTaskDescribe = string.Format("获取CCD{0}数据失败,{1}", ccdDevName, reStr);
+                            Console.WriteLine("Screw10");
                             break;
                         }
-                        foreach (string keyStr in ccdDataDic.Keys)
-                        {
-                            string str = string.Format("CCD数据，产品ID:{0}，数据：{1}", keyStr, ccdDataDic[keyStr]);
-                            logRecorder.AddDebugLog(nodeName, str);
-                            AddProcessRecord(keyStr, "模块", "检测数据", string.Format("读取到{0}检测数据", ccdDevName), ccdDataDic[keyStr]);
-                            string upLoadMesScrewData = "";
-                            if (GetScrewData(ccdDataDic[keyStr], ref upLoadMesScrewData) == false)
-                            {
-
-                                logRecorder.AddDebugLog(nodeName, "CCD数据格式错误！无法转换为MES需要格式！");
-                                continue;
-                            }
-                            if (UploadMesScrewData(keyStr, upLoadMesScrewData) == false)
-                            {
-                                logRecorder.AddDebugLog(nodeName, "上传MES锁螺丝数据失败！");
-                                continue;
-                            }
-                            logRecorder.AddDebugLog(nodeName, "上传MES锁螺丝数据成功！");
-                        }
+                        Console.WriteLine("Screw11");
                         currentTaskPhase++;
                         this.currentTask.TaskPhase = this.currentTaskPhase;
                         this.ctlTaskBll.Update(this.currentTask);
@@ -250,7 +330,7 @@ namespace LineNodes
            
         }
 
-        private bool UploadMesScrewData(string modCode, string screwData)
+        private int UploadMesScrewData(string modCode, string screwData,ref string restr)
         {
 
             int flag = 3;
@@ -267,16 +347,21 @@ namespace LineNodes
             string strJson = "";
 
             rObj = DevDataUpload(flag, M_DEVICE_SN, M_WORKSTATION_SN, modCode, M_UNION_SN, M_CONTAINER_SN, M_LEVEL, M_ITEMVALUE, ref strJson);
+            restr = rObj.RES;
             logRecorder.AddDebugLog(nodeName, string.Format("上传MES数据{0},返回{1},发送json数据{2}", M_ITEMVALUE, rObj.RES,strJson));
-            if (rObj.RES.Contains("OK"))
+            if (rObj.RES.ToUpper().Contains("OK"))
             {
-                return true;
+                return 0;
+            }
+            else if(rObj.RES.Contains("NG"))
+            {
+                return 1;
             }
             else
             {
                // Console.WriteLine(this.nodeName + "上传MES锁螺丝数据错误：" + rObj.RES);
                 logRecorder.AddDebugLog(nodeName, string.Format("上传MES返回{0}", rObj.RES));
-                return false;
+                return 2;
             }
         
 
@@ -301,7 +386,6 @@ namespace LineNodes
                    + ":Nm|螺丝1角度:" + screwJD1 + ":°|螺丝2角度:" + screwJD2 + ":°|螺丝3角度:" + screwJD3 + ":°|螺丝4角度:" + screwJD4 + ":°";
                 return true;
             }
-
             catch
             {
                 Console.WriteLine("CCD数据异常,{0}", screwData);

@@ -173,6 +173,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ALineScrewDB\ALineScrewDB.csproj">
+      <Project>{fd3f1683-58c3-4cb5-b36e-a39b161fc48c}</Project>
+      <Name>ALineScrewDB</Name>
+    </ProjectReference>
     <ProjectReference Include="..\FTDataAccess\DBAccess.csproj">
       <Project>{7031e95a-cbb5-44ae-aa9a-80211309981f}</Project>
       <Name>DBAccess</Name>

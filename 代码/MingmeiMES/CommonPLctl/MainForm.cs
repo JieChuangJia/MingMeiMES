@@ -64,13 +64,18 @@ namespace CommonPL
             string mtdbSrc = ConfigurationManager.AppSettings["MTDBConn"];
             string dcirdbSrc = ConfigurationManager.AppSettings["DCIRDBConn"];
             string fxjSrc = ConfigurationManager.AppSettings["FXJDBConn"];
+            string aLineScrewDBConn = ConfigurationManager.AppSettings["ALineScrewDBConn"];
+            
           
             //CtlDBAccess.DBUtility.PubConstant.ConnectionString = string.Format(@"{0}Initial Catalog=ACEcams;User ID=sa;Password=123456;", dbSrc);
             string dbConn1 = string.Format(@"{0}Initial Catalog=MingmeiMES;User ID=sa;Password=123456;", dbSrc);
             FTDataAccess.DBUtility.DbHelperSQL.SetConnstr(dbConn1);
 
+            
             MTDBAccess.PubConstant.ConnectionString = @"Provider = Microsoft.ACE.OLEDB.12.0;" + mtdbSrc + ";Persist Security Info = False;";
             DCIRDBAccess.PubConstant.ConnectionString = @"Provider = Microsoft.ACE.OLEDB.12.0;" + dcirdbSrc + ";Persist Security Info = False;";
+            ALineScrewDB.PubConstant.ConnectionString = @"Provider = Microsoft.ACE.OLEDB.12.0;" + aLineScrewDBConn + ";Persist Security Info = False;";
+
 
             string fxjDbConn = string.Format(@"{0}Initial Catalog=HL_JBF;User ID=sa;Password=123456;", fxjSrc);
 
