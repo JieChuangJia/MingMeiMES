@@ -12,59 +12,19 @@ namespace ALineScrewDB
     {
         public dbDAL()
         { }
-        #region  BasicMethod
+        #region  Method
+
 
         /// <summary>
         /// 是否存在该记录
         /// </summary>
-        public bool Exists(string 测试时间, string 二维码, string 螺丝1马头结果, string 螺丝1马头扭矩, string 螺丝1马头角度, string 螺丝1图片路径, string 螺丝2马头结果, string 螺丝2马头扭矩, string 螺丝2马头角度, string 螺丝2图片路径, string 螺丝3马头结果, string 螺丝3马头扭矩, string 螺丝3马头角度, string 螺丝3图片路径, string 螺丝4马头结果, string 螺丝4马头扭矩, string 螺丝4马头角度, string 螺丝4图片路径, bool UpLoad)
+        public bool Exists(string 二维码)
         {
             StringBuilder strSql = new StringBuilder();
             strSql.Append("select count(1) from db");
-            strSql.Append(" where 测试时间=@测试时间 and 二维码=@二维码 and 螺丝1马头结果=@螺丝1马头结果 and 螺丝1马头扭矩=@螺丝1马头扭矩 and 螺丝1马头角度=@螺丝1马头角度 and 螺丝1图片路径=@螺丝1图片路径 and 螺丝2马头结果=@螺丝2马头结果 and 螺丝2马头扭矩=@螺丝2马头扭矩 and 螺丝2马头角度=@螺丝2马头角度 and 螺丝2图片路径=@螺丝2图片路径 and 螺丝3马头结果=@螺丝3马头结果 and 螺丝3马头扭矩=@螺丝3马头扭矩 and 螺丝3马头角度=@螺丝3马头角度 and 螺丝3图片路径=@螺丝3图片路径 and 螺丝4马头结果=@螺丝4马头结果 and 螺丝4马头扭矩=@螺丝4马头扭矩 and 螺丝4马头角度=@螺丝4马头角度 and 螺丝4图片路径=@螺丝4图片路径 and UpLoad=@UpLoad ");
-            OleDbParameter[] parameters = {
-					new OleDbParameter("@测试时间", OleDbType.VarChar,255),
-					new OleDbParameter("@二维码", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝1马头结果", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝1马头扭矩", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝1马头角度", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝1图片路径", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝2马头结果", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝2马头扭矩", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝2马头角度", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝2图片路径", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝3马头结果", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝3马头扭矩", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝3马头角度", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝3图片路径", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝4马头结果", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝4马头扭矩", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝4马头角度", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝4图片路径", OleDbType.VarChar,255),
-					new OleDbParameter("@UpLoad", OleDbType.Boolean,1)			};
-            parameters[0].Value = 测试时间;
-            parameters[1].Value = 二维码;
-            parameters[2].Value = 螺丝1马头结果;
-            parameters[3].Value = 螺丝1马头扭矩;
-            parameters[4].Value = 螺丝1马头角度;
-            parameters[5].Value = 螺丝1图片路径;
-            parameters[6].Value = 螺丝2马头结果;
-            parameters[7].Value = 螺丝2马头扭矩;
-            parameters[8].Value = 螺丝2马头角度;
-            parameters[9].Value = 螺丝2图片路径;
-            parameters[10].Value = 螺丝3马头结果;
-            parameters[11].Value = 螺丝3马头扭矩;
-            parameters[12].Value = 螺丝3马头角度;
-            parameters[13].Value = 螺丝3图片路径;
-            parameters[14].Value = 螺丝4马头结果;
-            parameters[15].Value = 螺丝4马头扭矩;
-            parameters[16].Value = 螺丝4马头角度;
-            parameters[17].Value = 螺丝4图片路径;
-            parameters[18].Value = UpLoad;
-
-            return DbHelperOleDb.Exists(strSql.ToString(), parameters);
+            strSql.Append(" where 二维码='" + 二维码 + "' ");
+            return DbHelperOleDb.Exists(strSql.ToString());
         }
-
 
         /// <summary>
         /// 增加一条数据
@@ -72,51 +32,110 @@ namespace ALineScrewDB
         public bool Add(ALineScrewDB.dbModel model)
         {
             StringBuilder strSql = new StringBuilder();
+            StringBuilder strSql1 = new StringBuilder();
+            StringBuilder strSql2 = new StringBuilder();
+            if (model.测试时间 != null)
+            {
+                strSql1.Append("测试时间,");
+                strSql2.Append("'" + model.测试时间 + "',");
+            }
+            if (model.二维码 != null)
+            {
+                strSql1.Append("二维码,");
+                strSql2.Append("'" + model.二维码 + "',");
+            }
+            if (model.螺丝1马头结果 != null)
+            {
+                strSql1.Append("螺丝1马头结果,");
+                strSql2.Append("'" + model.螺丝1马头结果 + "',");
+            }
+            if (model.螺丝1马头扭矩 != null)
+            {
+                strSql1.Append("螺丝1马头扭矩,");
+                strSql2.Append("'" + model.螺丝1马头扭矩 + "',");
+            }
+            if (model.螺丝1马头角度 != null)
+            {
+                strSql1.Append("螺丝1马头角度,");
+                strSql2.Append("'" + model.螺丝1马头角度 + "',");
+            }
+            if (model.螺丝1图片路径 != null)
+            {
+                strSql1.Append("螺丝1图片路径,");
+                strSql2.Append("'" + model.螺丝1图片路径 + "',");
+            }
+            if (model.螺丝2马头结果 != null)
+            {
+                strSql1.Append("螺丝2马头结果,");
+                strSql2.Append("'" + model.螺丝2马头结果 + "',");
+            }
+            if (model.螺丝2马头扭矩 != null)
+            {
+                strSql1.Append("螺丝2马头扭矩,");
+                strSql2.Append("'" + model.螺丝2马头扭矩 + "',");
+            }
+            if (model.螺丝2马头角度 != null)
+            {
+                strSql1.Append("螺丝2马头角度,");
+                strSql2.Append("'" + model.螺丝2马头角度 + "',");
+            }
+            if (model.螺丝2图片路径 != null)
+            {
+                strSql1.Append("螺丝2图片路径,");
+                strSql2.Append("'" + model.螺丝2图片路径 + "',");
+            }
+            if (model.螺丝3马头结果 != null)
+            {
+                strSql1.Append("螺丝3马头结果,");
+                strSql2.Append("'" + model.螺丝3马头结果 + "',");
+            }
+            if (model.螺丝3马头扭矩 != null)
+            {
+                strSql1.Append("螺丝3马头扭矩,");
+                strSql2.Append("'" + model.螺丝3马头扭矩 + "',");
+            }
+            if (model.螺丝3马头角度 != null)
+            {
+                strSql1.Append("螺丝3马头角度,");
+                strSql2.Append("'" + model.螺丝3马头角度 + "',");
+            }
+            if (model.螺丝3图片路径 != null)
+            {
+                strSql1.Append("螺丝3图片路径,");
+                strSql2.Append("'" + model.螺丝3图片路径 + "',");
+            }
+            if (model.螺丝4马头结果 != null)
+            {
+                strSql1.Append("螺丝4马头结果,");
+                strSql2.Append("'" + model.螺丝4马头结果 + "',");
+            }
+            if (model.螺丝4马头扭矩 != null)
+            {
+                strSql1.Append("螺丝4马头扭矩,");
+                strSql2.Append("'" + model.螺丝4马头扭矩 + "',");
+            }
+            if (model.螺丝4马头角度 != null)
+            {
+                strSql1.Append("螺丝4马头角度,");
+                strSql2.Append("'" + model.螺丝4马头角度 + "',");
+            }
+            if (model.螺丝4图片路径 != null)
+            {
+                strSql1.Append("螺丝4图片路径,");
+                strSql2.Append("'" + model.螺丝4图片路径 + "',");
+            }
+            if (model.UpLoad != null)
+            {
+                strSql1.Append("UpLoad,");
+                strSql2.Append("'" + model.UpLoad + "',");
+            }
             strSql.Append("insert into db(");
-            strSql.Append("测试时间,二维码,螺丝1马头结果,螺丝1马头扭矩,螺丝1马头角度,螺丝1图片路径,螺丝2马头结果,螺丝2马头扭矩,螺丝2马头角度,螺丝2图片路径,螺丝3马头结果,螺丝3马头扭矩,螺丝3马头角度,螺丝3图片路径,螺丝4马头结果,螺丝4马头扭矩,螺丝4马头角度,螺丝4图片路径,UpLoad)");
+            strSql.Append(strSql1.ToString().Remove(strSql1.Length - 1));
+            strSql.Append(")");
             strSql.Append(" values (");
-            strSql.Append("@测试时间,@二维码,@螺丝1马头结果,@螺丝1马头扭矩,@螺丝1马头角度,@螺丝1图片路径,@螺丝2马头结果,@螺丝2马头扭矩,@螺丝2马头角度,@螺丝2图片路径,@螺丝3马头结果,@螺丝3马头扭矩,@螺丝3马头角度,@螺丝3图片路径,@螺丝4马头结果,@螺丝4马头扭矩,@螺丝4马头角度,@螺丝4图片路径,@UpLoad)");
-            OleDbParameter[] parameters = {
-					new OleDbParameter("@测试时间", OleDbType.VarChar,255),
-					new OleDbParameter("@二维码", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝1马头结果", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝1马头扭矩", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝1马头角度", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝1图片路径", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝2马头结果", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝2马头扭矩", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝2马头角度", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝2图片路径", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝3马头结果", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝3马头扭矩", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝3马头角度", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝3图片路径", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝4马头结果", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝4马头扭矩", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝4马头角度", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝4图片路径", OleDbType.VarChar,255),
-					new OleDbParameter("@UpLoad", OleDbType.Boolean,1)};
-            parameters[0].Value = model.测试时间;
-            parameters[1].Value = model.二维码;
-            parameters[2].Value = model.螺丝1马头结果;
-            parameters[3].Value = model.螺丝1马头扭矩;
-            parameters[4].Value = model.螺丝1马头角度;
-            parameters[5].Value = model.螺丝1图片路径;
-            parameters[6].Value = model.螺丝2马头结果;
-            parameters[7].Value = model.螺丝2马头扭矩;
-            parameters[8].Value = model.螺丝2马头角度;
-            parameters[9].Value = model.螺丝2图片路径;
-            parameters[10].Value = model.螺丝3马头结果;
-            parameters[11].Value = model.螺丝3马头扭矩;
-            parameters[12].Value = model.螺丝3马头角度;
-            parameters[13].Value = model.螺丝3图片路径;
-            parameters[14].Value = model.螺丝4马头结果;
-            parameters[15].Value = model.螺丝4马头扭矩;
-            parameters[16].Value = model.螺丝4马头角度;
-            parameters[17].Value = model.螺丝4图片路径;
-            parameters[18].Value = model.UpLoad;
-
-            int rows = DbHelperOleDb.ExecuteSql(strSql.ToString(), parameters);
+            strSql.Append(strSql2.ToString().Remove(strSql2.Length - 1));
+            strSql.Append(")");
+            int rows = DbHelperOleDb.ExecuteSql(strSql.ToString());
             if (rows > 0)
             {
                 return true;
@@ -126,6 +145,7 @@ namespace ALineScrewDB
                 return false;
             }
         }
+
         /// <summary>
         /// 更新一条数据
         /// </summary>
@@ -133,67 +153,155 @@ namespace ALineScrewDB
         {
             StringBuilder strSql = new StringBuilder();
             strSql.Append("update db set ");
-            strSql.Append("测试时间=@测试时间,");
-            strSql.Append("螺丝1马头结果=@螺丝1马头结果,");
-            strSql.Append("螺丝1马头扭矩=@螺丝1马头扭矩,");
-            strSql.Append("螺丝1马头角度=@螺丝1马头角度,");
-            strSql.Append("螺丝1图片路径=@螺丝1图片路径,");
-            strSql.Append("螺丝2马头结果=@螺丝2马头结果,");
-            strSql.Append("螺丝2马头扭矩=@螺丝2马头扭矩,");
-            strSql.Append("螺丝2马头角度=@螺丝2马头角度,");
-            strSql.Append("螺丝2图片路径=@螺丝2图片路径,");
-            strSql.Append("螺丝3马头结果=@螺丝3马头结果,");
-            strSql.Append("螺丝3马头扭矩=@螺丝3马头扭矩,");
-            strSql.Append("螺丝3马头角度=@螺丝3马头角度,");
-            strSql.Append("螺丝3图片路径=@螺丝3图片路径,");
-            strSql.Append("螺丝4马头结果=@螺丝4马头结果,");
-            strSql.Append("螺丝4马头扭矩=@螺丝4马头扭矩,");
-            strSql.Append("螺丝4马头角度=@螺丝4马头角度,");
-            strSql.Append("螺丝4图片路径=@螺丝4图片路径,");
-            strSql.Append("UpLoad=@UpLoad");
-            strSql.Append(" where 测试时间=@测试时间 and 二维码=@二维码 and 螺丝1马头结果=@螺丝1马头结果 and 螺丝1马头扭矩=@螺丝1马头扭矩 and 螺丝1马头角度=@螺丝1马头角度 and 螺丝1图片路径=@螺丝1图片路径 and 螺丝2马头结果=@螺丝2马头结果 and 螺丝2马头扭矩=@螺丝2马头扭矩 and 螺丝2马头角度=@螺丝2马头角度 and 螺丝2图片路径=@螺丝2图片路径 and 螺丝3马头结果=@螺丝3马头结果 and 螺丝3马头扭矩=@螺丝3马头扭矩 and 螺丝3马头角度=@螺丝3马头角度 and 螺丝3图片路径=@螺丝3图片路径 and 螺丝4马头结果=@螺丝4马头结果 and 螺丝4马头扭矩=@螺丝4马头扭矩 and 螺丝4马头角度=@螺丝4马头角度 and 螺丝4图片路径=@螺丝4图片路径 and UpLoad=@UpLoad ");
-            OleDbParameter[] parameters = {
-					new OleDbParameter("@测试时间", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝1马头结果", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝1马头扭矩", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝1马头角度", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝1图片路径", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝2马头结果", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝2马头扭矩", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝2马头角度", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝2图片路径", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝3马头结果", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝3马头扭矩", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝3马头角度", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝3图片路径", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝4马头结果", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝4马头扭矩", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝4马头角度", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝4图片路径", OleDbType.VarChar,255),
-					new OleDbParameter("@UpLoad", OleDbType.Boolean,1),
-					new OleDbParameter("@二维码", OleDbType.VarChar,255)};
-            parameters[0].Value = model.测试时间;
-            parameters[1].Value = model.螺丝1马头结果;
-            parameters[2].Value = model.螺丝1马头扭矩;
-            parameters[3].Value = model.螺丝1马头角度;
-            parameters[4].Value = model.螺丝1图片路径;
-            parameters[5].Value = model.螺丝2马头结果;
-            parameters[6].Value = model.螺丝2马头扭矩;
-            parameters[7].Value = model.螺丝2马头角度;
-            parameters[8].Value = model.螺丝2图片路径;
-            parameters[9].Value = model.螺丝3马头结果;
-            parameters[10].Value = model.螺丝3马头扭矩;
-            parameters[11].Value = model.螺丝3马头角度;
-            parameters[12].Value = model.螺丝3图片路径;
-            parameters[13].Value = model.螺丝4马头结果;
-            parameters[14].Value = model.螺丝4马头扭矩;
-            parameters[15].Value = model.螺丝4马头角度;
-            parameters[16].Value = model.螺丝4图片路径;
-            parameters[17].Value = model.UpLoad;
-            parameters[18].Value = model.二维码;
-
-            int rows = DbHelperOleDb.ExecuteSql(strSql.ToString(), parameters);
-            if (rows > 0)
+            if (model.测试时间 != null)
+            {
+                strSql.Append("测试时间='" + model.测试时间 + "',");
+            }
+            else
+            {
+                strSql.Append("测试时间= null ,");
+            }
+            if (model.螺丝1马头结果 != null)
+            {
+                strSql.Append("螺丝1马头结果='" + model.螺丝1马头结果 + "',");
+            }
+            else
+            {
+                strSql.Append("螺丝1马头结果= null ,");
+            }
+            if (model.螺丝1马头扭矩 != null)
+            {
+                strSql.Append("螺丝1马头扭矩='" + model.螺丝1马头扭矩 + "',");
+            }
+            else
+            {
+                strSql.Append("螺丝1马头扭矩= null ,");
+            }
+            if (model.螺丝1马头角度 != null)
+            {
+                strSql.Append("螺丝1马头角度='" + model.螺丝1马头角度 + "',");
+            }
+            else
+            {
+                strSql.Append("螺丝1马头角度= null ,");
+            }
+            if (model.螺丝1图片路径 != null)
+            {
+                strSql.Append("螺丝1图片路径='" + model.螺丝1图片路径 + "',");
+            }
+            else
+            {
+                strSql.Append("螺丝1图片路径= null ,");
+            }
+            if (model.螺丝2马头结果 != null)
+            {
+                strSql.Append("螺丝2马头结果='" + model.螺丝2马头结果 + "',");
+            }
+            else
+            {
+                strSql.Append("螺丝2马头结果= null ,");
+            }
+            if (model.螺丝2马头扭矩 != null)
+            {
+                strSql.Append("螺丝2马头扭矩='" + model.螺丝2马头扭矩 + "',");
+            }
+            else
+            {
+                strSql.Append("螺丝2马头扭矩= null ,");
+            }
+            if (model.螺丝2马头角度 != null)
+            {
+                strSql.Append("螺丝2马头角度='" + model.螺丝2马头角度 + "',");
+            }
+            else
+            {
+                strSql.Append("螺丝2马头角度= null ,");
+            }
+            if (model.螺丝2图片路径 != null)
+            {
+                strSql.Append("螺丝2图片路径='" + model.螺丝2图片路径 + "',");
+            }
+            else
+            {
+                strSql.Append("螺丝2图片路径= null ,");
+            }
+            if (model.螺丝3马头结果 != null)
+            {
+                strSql.Append("螺丝3马头结果='" + model.螺丝3马头结果 + "',");
+            }
+            else
+            {
+                strSql.Append("螺丝3马头结果= null ,");
+            }
+            if (model.螺丝3马头扭矩 != null)
+            {
+                strSql.Append("螺丝3马头扭矩='" + model.螺丝3马头扭矩 + "',");
+            }
+            else
+            {
+                strSql.Append("螺丝3马头扭矩= null ,");
+            }
+            if (model.螺丝3马头角度 != null)
+            {
+                strSql.Append("螺丝3马头角度='" + model.螺丝3马头角度 + "',");
+            }
+            else
+            {
+                strSql.Append("螺丝3马头角度= null ,");
+            }
+            if (model.螺丝3图片路径 != null)
+            {
+                strSql.Append("螺丝3图片路径='" + model.螺丝3图片路径 + "',");
+            }
+            else
+            {
+                strSql.Append("螺丝3图片路径= null ,");
+            }
+            if (model.螺丝4马头结果 != null)
+            {
+                strSql.Append("螺丝4马头结果='" + model.螺丝4马头结果 + "',");
+            }
+            else
+            {
+                strSql.Append("螺丝4马头结果= null ,");
+            }
+            if (model.螺丝4马头扭矩 != null)
+            {
+                strSql.Append("螺丝4马头扭矩='" + model.螺丝4马头扭矩 + "',");
+            }
+            else
+            {
+                strSql.Append("螺丝4马头扭矩= null ,");
+            }
+            if (model.螺丝4马头角度 != null)
+            {
+                strSql.Append("螺丝4马头角度='" + model.螺丝4马头角度 + "',");
+            }
+            else
+            {
+                strSql.Append("螺丝4马头角度= null ,");
+            }
+            if (model.螺丝4图片路径 != null)
+            {
+                strSql.Append("螺丝4图片路径='" + model.螺丝4图片路径 + "',");
+            }
+            else
+            {
+                strSql.Append("螺丝4图片路径= null ,");
+            }
+            if (model.UpLoad != null)
+            {
+                strSql.Append("UpLoad='" + model.UpLoad + "',");
+            }
+            else
+            {
+                strSql.Append("UpLoad= null ,");
+            }
+            int n = strSql.ToString().LastIndexOf(",");
+            strSql.Remove(n, 1);
+            strSql.Append(" where 二维码='" + model.二维码 + "' ");
+            int rowsAffected = DbHelperOleDb.ExecuteSql(strSql.ToString());
+            if (rowsAffected > 0)
             {
                 return true;
             }
@@ -206,53 +314,29 @@ namespace ALineScrewDB
         /// <summary>
         /// 删除一条数据
         /// </summary>
-        public bool Delete(string 测试时间, string 二维码, string 螺丝1马头结果, string 螺丝1马头扭矩, string 螺丝1马头角度, string 螺丝1图片路径, string 螺丝2马头结果, string 螺丝2马头扭矩, string 螺丝2马头角度, string 螺丝2图片路径, string 螺丝3马头结果, string 螺丝3马头扭矩, string 螺丝3马头角度, string 螺丝3图片路径, string 螺丝4马头结果, string 螺丝4马头扭矩, string 螺丝4马头角度, string 螺丝4图片路径, bool UpLoad)
+        public bool Delete(string 二维码)
         {
-
             StringBuilder strSql = new StringBuilder();
             strSql.Append("delete from db ");
-            strSql.Append(" where 测试时间=@测试时间 and 二维码=@二维码 and 螺丝1马头结果=@螺丝1马头结果 and 螺丝1马头扭矩=@螺丝1马头扭矩 and 螺丝1马头角度=@螺丝1马头角度 and 螺丝1图片路径=@螺丝1图片路径 and 螺丝2马头结果=@螺丝2马头结果 and 螺丝2马头扭矩=@螺丝2马头扭矩 and 螺丝2马头角度=@螺丝2马头角度 and 螺丝2图片路径=@螺丝2图片路径 and 螺丝3马头结果=@螺丝3马头结果 and 螺丝3马头扭矩=@螺丝3马头扭矩 and 螺丝3马头角度=@螺丝3马头角度 and 螺丝3图片路径=@螺丝3图片路径 and 螺丝4马头结果=@螺丝4马头结果 and 螺丝4马头扭矩=@螺丝4马头扭矩 and 螺丝4马头角度=@螺丝4马头角度 and 螺丝4图片路径=@螺丝4图片路径 and UpLoad=@UpLoad ");
-            OleDbParameter[] parameters = {
-					new OleDbParameter("@测试时间", OleDbType.VarChar,255),
-					new OleDbParameter("@二维码", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝1马头结果", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝1马头扭矩", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝1马头角度", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝1图片路径", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝2马头结果", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝2马头扭矩", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝2马头角度", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝2图片路径", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝3马头结果", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝3马头扭矩", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝3马头角度", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝3图片路径", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝4马头结果", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝4马头扭矩", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝4马头角度", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝4图片路径", OleDbType.VarChar,255),
-					new OleDbParameter("@UpLoad", OleDbType.Boolean,1)			};
-            parameters[0].Value = 测试时间;
-            parameters[1].Value = 二维码;
-            parameters[2].Value = 螺丝1马头结果;
-            parameters[3].Value = 螺丝1马头扭矩;
-            parameters[4].Value = 螺丝1马头角度;
-            parameters[5].Value = 螺丝1图片路径;
-            parameters[6].Value = 螺丝2马头结果;
-            parameters[7].Value = 螺丝2马头扭矩;
-            parameters[8].Value = 螺丝2马头角度;
-            parameters[9].Value = 螺丝2图片路径;
-            parameters[10].Value = 螺丝3马头结果;
-            parameters[11].Value = 螺丝3马头扭矩;
-            parameters[12].Value = 螺丝3马头角度;
-            parameters[13].Value = 螺丝3图片路径;
-            parameters[14].Value = 螺丝4马头结果;
-            parameters[15].Value = 螺丝4马头扭矩;
-            parameters[16].Value = 螺丝4马头角度;
-            parameters[17].Value = 螺丝4图片路径;
-            parameters[18].Value = UpLoad;
-
-            int rows = DbHelperOleDb.ExecuteSql(strSql.ToString(), parameters);
+            strSql.Append(" where 二维码='" + 二维码 + "' ");
+            int rowsAffected = DbHelperOleDb.ExecuteSql(strSql.ToString());
+            if (rowsAffected > 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }		/// <summary>
+        /// 批量删除数据
+        /// </summary>
+        public bool DeleteList(string 二维码list)
+        {
+            StringBuilder strSql = new StringBuilder();
+            strSql.Append("delete from db ");
+            strSql.Append(" where 二维码 in (" + 二维码list + ")  ");
+            int rows = DbHelperOleDb.ExecuteSql(strSql.ToString());
             if (rows > 0)
             {
                 return true;
@@ -267,54 +351,15 @@ namespace ALineScrewDB
         /// <summary>
         /// 得到一个对象实体
         /// </summary>
-        public ALineScrewDB.dbModel GetModel(string 测试时间, string 二维码, string 螺丝1马头结果, string 螺丝1马头扭矩, string 螺丝1马头角度, string 螺丝1图片路径, string 螺丝2马头结果, string 螺丝2马头扭矩, string 螺丝2马头角度, string 螺丝2图片路径, string 螺丝3马头结果, string 螺丝3马头扭矩, string 螺丝3马头角度, string 螺丝3图片路径, string 螺丝4马头结果, string 螺丝4马头扭矩, string 螺丝4马头角度, string 螺丝4图片路径, bool UpLoad)
+        public ALineScrewDB.dbModel GetModel(string 二维码)
         {
-
             StringBuilder strSql = new StringBuilder();
-            strSql.Append("select 测试时间,二维码,螺丝1马头结果,螺丝1马头扭矩,螺丝1马头角度,螺丝1图片路径,螺丝2马头结果,螺丝2马头扭矩,螺丝2马头角度,螺丝2图片路径,螺丝3马头结果,螺丝3马头扭矩,螺丝3马头角度,螺丝3图片路径,螺丝4马头结果,螺丝4马头扭矩,螺丝4马头角度,螺丝4图片路径,UpLoad from db ");
-            strSql.Append(" where 测试时间=@测试时间 and 二维码=@二维码 and 螺丝1马头结果=@螺丝1马头结果 and 螺丝1马头扭矩=@螺丝1马头扭矩 and 螺丝1马头角度=@螺丝1马头角度 and 螺丝1图片路径=@螺丝1图片路径 and 螺丝2马头结果=@螺丝2马头结果 and 螺丝2马头扭矩=@螺丝2马头扭矩 and 螺丝2马头角度=@螺丝2马头角度 and 螺丝2图片路径=@螺丝2图片路径 and 螺丝3马头结果=@螺丝3马头结果 and 螺丝3马头扭矩=@螺丝3马头扭矩 and 螺丝3马头角度=@螺丝3马头角度 and 螺丝3图片路径=@螺丝3图片路径 and 螺丝4马头结果=@螺丝4马头结果 and 螺丝4马头扭矩=@螺丝4马头扭矩 and 螺丝4马头角度=@螺丝4马头角度 and 螺丝4图片路径=@螺丝4图片路径 and UpLoad=@UpLoad ");
-            OleDbParameter[] parameters = {
-					new OleDbParameter("@测试时间", OleDbType.VarChar,255),
-					new OleDbParameter("@二维码", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝1马头结果", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝1马头扭矩", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝1马头角度", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝1图片路径", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝2马头结果", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝2马头扭矩", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝2马头角度", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝2图片路径", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝3马头结果", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝3马头扭矩", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝3马头角度", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝3图片路径", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝4马头结果", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝4马头扭矩", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝4马头角度", OleDbType.VarChar,255),
-					new OleDbParameter("@螺丝4图片路径", OleDbType.VarChar,255),
-					new OleDbParameter("@UpLoad", OleDbType.Boolean,1)			};
-            parameters[0].Value = 测试时间;
-            parameters[1].Value = 二维码;
-            parameters[2].Value = 螺丝1马头结果;
-            parameters[3].Value = 螺丝1马头扭矩;
-            parameters[4].Value = 螺丝1马头角度;
-            parameters[5].Value = 螺丝1图片路径;
-            parameters[6].Value = 螺丝2马头结果;
-            parameters[7].Value = 螺丝2马头扭矩;
-            parameters[8].Value = 螺丝2马头角度;
-            parameters[9].Value = 螺丝2图片路径;
-            parameters[10].Value = 螺丝3马头结果;
-            parameters[11].Value = 螺丝3马头扭矩;
-            parameters[12].Value = 螺丝3马头角度;
-            parameters[13].Value = 螺丝3图片路径;
-            parameters[14].Value = 螺丝4马头结果;
-            parameters[15].Value = 螺丝4马头扭矩;
-            parameters[16].Value = 螺丝4马头角度;
-            parameters[17].Value = 螺丝4图片路径;
-            parameters[18].Value = UpLoad;
-
+            strSql.Append("select  ");
+            strSql.Append(" 测试时间,二维码,螺丝1马头结果,螺丝1马头扭矩,螺丝1马头角度,螺丝1图片路径,螺丝2马头结果,螺丝2马头扭矩,螺丝2马头角度,螺丝2图片路径,螺丝3马头结果,螺丝3马头扭矩,螺丝3马头角度,螺丝3图片路径,螺丝4马头结果,螺丝4马头扭矩,螺丝4马头角度,螺丝4图片路径,UpLoad ");
+            strSql.Append(" from db ");
+            strSql.Append(" where 二维码='" + 二维码 + "' ");
             ALineScrewDB.dbModel model = new ALineScrewDB.dbModel();
-            DataSet ds = DbHelperOleDb.Query(strSql.ToString(), parameters);
+            DataSet ds = DbHelperOleDb.Query(strSql.ToString());
             if (ds.Tables[0].Rows.Count > 0)
             {
                 return DataRowToModel(ds.Tables[0].Rows[0]);
@@ -324,7 +369,6 @@ namespace ALineScrewDB
                 return null;
             }
         }
-
 
         /// <summary>
         /// 得到一个对象实体
@@ -406,16 +450,9 @@ namespace ALineScrewDB
                 {
                     model.螺丝4图片路径 = row["螺丝4图片路径"].ToString();
                 }
-                if (row["UpLoad"] != null && row["UpLoad"].ToString() != "")
+                if (row["UpLoad"] != null)
                 {
-                    if ((row["UpLoad"].ToString() == "1") || (row["UpLoad"].ToString().ToLower() == "true"))
-                    {
-                        model.UpLoad = true;
-                    }
-                    else
-                    {
-                        model.UpLoad = false;
-                    }
+                    model.UpLoad = row["UpLoad"].ToString();
                 }
             }
             return model;
@@ -471,7 +508,7 @@ namespace ALineScrewDB
             }
             else
             {
-                strSql.Append("order by T.UpLoad desc");
+                strSql.Append("order by T.二维码 desc");
             }
             strSql.Append(")AS Row, T.*  from db T ");
             if (!string.IsNullOrEmpty(strWhere.Trim()))
@@ -484,31 +521,9 @@ namespace ALineScrewDB
         }
 
         /*
-        /// <summary>
-        /// 分页获取数据列表
-        /// </summary>
-        public DataSet GetList(int PageSize,int PageIndex,string strWhere)
-        {
-            OleDbParameter[] parameters = {
-                    new OleDbParameter("@tblName", OleDbType.VarChar, 255),
-                    new OleDbParameter("@fldName", OleDbType.VarChar, 255),
-                    new OleDbParameter("@PageSize", OleDbType.Integer),
-                    new OleDbParameter("@PageIndex", OleDbType.Integer),
-                    new OleDbParameter("@IsReCount", OleDbType.Boolean),
-                    new OleDbParameter("@OrderType", OleDbType.Boolean),
-                    new OleDbParameter("@strWhere", OleDbType.VarChar,1000),
-                    };
-            parameters[0].Value = "db";
-            parameters[1].Value = "UpLoad";
-            parameters[2].Value = PageSize;
-            parameters[3].Value = PageIndex;
-            parameters[4].Value = 0;
-            parameters[5].Value = 0;
-            parameters[6].Value = strWhere;	
-            return DbHelperOleDb.RunProcedure("UP_GetRecordByPage",parameters,"ds");
-        }*/
+        */
 
-        #endregion  BasicMethod
+        #endregion  Method
         #region  ExtensionMethod
 
         #endregion  ExtensionMethod

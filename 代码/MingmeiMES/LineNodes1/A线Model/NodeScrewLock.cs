@@ -194,82 +194,100 @@ namespace LineNodes
                         //    logRecorder.AddDebugLog(nodeName, "上传MES锁螺丝数据成功！");
                         //}
                         #endregion
+                        //==更改为读取数据库形式，根据模块条码获取数据，判断所有条码的数据上传成功后执行下一步======//
                         int readDataApply = 0;
                         Console.WriteLine("Screw0");
-                        if(this.plcRW2.ReadDB("D9000",ref readDataApply)==false)
+                        bool isScrewCpt = true;//所有螺丝加工完成标识
+                        List<DBAccess.Model.BatteryModuleModel> modList = modBll.GetModelList(string.Format("palletID='{0}' and palletBinded=1", this.rfidUID));
+                        foreach (DBAccess.Model.BatteryModuleModel module in modList)
+                        {
+                            ALineScrewDB.dbModel screwModel = bllScrewDb.GetModelByModuleID(module.batModuleID);
+                            if (screwModel == null)
+                            {
+                                continue;
+                            }
+                            
+                            if (screwModel.UpLoad != "是")
+                            {
+                                isScrewCpt = false;
+                                break;
+                            }
+                        }
+                        if (isScrewCpt == true)
+                        {
+                            Console.WriteLine("Screw18");
+                            currentTaskPhase++;
+                            this.currentTask.TaskPhase = this.currentTaskPhase;
+                            this.ctlTaskBll.Update(this.currentTask);
+                            break;
+                        }
+                        if (this.plcRW2.ReadDB("D9000", ref readDataApply) == false)
                         {
                             Console.WriteLine("Screw1");
                             break;
                         }
                         Console.WriteLine("Screw2");
-                        if(readDataApply !=1)
+                        if (readDataApply != 1)
                         {
                             break;
                         }
-                        Console.WriteLine("Screw3");
-                        //==更改为读取数据库形式，根据模块条码获取数据，判断所有条码的数据上传成功后执行下一步======//
-                        bool isScrewCpt = true;//所有螺丝加工完成标识
-                         List<DBAccess.Model.BatteryModuleModel> modList = modBll.GetModelList(string.Format("palletID='{0}' and palletBinded=1", this.rfidUID));
-                         Console.WriteLine("Screw4");
-                         foreach (DBAccess.Model.BatteryModuleModel module in modList)
-                         {
-                             ALineScrewDB.dbModel screwModel = bllScrewDb.GetModelByModuleID(module.batModuleID);
-                             if (screwModel == null)
-                             {
-                                 continue;
-                             }
-                             Console.WriteLine("Screw5");
-
-                             if (screwModel.UpLoad == false)
-                             {
-                                 isScrewCpt = false;
-                             }
-
-                             if (screwModel.UpLoad == true)
-                             {
-                                 continue;
-                             }
-                             Console.WriteLine("Screw6");
-                             string mesScrewData = "螺丝1扭矩:" + screwModel.螺丝1马头扭矩 + ":Nm|螺丝2扭矩:" + screwModel.螺丝2马头扭矩 + ":Nm|螺丝3扭矩:"
-                                 + screwModel.螺丝3马头扭矩 + ":Nm|螺丝4扭矩:" + screwModel.螺丝4马头扭矩 + ":Nm|螺丝1角度:" + screwModel.螺丝1马头角度
-                                 + ":°|螺丝2角度:" + screwModel.螺丝2马头角度 + ":°|螺丝3角度:" + screwModel.螺丝3马头角度 + ":°|螺丝4角度:"
-                                 + screwModel.螺丝4马头角度 + ":°";
-
-                             int status = UploadMesScrewData(module.batModuleID, mesScrewData,ref reStr);
-                             if (status == 0)
-                             {
-                                 Console.WriteLine("Screw7");
-                                 if (this.plcRW2.WriteDB("D9000", 2) == false)
-                                 {
-                                     break;
-                                 }
-                                 logRecorder.AddDebugLog(nodeName, "上传MES锁螺丝数据成功！数据：" + mesScrewData +"返回："+ reStr);
-                             }
-                             else if (status == 1)
-                             {
-                                 Console.WriteLine("Screw8");
-                                 logRecorder.AddDebugLog(nodeName, "上传MES锁螺丝数据成功，但返回NG！" + reStr);
-                                 if (this.plcRW2.WriteDB("D9000", 3) == false)
-                                 {
-                                     break;
-                                 }
-                             }
-                             else
-                             {
-                                 Console.WriteLine("Screw9");
-                                 //Console.WriteLine();
-                                 logRecorder.AddDebugLog(nodeName, "上传MES锁螺丝数据失败！" + reStr);
-                                 continue;
-                             }
-                             screwModel.UpLoad =true;
-                             bllScrewDb.Update(screwModel);
-
-                              
-                         }
-                        //========================================================================================//
-                        if(isScrewCpt == false)
+                    
+                        Console.WriteLine("Screw4");
+                        foreach (DBAccess.Model.BatteryModuleModel module in modList)
                         {
-                            Console.WriteLine("Screw10");
+                            ALineScrewDB.dbModel screwModel = bllScrewDb.GetModelByModuleID(module.batModuleID);
+                            if (screwModel == null)
+                            {
+                                continue;
+                            }
+                            Console.WriteLine("Screw5");
+
+
+                            if (screwModel.UpLoad == "是")
+                            {
+                                continue;
+                            }
+                            Console.WriteLine("Screw6");
+                            string mesScrewData = "";
+                            if (GetScrewData(screwModel, ref mesScrewData, ref reStr) == false)
+                            {
+                                Console.WriteLine("模块:" + screwModel.二维码 + ",获取螺丝数据失败：" + reStr);
+                                continue;
+                            }
+
+                            int status = UploadMesScrewData(module.batModuleID, mesScrewData, ref reStr);
+                            if (status == 0)
+                            {
+                                Console.WriteLine("Screw7");
+                                if (this.plcRW2.WriteDB("D9000", 2) == false)
+                                {
+                                    break;
+                                }
+                                logRecorder.AddDebugLog(nodeName, "上传MES锁螺丝数据成功！数据：" + mesScrewData + "返回：" + reStr);
+                            }
+                            else if (status == 1)
+                            {
+                                Console.WriteLine("Screw8");
+                                logRecorder.AddDebugLog(nodeName, "上传MES锁螺丝数据成功，但返回NG！" + reStr);
+                                if (this.plcRW2.WriteDB("D9000", 3) == false)
+                                {
+                                    break;
+                                }
+                            }
+                            else
+                            {
+                                Console.WriteLine("Screw9");
+                                //Console.WriteLine();
+                                logRecorder.AddDebugLog(nodeName, "上传MES锁螺丝数据失败！" + reStr);
+                                continue;
+                            }
+                            screwModel.UpLoad = "是";
+                            
+                            bllScrewDb.Update(screwModel);
+                        }
+                        //========================================================================================//
+                        if (isScrewCpt == false)
+                        {                          
                             break;
                         }
                         Console.WriteLine("Screw11");
@@ -329,7 +347,74 @@ namespace LineNodes
             return true;
            
         }
+        private bool GetScrewData( ALineScrewDB.dbModel screwModel,ref string screwdata,ref string restr)
+        {
+            try
+            {
 
+
+                if (screwModel == null)
+                {
+                    restr = "传入对象为空";
+                    return false;
+                }
+                if (screwModel.螺丝1马头扭矩.ToLower().Trim() == "null")
+                {
+                    restr = "螺丝1码头扭矩为空！";
+                    return false;
+                }
+                else if (screwModel.螺丝2马头扭矩.ToLower().Trim() == "null")
+                {
+                    restr = "螺丝2码头扭矩为空！";
+                    return false;
+                }
+                else if (screwModel.螺丝3马头扭矩.ToLower().Trim() == "null")
+                {
+                    restr = "螺丝3码头扭矩为空！";
+                    return false;
+                }
+                else if (screwModel.螺丝4马头扭矩.ToLower().Trim() == "null")
+                {
+                    restr = "螺丝4码头扭矩为空！";
+                    return false;
+                }
+                else if (screwModel.螺丝1马头角度.ToLower().Trim() == "null")
+                {
+                    restr = "螺丝1马头角度为空！";
+                    return false;
+                }
+                else if (screwModel.螺丝2马头角度.ToLower().Trim() == "null")
+                {
+                    restr = "螺丝2马头角度为空！";
+                    return false;
+                }
+                else if (screwModel.螺丝3马头角度.ToLower().Trim() == "null")
+                {
+                    restr = "螺丝3马头角度为空！";
+                    return false;
+                }
+                else if (screwModel.螺丝4马头角度.ToLower().Trim() == "null")
+                {
+                    restr = "螺丝4马头角度为空！";
+                    return false;
+                }
+
+                string mesScrewData = "螺丝1扭矩:" + screwModel.螺丝1马头扭矩 + ":Nm|螺丝2扭矩:" + screwModel.螺丝2马头扭矩 + ":Nm|螺丝3扭矩:"
+                               + screwModel.螺丝3马头扭矩 + ":Nm|螺丝4扭矩:" + screwModel.螺丝4马头扭矩 + ":Nm|螺丝1角度:" + screwModel.螺丝1马头角度
+                               + ":°|螺丝2角度:" + screwModel.螺丝2马头角度 + ":°|螺丝3角度:" + screwModel.螺丝3马头角度 + ":°|螺丝4角度:"
+                               + screwModel.螺丝4马头角度 + ":°";
+
+                screwdata = mesScrewData;
+                mesScrewData = "获取螺丝数据成功！";
+                return true;
+            }
+            catch(Exception ex)
+            {
+                restr = ex.Message;
+                
+                return false;
+            }
+        }
         private int UploadMesScrewData(string modCode, string screwData,ref string restr)
         {
 
@@ -348,7 +433,7 @@ namespace LineNodes
 
             rObj = DevDataUpload(flag, M_DEVICE_SN, M_WORKSTATION_SN, modCode, M_UNION_SN, M_CONTAINER_SN, M_LEVEL, M_ITEMVALUE, ref strJson);
             restr = rObj.RES;
-            logRecorder.AddDebugLog(nodeName, string.Format("上传MES数据{0},返回{1},发送json数据{2}", M_ITEMVALUE, rObj.RES,strJson));
+            //logRecorder.AddDebugLog(nodeName, string.Format("上传MES数据{0},返回{1},发送json数据{2}", M_ITEMVALUE, rObj.RES,strJson));
             if (rObj.RES.ToUpper().Contains("OK"))
             {
                 return 0;

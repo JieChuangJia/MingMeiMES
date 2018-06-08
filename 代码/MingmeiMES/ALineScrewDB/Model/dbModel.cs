@@ -28,7 +28,7 @@ namespace ALineScrewDB
         private string _螺丝4马头扭矩;
         private string _螺丝4马头角度;
         private string _螺丝4图片路径;
-        private bool _upload = false;
+        private string _upload;
         /// <summary>
         /// 
         /// </summary>
@@ -176,7 +176,7 @@ namespace ALineScrewDB
         /// <summary>
         /// 
         /// </summary>
-        public bool UpLoad
+        public string UpLoad
         {
             set { _upload = value; }
             get { return _upload; }

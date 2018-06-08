@@ -189,6 +189,11 @@ namespace LineNodes
                         this.currentTask.TaskPhase = this.currentTaskPhase;
                         this.ctlTaskBll.Update(this.currentTask);
 
+                        if (!TryUnbind(rfidUID, ref reStr))
+                        {
+                            logRecorder.AddDebugLog(nodeName, "解绑RFID:" + rfidUID + "失败," + reStr);
+                            break;
+                        }
                         logRecorder.AddDebugLog(nodeName, string.Format("读到RFID:{0}，开始绑定",this.rfidUID));
                         this.bindModeCt = modBll.GetRecordCount(string.Format("palletID='{0}' and palletBinded=1", this.rfidUID));
                         this.db1ValsToSnd[2] = (short)this.bindModeCt;
@@ -371,12 +376,14 @@ namespace LineNodes
                 mod.asmTime = System.DateTime.Now;
                 mod.tag1 = modGrade.ToString();
                 mod.tag5 = modGradeNum.ToString();//分档数字放到tag5中np_added
+                this.logRecorder.AddDebugLog(this.nodeName, "位置8：" + this.db2Vals[8] + "位置9：" + this.db2Vals[9] + "位置10：" + this.db2Vals[10]);
+                   
                 if (this.db2Vals[0] == 1) //A通道
-                {
+                {                 
                     mod.tag2 = this.db2Vals[9].ToString();
                 }
                 else if (this.db2Vals[0] == 2) //B通道
-                {
+                {                
                     mod.tag2 = this.db2Vals[10].ToString();
                 }
                 //if(this.db2Vals[6] == 1)

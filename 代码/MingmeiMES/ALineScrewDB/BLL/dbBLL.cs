@@ -16,9 +16,9 @@ namespace ALineScrewDB.BLL
         /// <summary>
         /// 是否存在该记录
         /// </summary>
-        public bool Exists(string 测试时间, string 二维码, string 螺丝1马头结果, string 螺丝1马头扭矩, string 螺丝1马头角度, string 螺丝1图片路径, string 螺丝2马头结果, string 螺丝2马头扭矩, string 螺丝2马头角度, string 螺丝2图片路径, string 螺丝3马头结果, string 螺丝3马头扭矩, string 螺丝3马头角度, string 螺丝3图片路径, string 螺丝4马头结果, string 螺丝4马头扭矩, string 螺丝4马头角度, string 螺丝4图片路径, bool UpLoad)
+        public bool Exists(string 二维码)
         {
-            return dal.Exists(测试时间, 二维码, 螺丝1马头结果, 螺丝1马头扭矩, 螺丝1马头角度, 螺丝1图片路径, 螺丝2马头结果, 螺丝2马头扭矩, 螺丝2马头角度, 螺丝2图片路径, 螺丝3马头结果, 螺丝3马头扭矩, 螺丝3马头角度, 螺丝3图片路径, 螺丝4马头结果, 螺丝4马头扭矩, 螺丝4马头角度, 螺丝4图片路径, UpLoad);
+            return dal.Exists(二维码);
         }
 
         /// <summary>
@@ -40,22 +40,30 @@ namespace ALineScrewDB.BLL
         /// <summary>
         /// 删除一条数据
         /// </summary>
-        public bool Delete(string 测试时间, string 二维码, string 螺丝1马头结果, string 螺丝1马头扭矩, string 螺丝1马头角度, string 螺丝1图片路径, string 螺丝2马头结果, string 螺丝2马头扭矩, string 螺丝2马头角度, string 螺丝2图片路径, string 螺丝3马头结果, string 螺丝3马头扭矩, string 螺丝3马头角度, string 螺丝3图片路径, string 螺丝4马头结果, string 螺丝4马头扭矩, string 螺丝4马头角度, string 螺丝4图片路径, bool UpLoad)
+        public bool Delete(string 二维码)
         {
 
-            return dal.Delete(测试时间, 二维码, 螺丝1马头结果, 螺丝1马头扭矩, 螺丝1马头角度, 螺丝1图片路径, 螺丝2马头结果, 螺丝2马头扭矩, 螺丝2马头角度, 螺丝2图片路径, 螺丝3马头结果, 螺丝3马头扭矩, 螺丝3马头角度, 螺丝3图片路径, 螺丝4马头结果, 螺丝4马头扭矩, 螺丝4马头角度, 螺丝4图片路径, UpLoad);
+            return dal.Delete(二维码);
+        }
+        /// <summary>
+        /// 删除一条数据
+        /// </summary>
+        public bool DeleteList(string 二维码list)
+        {
+            return dal.DeleteList(二维码list);
         }
 
         /// <summary>
         /// 得到一个对象实体
         /// </summary>
-        public ALineScrewDB.dbModel GetModel(string 测试时间, string 二维码, string 螺丝1马头结果, string 螺丝1马头扭矩, string 螺丝1马头角度, string 螺丝1图片路径, string 螺丝2马头结果, string 螺丝2马头扭矩, string 螺丝2马头角度, string 螺丝2图片路径, string 螺丝3马头结果, string 螺丝3马头扭矩, string 螺丝3马头角度, string 螺丝3图片路径, string 螺丝4马头结果, string 螺丝4马头扭矩, string 螺丝4马头角度, string 螺丝4图片路径, bool UpLoad)
+        public ALineScrewDB.dbModel GetModel(string 二维码)
         {
 
-            return dal.GetModel(测试时间, 二维码, 螺丝1马头结果, 螺丝1马头扭矩, 螺丝1马头角度, 螺丝1图片路径, 螺丝2马头结果, 螺丝2马头扭矩, 螺丝2马头角度, 螺丝2图片路径, 螺丝3马头结果, 螺丝3马头扭矩, 螺丝3马头角度, 螺丝3图片路径, 螺丝4马头结果, 螺丝4马头扭矩, 螺丝4马头角度, 螺丝4图片路径, UpLoad);
+            return dal.GetModel(二维码);
         }
 
-      
+        
+
         /// <summary>
         /// 获得数据列表
         /// </summary>
