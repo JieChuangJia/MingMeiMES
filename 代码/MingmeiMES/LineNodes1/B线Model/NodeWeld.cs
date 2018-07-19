@@ -14,6 +14,8 @@ namespace LineNodes
     public class NodeWeld : CtlNodeBaseModel
     {
         string welderIP = "192.168.0.44";
+        int stepIndex = 1;
+        DBAccess.Model.BatteryModuleModel currWorkMod = null;
         public override bool BuildCfg(System.Xml.Linq.XElement xe, ref string reStr)
         {
             if (!base.BuildCfg(xe, ref reStr))
@@ -50,10 +52,9 @@ namespace LineNodes
                 
                 return false;
             }
-            
+
             switch (currentTaskPhase)
-            {
-                    
+            {     
                
                 case 1:
                     {
@@ -74,9 +75,7 @@ namespace LineNodes
 
                         currentTaskPhase++;
                         this.currentTask.TaskPhase = this.currentTaskPhase;
-                  
                         this.ctlTaskBll.Update(this.currentTask);
-                       
                         break;
                     }
                 case 2:
@@ -84,204 +83,21 @@ namespace LineNodes
                         List<DBAccess.Model.BatteryModuleModel> modList = modBll.GetModelList(string.Format("palletID='{0}' and palletBinded=1", rfidUID));
                         if (modList.Count() < 1) //空板直接放行
                         {
-                            currentTaskPhase = 5;
+                            currentTaskPhase = 3;
                             break;
                         }
-                        string welderSndFile = string.Format(@"\\{0}\MESReport\DeviceInfoLane{1}.txt", welderIP, channelIndex); // @"\\192.168.0.45\MESReport\DeviceInfoLane1.txt";
-                        if (!System.IO.File.Exists(welderSndFile))
+                        bool isAllComplete = false;
+                        ModuleWeldBuiness(modList, ref isAllComplete);
+                        if (isAllComplete == true)
                         {
-                            currentTaskDescribe = string.Format("铝丝焊文件：{0}不存在", welderSndFile);
-                            return false;
+                            currentTaskPhase++;
+                            this.currentTask.TaskPhase = this.currentTaskPhase;
+                            this.ctlTaskBll.Update(this.currentTask);
                         }
-                        System.IO.StreamWriter writter = new System.IO.StreamWriter(welderSndFile, false);
-                        StringBuilder strBuild = new StringBuilder();
-                        for (int i = 1; i < 5; i++)
-                        {
-                            string str = string.Format("{0},{1},", i, this.rfidUID);
-                            foreach (DBAccess.Model.BatteryModuleModel mod in modList)
-                            {
-                                if (mod.tag2.Trim() == i.ToString())
-                                {
-                                    str += mod.batModuleID;
-                                    break;
-                                }
-                            }
-                            strBuild.AppendLine(str);
-                        }
-                        writter.Write(strBuild.ToString());
-                        writter.Flush();
-                        writter.Close();
-                        logRecorder.AddDebugLog(nodeName, "写入铝丝焊:" + strBuild.ToString());
-
-                     
-                        currentTaskPhase++;
-                        this.currentTask.TaskPhase = this.currentTaskPhase;
-                        this.ctlTaskBll.Update(this.currentTask);
-
-
-                        //List<DBAccess.Model.BatteryModuleModel> modList = modBll.GetModelList(string.Format("palletID='{0}' and palletBinded=1", this.rfidUID));
-                        //if (modList.Count() < 1)//空板直接放行
-                        //{
-                        //    currentTaskPhase = 4;
-                        //    break;
-                        //}
-                        break;
+                         
                     }
+                    break;
                 case 3:
-                    {
-                        if(this.db2Vals[2+channelIndex] != 2)
-                        {
-                            currentTaskDescribe = "等待设备工作完成";
-                            break;
-                        }
-                        List<DBAccess.Model.BatteryModuleModel> modList = modBll.GetModelList(string.Format("palletID='{0}' and palletBinded=1", this.rfidUID));
-                        if (modList.Count() < 1) //空板直接放行
-                        {
-                            currentTaskPhase = 5;
-                            break;
-                        }
-                        bool isReceive = true;
-                        for(int i = 0;i< modList.Count;i++)
-                        {
-                          
-                            string testResultPath = string.Format(@"\\{0}\MESReport\PullTestResult\{1}_{2}.csv", welderIP, modList[i].palletID, modList[i].batModuleID);
-                            if (!System.IO.File.Exists(testResultPath))
-                            {
-                                currentTaskDescribe = string.Format(this.nodeName + "铝丝焊结果文件：{0}不存在", testResultPath);
-                                isReceive = false;
-                                break;
-                            }
-                            DataTable dt = CSVFileHelper.OpenCSV(testResultPath);
-                            string checkRes = "";
-                            for (int j = 0; j < dt.Rows.Count; j++)
-                            {
-                                if (dt.Rows[j]["Traceability - integrated pull test - passed"].ToString().ToUpper() == "FALSE")
-                                {
-                                    checkRes = "NG";
-                                    break;
-                                }
-                            }
-                            if (checkRes == "NG")
-                            {
-                                modList[i].checkResult = 2;
-                                modList[i].palletBinded = false;
-                                modList[i].tag3 = this.nodeName; //标识在哪个工位产生的NG,(共有三个工位，1#铝丝焊、2#铝丝焊、DCIR检测)
-                            }
-                            else
-                            {
-
-                                modList[i].checkResult = 1;
-                            }
-                            modBll.Update(modList[i]);
-                        }
-                        if(isReceive == false)
-                        {
-                            break;
-                        }
-                        currentTaskPhase++;
-                        this.currentTask.TaskPhase = this.currentTaskPhase;
-                        this.ctlTaskBll.Update(this.currentTask);
-                        
-                        break;
-                    }
-                //case 4:
-                //    {
-                //        List<DBAccess.Model.BatteryModuleModel> modList = modBll.GetModelList(string.Format("palletID='{0}' and palletBinded=1", this.rfidUID));
-                //        if (modList.Count() < 1) //空板直接放行
-                //        {
-                //            currentTaskPhase = 5;
-                //            break;
-                //        }
-                //        //if (!AfterMechFromSoft(modList, ref reStr))
-                //        //{
-                //        //    Console.WriteLine(string.Format("{0},{1}", nodeName, reStr));
-                //        //    break;
-                //        //}
-                //        //if (!SendCheckResult(modList, ref reStr))
-                //        //{
-                //        //    Console.WriteLine(string.Format("{0},{1}", nodeName, reStr));
-                //        //    break;
-                //        //}
-                //        currentTaskPhase++;
-                //        this.currentTask.TaskPhase = this.currentTaskPhase;
-                //        this.ctlTaskBll.Update(this.currentTask);
-                //        break;
-                //    }
-                case 4:
-                    {
-                        if (isWithMes == false)
-                        {
-                            currentTaskPhase = 5;
-                            break;
-                        }
-                        currentTaskDescribe = "上传MES数据";
-                        List<DBAccess.Model.BatteryModuleModel> modList = modBll.GetModelList(string.Format("palletID='{0}'", this.rfidUID));
-                        if (modList.Count() < 1) //空板直接放行
-                        {
-                            currentTaskPhase = 5;
-                            break;
-                        }
-                        bool isReceive = true;
-                        string M_WORKSTATION_SN = "";
-                        if (this.nodeID == "OPB004")
-                        {
-                            M_WORKSTATION_SN = "Y00101701";
-                        }
-                        else
-                        {
-                            M_WORKSTATION_SN = "Y00102001";
-                        }
-
-                        for (int i = 0; i < modList.Count; i++)
-                        {
-                            if (modList[i].palletBinded == false && modList[i].tag3 != null && modList[i].tag3 != this.nodeName)
-                            {
-                                continue;
-                            }
-                            string testResultPath = string.Format(@"\\{0}\MESReport\BondParameters\{1}_{2}.csv", welderIP, modList[i].palletID, modList[i].batModuleID);
-                            if (!System.IO.File.Exists(testResultPath))
-                            {
-                                currentTaskDescribe = string.Format(this.nodeName + "铝丝焊参数文件：{0}不存在", testResultPath);
-                                isReceive = false;
-                                break;
-                            }
-                            DataTable dt = CSVFileHelper.OpenCSV(testResultPath);
-                            string pullTestPath = string.Format(@"\\{0}\MESReport\PullTestResult\{1}_{2}.csv", welderIP, modList[i].palletID, modList[i].batModuleID);
-                            if(!System.IO.File.Exists(pullTestPath))
-                            {
-                                currentTaskDescribe = string.Format(this.nodeName + "铝丝焊拉力结果参数文件：{0}不存在", testResultPath);
-                                isReceive = false;
-                                break;
-                            }
-                            DataTable dtPull = CSVFileHelper.OpenCSV(pullTestPath);
-                            int M_FLAG = 3;
-                            string M_DEVICE_SN = "";
-                            string M_SN = modList[i].batModuleID;
-                            string M_UNION_SN = "";
-                            string M_CONTAINER_SN = "";
-                            string M_LEVEL = "";
-                            string M_ITEMVALUE = GetItemVal(dt,dtPull);
-                            //上传数据
-                            RootObject rObj = new RootObject();
-                            string strJson = "";
-                            rObj = DevDataUpload(M_FLAG, M_DEVICE_SN, M_WORKSTATION_SN, M_SN, M_UNION_SN, M_CONTAINER_SN, M_LEVEL, M_ITEMVALUE,ref strJson);
-                            currentTaskDescribe = rObj.RES + "," + M_FLAG + "," + M_WORKSTATION_SN + "," + M_ITEMVALUE + this.nodeName + rObj.CONTROL_TYPE;
-                            Console.WriteLine(rObj.RES);
-                            Console.WriteLine(M_ITEMVALUE);
-                            logRecorder.AddDebugLog(nodeName, "上传mes数据:" + M_ITEMVALUE);
-                            this.WriteTxtLog(modList[i].batModuleID,"上传mes数据:" + M_ITEMVALUE+"返回结果:"+rObj.RES);
-                            logRecorder.AddDebugLog(nodeName, string.Format("上传MES，返回结果:{0}",rObj.RES));
-                        }
-                        if (isReceive == false)
-                        {
-                            break;
-                        }
-                        currentTaskPhase++;
-                        this.currentTask.TaskPhase = this.currentTaskPhase;
-                        this.ctlTaskBll.Update(this.currentTask);
-                        break;;
-                    }
-                case 5:
                     {
 
                       //  Thread.Sleep(10000);
@@ -298,6 +114,263 @@ namespace LineNodes
                     break;
             }
             return true;
+        }
+
+        private void ModuleWeldBuiness(List<DBAccess.Model.BatteryModuleModel> modList, ref bool isAllComplete)
+        {
+           
+            string weldStr = "";
+            string reStr = "";
+          
+
+            if (db2Vals[0] == 0)
+            {
+                stepIndex = 1;
+            }
+            switch (stepIndex)
+            {
+                case 1:
+                    {
+                         currWorkMod = null;
+                        Console.WriteLine("weld1");
+                        //tag3:SENDED记录数据已发送至焊机，COMPLETE为加工完成
+                        string welderSndFile = string.Format(@"\\{0}\MESReport\DeviceInfoLane{1}.txt", welderIP, channelIndex); // @"\\192.168.0.45\MESReport\DeviceInfoLane1.txt";
+                        if (!System.IO.File.Exists(welderSndFile))
+                        {
+                            currentTaskDescribe = string.Format("铝丝焊文件：{0}不存在", welderSndFile);
+                            return;
+                        }
+                        Console.WriteLine("weld2");
+                        for (int i = 0; i < modList.Count ; i++)
+                        {                          
+                            if (modList[i].tag4.ToUpper() == ENUMWeldStatus.SENDED.ToString() || modList[i].tag4.ToUpper() == ENUMWeldStatus.COMPLETE.ToString())
+                            {
+                                continue;
+                            }
+                            currWorkMod = modList[i];
+
+                            if (GetWeldStr(currWorkMod, ref weldStr, ref reStr) == false)
+                            {
+                                logRecorder.AddDebugLog(nodeName, string.Format("获取模块焊接加工数据失败:{0}", reStr));
+                                continue;
+                            }
+                            break;
+                        }
+                        Console.WriteLine("weld3");
+                        if(currWorkMod ==null)
+                        {
+                            return;
+                        }
+                        Console.WriteLine("weld4");
+                        System.IO.StreamWriter writter = new System.IO.StreamWriter(welderSndFile, false);
+                        StringBuilder strBuild = new StringBuilder();
+                        writter.Write(weldStr);
+                        writter.Flush();
+                        writter.Close();
+                        logRecorder.AddDebugLog(nodeName, "写入铝丝焊:" + weldStr);
+                        currWorkMod.tag4 = ENUMWeldStatus.SENDED.ToString();
+                        modBll.Update(currWorkMod);
+                        Console.WriteLine("weld5");
+                        stepIndex++;
+                        break;
+                    }
+                case 2:
+                    {
+                        Console.WriteLine("weld6");
+                        if (this.db2Vals[2 + channelIndex] != 2)//有模块加工完成
+                        {
+                            currentTaskDescribe = "等待设备工作完成";
+                            return;
+                        }
+                        if(this.NodeDB2Commit(2 + channelIndex,1,ref reStr)==false)//复位读写
+                        {
+                            return;
+                        }
+                        Console.WriteLine("weld7");
+                        if (CompleteDescRecord(currWorkMod, ref reStr) == false)
+                        {
+                            logRecorder.AddDebugLog(nodeName, string.Format("焊接完成反馈数据处理失败:{0}", reStr));
+                            return;
+                        }
+                        Console.WriteLine("weld8");
+                        if (UploadBatteryModToMes(currWorkMod, ref reStr) == false)
+                        {
+                            logRecorder.AddDebugLog(nodeName, string.Format("焊接上传数据失败:{0}", reStr));
+                            return;
+                        }
+                        Console.WriteLine("weld9");
+                        currWorkMod.tag4 = ENUMWeldStatus.COMPLETE.ToString();
+                        modBll.Update(currWorkMod);
+                        if (IsAllModComplete() == true)
+                        {
+                            Console.WriteLine("weld10");
+                            currWorkMod.tag4 = "";
+                            modBll.Update(currWorkMod);
+                            isAllComplete = true;
+                        }
+                        else
+                        {
+                            isAllComplete = false;
+                            Console.WriteLine("weld11");
+                        }
+
+                        stepIndex = 1;
+                        break;
+                    }
+            }
+
+        }
+        private bool IsAllModComplete( )
+        {
+            List<DBAccess.Model.BatteryModuleModel> modList = modBll.GetModelList(string.Format("palletID='{0}'", this.rfidUID));
+            bool isAllCmd = true;
+            foreach(DBAccess.Model.BatteryModuleModel  mod in modList)
+            {
+                if(mod.tag4.ToUpper()!=ENUMWeldStatus.COMPLETE.ToString())
+                {
+                    isAllCmd = false;
+                }
+            }
+            return isAllCmd;
+        }
+
+        private bool CompleteDescRecord( DBAccess.Model.BatteryModuleModel modBattery  ,ref string restr)
+        {
+            try
+            {
+                string testResultPath = string.Format(@"\\{0}\MESReport\PullTestResult\{1}_{2}.csv", welderIP, modBattery.palletID, modBattery.batModuleID);
+                if (!System.IO.File.Exists(testResultPath))
+                {
+                    currentTaskDescribe = string.Format(this.nodeName + "铝丝焊结果文件：{0}不存在", testResultPath);
+
+                    return false;
+                }
+                DataTable dt = CSVFileHelper.OpenCSV(testResultPath);
+                string checkRes = "";
+                for (int j = 0; j < dt.Rows.Count; j++)
+                {
+                    if (dt.Rows[j]["Traceability - integrated pull test - passed"].ToString().ToUpper() == "FALSE")
+                    {
+                        checkRes = "NG";
+                        break;
+                    }
+                }
+                if (checkRes == "NG")
+                {
+                    modBattery.checkResult = 2;
+                    modBattery.palletBinded = false;
+                    modBattery.tag3 = this.nodeName; //标识在哪个工位产生的NG,(共有三个工位，1#铝丝焊、2#铝丝焊、DCIR检测)
+                }
+                else
+                {
+
+                    modBattery.checkResult = 1;
+                }
+                modBll.Update(modBattery);
+
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                restr = ex.Message;
+                return false;
+            }
+        }
+        private bool GetWeldStr( DBAccess.Model.BatteryModuleModel currMod, ref string weldStr,ref string restr)
+        {
+            
+            try
+            {
+                //StringBuilder strBuild = new StringBuilder();
+                string str = string.Format("{0},{1},", currMod.tag2.Trim(), this.rfidUID);
+                str += currMod.batModuleID;
+                //foreach (DBAccess.Model.BatteryModuleModel mod in modList)
+                //{
+                //    if (mod.tag2.Trim() == modPosIndex)
+                //    {
+                //        str += mod.batModuleID;
+                //        break;
+                //    }
+                //}
+                //strBuild.AppendLine(str);
+
+                weldStr = str;
+                return true;
+            }
+            catch(Exception ex)
+            {
+                restr = ex.Message;
+                return false;
+            }
+          
+        }
+
+        private bool UploadBatteryModToMes( DBAccess.Model.BatteryModuleModel modBattery ,ref string reStr)
+        {
+            try
+            {
+                string M_WORKSTATION_SN = "";
+                if (this.nodeID == "OPB004")
+                {
+                    M_WORKSTATION_SN = "Y00101701";
+                }
+                else
+                {
+                    M_WORKSTATION_SN = "Y00102001";
+                }
+
+
+                if (modBattery.palletBinded == false && modBattery.tag3 != null && modBattery.tag3 != this.nodeName)
+                {
+                    reStr = this.nodeName + ":模块没有绑定！";
+                    return false;
+                }
+                string testResultPath = string.Format(@"\\{0}\MESReport\BondParameters\{1}_{2}.csv", welderIP, modBattery.palletID, modBattery.batModuleID);
+                if (!System.IO.File.Exists(testResultPath))
+                {
+                    currentTaskDescribe = string.Format(this.nodeName + "铝丝焊参数文件：{0}不存在", testResultPath);
+                    reStr = currentTaskDescribe;
+                    return false;
+                }
+                DataTable dt = CSVFileHelper.OpenCSV(testResultPath);
+                string pullTestPath = string.Format(@"\\{0}\MESReport\PullTestResult\{1}_{2}.csv", welderIP, modBattery.palletID, modBattery.batModuleID);
+                if (!System.IO.File.Exists(pullTestPath))
+                {
+                    currentTaskDescribe = string.Format(this.nodeName + "铝丝焊拉力结果参数文件：{0}不存在", testResultPath);
+                    reStr = currentTaskDescribe;
+                    return false;
+                }
+                DataTable dtPull = CSVFileHelper.OpenCSV(pullTestPath);
+                int M_FLAG = 3;
+                string M_DEVICE_SN = "";
+                string M_SN = modBattery.batModuleID;
+                string M_UNION_SN = "";
+                string M_CONTAINER_SN = "";
+                string M_LEVEL = "";
+                string M_ITEMVALUE = GetItemVal(dt, dtPull);
+                //上传数据
+                RootObject rObj = new RootObject();
+                string strJson = "";
+                rObj = DevDataUpload(M_FLAG, M_DEVICE_SN, M_WORKSTATION_SN, M_SN, M_UNION_SN, M_CONTAINER_SN, M_LEVEL, M_ITEMVALUE, ref strJson);
+                currentTaskDescribe = rObj.RES + "," + M_FLAG + "," + M_WORKSTATION_SN + "," + M_ITEMVALUE + this.nodeName + rObj.CONTROL_TYPE;
+                Console.WriteLine(rObj.RES);
+                Console.WriteLine(M_ITEMVALUE);
+                logRecorder.AddDebugLog(nodeName, "上传mes数据:" + M_ITEMVALUE);
+                this.WriteTxtLog(modBattery.batModuleID, "上传mes数据:" + M_ITEMVALUE + "返回结果:" + rObj.RES);
+                logRecorder.AddDebugLog(nodeName, string.Format("上传MES，返回结果:{0}", rObj.RES));
+
+
+                return true;
+            }
+            catch(Exception ex)
+            {
+                reStr = ex.Message;
+                logRecorder.AddDebugLog(nodeName, string.Format("上传MES错误：{0}",ex.Message));
+                return false;
+            }
+        
+          
         }
         protected bool WriteProductsToWelder(int channel,string rfidStr)
         {
@@ -388,19 +461,19 @@ namespace LineNodes
                         if (this.db1ValsToSnd[0] != 2)
                         {
                             
-                            if (WriteProductsToWelder(1, rfidUIDA))
-                            {
-                                logRecorder.AddDebugLog(nodeName, string.Format("A通道读到RFID:{0}", this.rfidUIDA));
-                                Thread.Sleep(5000);
-                                this.db1ValsToSnd[0] = 2;
+                            //if (WriteProductsToWelder(1, rfidUIDA))
+                            //{
+                            //    logRecorder.AddDebugLog(nodeName, string.Format("A通道读到RFID:{0}", this.rfidUIDA));
+                            //    Thread.Sleep(5000);
+                            //    this.db1ValsToSnd[0] = 2;
                               
-                            }
-                            else
-                            {
-                                //rfidUIDA = "";
-                                this.db1ValsToSnd[0] = 2;
-                            }
-                         
+                            //}
+                            //else
+                            //{
+                               
+                            //    this.db1ValsToSnd[0] = 2;
+                            //}
+                            this.db1ValsToSnd[0] = 2;
                         }
                         //if (!SysCfgModel.SimMode)
                         //{
@@ -779,5 +852,11 @@ namespace LineNodes
             string itemVal = str.Substring(0, str.Length - 1);
             return itemVal;
         }
+    }
+
+    public enum ENUMWeldStatus
+    {
+        SENDED,//记录数据已发送至焊机上位机
+        COMPLETE  //铝丝焊焊接加工完成
     }
 }

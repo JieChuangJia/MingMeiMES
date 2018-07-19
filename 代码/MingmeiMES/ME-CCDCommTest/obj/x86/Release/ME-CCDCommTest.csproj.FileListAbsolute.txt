@@ -57,3 +57,12 @@ F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\ME-CCDCommTest\obj\x8
 F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\ME-CCDCommTest\obj\x86\Release\ME-CCDCommTest.csproj.GenerateResource.Cache
 F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\ME-CCDCommTest\obj\x86\Release\ME-CCDCommTest.exe
 F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\ME-CCDCommTest\obj\x86\Release\ME-CCDCommTest.pdb
+E:\JCJ\MingmeiMES\MingmeiMES\ME-CCDCommTest\bin\Release\ME-CCDCommTest.exe.config
+E:\JCJ\MingmeiMES\MingmeiMES\ME-CCDCommTest\bin\Release\ME-CCDCommTest.exe
+E:\JCJ\MingmeiMES\MingmeiMES\ME-CCDCommTest\bin\Release\ME-CCDCommTest.pdb
+E:\JCJ\MingmeiMES\MingmeiMES\ME-CCDCommTest\obj\x86\Release\ME-CCDCommTest.csprojResolveAssemblyReference.cache
+E:\JCJ\MingmeiMES\MingmeiMES\ME-CCDCommTest\obj\x86\Release\ME_CCDCommTest.Form1.resources
+E:\JCJ\MingmeiMES\MingmeiMES\ME-CCDCommTest\obj\x86\Release\ME_CCDCommTest.Properties.Resources.resources
+E:\JCJ\MingmeiMES\MingmeiMES\ME-CCDCommTest\obj\x86\Release\ME-CCDCommTest.csproj.GenerateResource.Cache
+E:\JCJ\MingmeiMES\MingmeiMES\ME-CCDCommTest\obj\x86\Release\ME-CCDCommTest.exe
+E:\JCJ\MingmeiMES\MingmeiMES\ME-CCDCommTest\obj\x86\Release\ME-CCDCommTest.pdb
