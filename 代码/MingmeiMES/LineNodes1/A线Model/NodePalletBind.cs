@@ -376,7 +376,7 @@ namespace LineNodes
                 mod.asmTime = System.DateTime.Now;
                 mod.tag1 = modGrade.ToString();
                 mod.tag5 = modGradeNum.ToString();//分档数字放到tag5中np_added
-                this.logRecorder.AddDebugLog(this.nodeName, "位置8：" + this.db2Vals[8] + "位置9：" + this.db2Vals[9] + "位置10：" + this.db2Vals[10]);
+                //this.logRecorder.AddDebugLog(this.nodeName, "位置8：" + this.db2Vals[8] + "位置9：" + this.db2Vals[9] + "位置10：" + this.db2Vals[10]);
                    
                 if (this.db2Vals[0] == 1) //A通道
                 {                 

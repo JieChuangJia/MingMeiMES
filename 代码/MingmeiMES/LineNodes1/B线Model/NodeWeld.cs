@@ -26,11 +26,14 @@ namespace LineNodes
             this.dicCommuDataDB1[2].DataDescription = "B通道读卡结果,1：复位/待机状态,2：RFID读取成功,3：RFID读取失败,4：无绑定数据";
             this.dicCommuDataDB1[3].DataDescription = "A通道,1：复位/待机状态,2：数据读取中,3：数据读取完毕，放行";
             this.dicCommuDataDB1[4].DataDescription = "B通道,1：复位/待机状态,2：数据读取中,3：数据读取完毕，放行";
+
             this.dicCommuDataDB2[1].DataDescription = "0：无,1：正在运行A通道,2：正在运行B通道";
             this.dicCommuDataDB2[2].DataDescription = "1：A通道无板,2：A通道有板，读卡请求";
             this.dicCommuDataDB2[3].DataDescription = "1：B通道无板,2：B通道有板，读卡请求";
             this.dicCommuDataDB2[4].DataDescription = "A通道设备完成状态，1:复位，2:完成";
-            this.dicCommuDataDB2[5].DataDescription = "A通道设备完成状态，1:复位，2:完成";
+            this.dicCommuDataDB2[5].DataDescription = "B通道设备完成状态，1:复位，2:完成";
+            this.dicCommuDataDB2[6].DataDescription = "A通道数据下发铝丝焊数据状态，1:MES下发铝丝数据成功，2:PLC读取成功";
+            this.dicCommuDataDB2[7].DataDescription = "B通道数据下发铝丝焊数据状态，1:MES下发铝丝数据成功，2:PLC读取成功";
             if(this.nodeID=="OPB004")
             {
                 welderIP = "192.168.0.44";
@@ -123,7 +126,7 @@ namespace LineNodes
             string reStr = "";
           
 
-            if (db2Vals[0] == 0)
+            if (db2Vals[0] != 0 && stepIndex==0)
             {
                 stepIndex = 1;
             }
@@ -132,7 +135,7 @@ namespace LineNodes
                 case 1:
                     {
                          currWorkMod = null;
-                        Console.WriteLine("weld1");
+                        //Console.WriteLine("weld1");
                         //tag3:SENDED记录数据已发送至焊机，COMPLETE为加工完成
                         string welderSndFile = string.Format(@"\\{0}\MESReport\DeviceInfoLane{1}.txt", welderIP, channelIndex); // @"\\192.168.0.45\MESReport\DeviceInfoLane1.txt";
                         if (!System.IO.File.Exists(welderSndFile))
@@ -140,7 +143,7 @@ namespace LineNodes
                             currentTaskDescribe = string.Format("铝丝焊文件：{0}不存在", welderSndFile);
                             return;
                         }
-                        Console.WriteLine("weld2");
+                        //Console.WriteLine("weld2");
                         for (int i = 0; i < modList.Count ; i++)
                         {                          
                             if (modList[i].tag4.ToUpper() == ENUMWeldStatus.SENDED.ToString() || modList[i].tag4.ToUpper() == ENUMWeldStatus.COMPLETE.ToString())
@@ -156,12 +159,12 @@ namespace LineNodes
                             }
                             break;
                         }
-                        Console.WriteLine("weld3");
+                        //Console.WriteLine("weld3");
                         if(currWorkMod ==null)
                         {
                             return;
                         }
-                        Console.WriteLine("weld4");
+                        //Console.WriteLine("weld4");
                         System.IO.StreamWriter writter = new System.IO.StreamWriter(welderSndFile, false);
                         StringBuilder strBuild = new StringBuilder();
                         writter.Write(weldStr);
@@ -170,13 +173,26 @@ namespace LineNodes
                         logRecorder.AddDebugLog(nodeName, "写入铝丝焊:" + weldStr);
                         currWorkMod.tag4 = ENUMWeldStatus.SENDED.ToString();
                         modBll.Update(currWorkMod);
-                        Console.WriteLine("weld5");
+                        //Console.WriteLine("weld5");
+
+                        if(NodeDB2Commit(4 + this.channelIndex,1,ref reStr)==false)//焊接参数写入完成
+                        {
+                            break;
+                        }
                         stepIndex++;
                         break;
                     }
                 case 2:
                     {
-                        Console.WriteLine("weld6");
+                        if (db2Vals[4 + this.channelIndex] !=2)
+                        {
+                            break;
+                        }
+                        //if (NodeDB2Commit(4 + this.channelIndex, 0, ref reStr) == false)//焊接参数写入完成
+                        //{
+                        //    break;
+                        //}
+                        //Console.WriteLine("weld6");
                         if (this.db2Vals[2 + channelIndex] != 2)//有模块加工完成
                         {
                             currentTaskDescribe = "等待设备工作完成";
@@ -186,24 +202,25 @@ namespace LineNodes
                         {
                             return;
                         }
-                        Console.WriteLine("weld7");
+                        //Console.WriteLine("weld7");
                         if (CompleteDescRecord(currWorkMod, ref reStr) == false)
                         {
                             logRecorder.AddDebugLog(nodeName, string.Format("焊接完成反馈数据处理失败:{0}", reStr));
-                            return;
+
                         }
-                        Console.WriteLine("weld8");
-                        if (UploadBatteryModToMes(currWorkMod, ref reStr) == false)
-                        {
-                            logRecorder.AddDebugLog(nodeName, string.Format("焊接上传数据失败:{0}", reStr));
-                            return;
-                        }
-                        Console.WriteLine("weld9");
+                        //Console.WriteLine("weld8");
+
+                        Thread uploadMesThread = new Thread(new ParameterizedThreadStart(UploadBatteryModToMes));
+                        uploadMesThread.IsBackground = true;
+                        uploadMesThread.Start(currWorkMod);
+
+                       
+                        //Console.WriteLine("weld9");
                         currWorkMod.tag4 = ENUMWeldStatus.COMPLETE.ToString();
                         modBll.Update(currWorkMod);
                         if (IsAllModComplete() == true)
                         {
-                            Console.WriteLine("weld10");
+                            //Console.WriteLine("weld10");
                             currWorkMod.tag4 = "";
                             modBll.Update(currWorkMod);
                             isAllComplete = true;
@@ -211,10 +228,11 @@ namespace LineNodes
                         else
                         {
                             isAllComplete = false;
-                            Console.WriteLine("weld11");
+                            //Console.WriteLine("weld11");
                         }
 
-                        stepIndex = 1;
+                      
+                        stepIndex = 0;
                         break;
                     }
             }
@@ -306,10 +324,11 @@ namespace LineNodes
           
         }
 
-        private bool UploadBatteryModToMes( DBAccess.Model.BatteryModuleModel modBattery ,ref string reStr)
+        private void UploadBatteryModToMes(object objModBattery)
         {
             try
             {
+                DBAccess.Model.BatteryModuleModel modBattery = objModBattery as DBAccess.Model.BatteryModuleModel;
                 string M_WORKSTATION_SN = "";
                 if (this.nodeID == "OPB004")
                 {
@@ -323,23 +342,25 @@ namespace LineNodes
 
                 if (modBattery.palletBinded == false && modBattery.tag3 != null && modBattery.tag3 != this.nodeName)
                 {
-                    reStr = this.nodeName + ":模块没有绑定！";
-                    return false;
+                    string restr = this.nodeName + ":模块没有绑定！";
+                    logRecorder.AddDebugLog(nodeName, string.Format("焊接完成反馈数据处理失败:{0}", restr));
+                    return;
+
                 }
                 string testResultPath = string.Format(@"\\{0}\MESReport\BondParameters\{1}_{2}.csv", welderIP, modBattery.palletID, modBattery.batModuleID);
                 if (!System.IO.File.Exists(testResultPath))
                 {
-                    currentTaskDescribe = string.Format(this.nodeName + "铝丝焊参数文件：{0}不存在", testResultPath);
-                    reStr = currentTaskDescribe;
-                    return false;
+                    string restr = string.Format(this.nodeName + "铝丝焊参数文件：{0}不存在", testResultPath);
+                    logRecorder.AddDebugLog(nodeName, string.Format("焊接完成反馈数据处理失败:{0}", restr));
+                    return;
                 }
                 DataTable dt = CSVFileHelper.OpenCSV(testResultPath);
                 string pullTestPath = string.Format(@"\\{0}\MESReport\PullTestResult\{1}_{2}.csv", welderIP, modBattery.palletID, modBattery.batModuleID);
                 if (!System.IO.File.Exists(pullTestPath))
                 {
-                    currentTaskDescribe = string.Format(this.nodeName + "铝丝焊拉力结果参数文件：{0}不存在", testResultPath);
-                    reStr = currentTaskDescribe;
-                    return false;
+                    string restr = string.Format(this.nodeName + "铝丝焊拉力结果参数文件：{0}不存在", testResultPath);
+                    logRecorder.AddDebugLog(nodeName, string.Format("焊接完成反馈数据处理失败:{0}", restr));
+                    return;
                 }
                 DataTable dtPull = CSVFileHelper.OpenCSV(pullTestPath);
                 int M_FLAG = 3;
@@ -360,14 +381,12 @@ namespace LineNodes
                 this.WriteTxtLog(modBattery.batModuleID, "上传mes数据:" + M_ITEMVALUE + "返回结果:" + rObj.RES);
                 logRecorder.AddDebugLog(nodeName, string.Format("上传MES，返回结果:{0}", rObj.RES));
 
-
-                return true;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                reStr = ex.Message;
-                logRecorder.AddDebugLog(nodeName, string.Format("上传MES错误：{0}",ex.Message));
-                return false;
+
+                logRecorder.AddDebugLog(nodeName, string.Format("上传MES错误：{0}", ex.Message));
+
             }
         
           
