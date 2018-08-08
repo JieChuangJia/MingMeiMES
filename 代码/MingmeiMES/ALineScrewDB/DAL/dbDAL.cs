@@ -124,11 +124,6 @@ namespace ALineScrewDB
                 strSql1.Append("螺丝4图片路径,");
                 strSql2.Append("'" + model.螺丝4图片路径 + "',");
             }
-            if (model.UpLoad != null)
-            {
-                strSql1.Append("UpLoad,");
-                strSql2.Append("'" + model.UpLoad + "',");
-            }
             strSql.Append("insert into db(");
             strSql.Append(strSql1.ToString().Remove(strSql1.Length - 1));
             strSql.Append(")");
@@ -289,14 +284,6 @@ namespace ALineScrewDB
             {
                 strSql.Append("螺丝4图片路径= null ,");
             }
-            if (model.UpLoad != null)
-            {
-                strSql.Append("UpLoad='" + model.UpLoad + "',");
-            }
-            else
-            {
-                strSql.Append("UpLoad= null ,");
-            }
             int n = strSql.ToString().LastIndexOf(",");
             strSql.Remove(n, 1);
             strSql.Append(" where 二维码='" + model.二维码 + "' ");
@@ -355,7 +342,7 @@ namespace ALineScrewDB
         {
             StringBuilder strSql = new StringBuilder();
             strSql.Append("select  ");
-            strSql.Append(" 测试时间,二维码,螺丝1马头结果,螺丝1马头扭矩,螺丝1马头角度,螺丝1图片路径,螺丝2马头结果,螺丝2马头扭矩,螺丝2马头角度,螺丝2图片路径,螺丝3马头结果,螺丝3马头扭矩,螺丝3马头角度,螺丝3图片路径,螺丝4马头结果,螺丝4马头扭矩,螺丝4马头角度,螺丝4图片路径,UpLoad ");
+            strSql.Append(" 测试时间,二维码,螺丝1马头结果,螺丝1马头扭矩,螺丝1马头角度,螺丝1图片路径,螺丝2马头结果,螺丝2马头扭矩,螺丝2马头角度,螺丝2图片路径,螺丝3马头结果,螺丝3马头扭矩,螺丝3马头角度,螺丝3图片路径,螺丝4马头结果,螺丝4马头扭矩,螺丝4马头角度,螺丝4图片路径 ");
             strSql.Append(" from db ");
             strSql.Append(" where 二维码='" + 二维码 + "' ");
             ALineScrewDB.dbModel model = new ALineScrewDB.dbModel();
@@ -450,10 +437,6 @@ namespace ALineScrewDB
                 {
                     model.螺丝4图片路径 = row["螺丝4图片路径"].ToString();
                 }
-                if (row["UpLoad"] != null)
-                {
-                    model.UpLoad = row["UpLoad"].ToString();
-                }
             }
             return model;
         }
@@ -464,7 +447,7 @@ namespace ALineScrewDB
         public DataSet GetList(string strWhere)
         {
             StringBuilder strSql = new StringBuilder();
-            strSql.Append("select 测试时间,二维码,螺丝1马头结果,螺丝1马头扭矩,螺丝1马头角度,螺丝1图片路径,螺丝2马头结果,螺丝2马头扭矩,螺丝2马头角度,螺丝2图片路径,螺丝3马头结果,螺丝3马头扭矩,螺丝3马头角度,螺丝3图片路径,螺丝4马头结果,螺丝4马头扭矩,螺丝4马头角度,螺丝4图片路径,UpLoad ");
+            strSql.Append("select 测试时间,二维码,螺丝1马头结果,螺丝1马头扭矩,螺丝1马头角度,螺丝1图片路径,螺丝2马头结果,螺丝2马头扭矩,螺丝2马头角度,螺丝2图片路径,螺丝3马头结果,螺丝3马头扭矩,螺丝3马头角度,螺丝3图片路径,螺丝4马头结果,螺丝4马头扭矩,螺丝4马头角度,螺丝4图片路径 ");
             strSql.Append(" FROM db ");
             if (strWhere.Trim() != "")
             {

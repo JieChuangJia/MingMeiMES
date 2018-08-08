@@ -22,3 +22,8 @@ F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\用户控件\GDICommo
 F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\用户控件\GDICommon\obj\x86\Release\GDICommon.csprojResolveAssemblyReference.cache
 F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\用户控件\GDICommon\obj\x86\Release\GDICommon.dll
 F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\用户控件\GDICommon\obj\x86\Release\GDICommon.pdb
+E:\JCJ\MingmeiMES\MingmeiMES\用户控件\GDICommon\bin\Release\GDICommon.dll
+E:\JCJ\MingmeiMES\MingmeiMES\用户控件\GDICommon\bin\Release\GDICommon.pdb
+E:\JCJ\MingmeiMES\MingmeiMES\用户控件\GDICommon\obj\x86\Release\GDICommon.csprojResolveAssemblyReference.cache
+E:\JCJ\MingmeiMES\MingmeiMES\用户控件\GDICommon\obj\x86\Release\GDICommon.dll
+E:\JCJ\MingmeiMES\MingmeiMES\用户控件\GDICommon\obj\x86\Release\GDICommon.pdb

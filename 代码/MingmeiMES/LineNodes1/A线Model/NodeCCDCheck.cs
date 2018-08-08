@@ -4,12 +4,15 @@ using System.Linq;
 using System.Text;
 using PLProcessModel;
 using DCIRDBAccess;
+using LogInterface;
+using DevInterface;
 namespace LineNodes
 {
     public class NodeCCDCheck:CtlNodeBaseModel
     {
         protected System.DateTime devOpenSt = DateTime.Now;
         protected dbDCIRBll dcirBll = new dbDCIRBll();
+        private CCDNGHandler ccdNgHandler = null;
         public override bool BuildCfg(System.Xml.Linq.XElement xe, ref string reStr)
         {
             if (!base.BuildCfg(xe, ref reStr))
@@ -50,6 +53,7 @@ namespace LineNodes
                             break;
                         }
                         currentTaskPhase++;
+                        ccdNgHandler = new CCDNGHandler(this.plcRW2, this.rfidUID, this.logRecorder);//创建NG检查对象
                         this.currentTask.TaskParam = rfidUID;
                         this.currentTask.TaskPhase = this.currentTaskPhase;
                         this.ctlTaskBll.Update(this.currentTask);
@@ -57,7 +61,14 @@ namespace LineNodes
                     }
                 case 2:
                     {
-                        List<DBAccess.Model.BatteryModuleModel> modList = modBll.GetModelList(string.Format("palletID='{0}' and palletBinded=1", this.rfidUID));
+                        if (this.nodeID == "OPA009")
+                        {
+                            if (this.ccdNgHandler.Execute() == false)
+                            {
+                                break;
+                            }
+                        }
+                        List<DBAccess.Model.BatteryModuleModel> modList = modBll.GetModelList(string.Format("palletID='{0}' and palletBinded=1 or checkResult=2", this.rfidUID));//有NG产品也不能放行
                         if (modList.Count() < 1)
                         {
                             currentTaskPhase = 9;
@@ -74,7 +85,9 @@ namespace LineNodes
                         //}
                         //else
                         //{
-                            if (!PreMech(modList, ref reStr))
+                         List<DBAccess.Model.BatteryModuleModel> workModList = modBll.GetModelList(string.Format("palletID='{0}' and palletBinded=1", this.rfidUID));//有NG产品也不能放行
+
+                         if (!PreMech(workModList, ref reStr))
                             {
                                 Console.WriteLine(string.Format("{0},{1}", nodeName, reStr));
                                 break;
@@ -299,6 +312,12 @@ namespace LineNodes
                                 RootObject rObj = new RootObject();
                                 string strJson = "";
                                 rObj = DevDataUpload(M_FLAG, M_DEVICE_SN, M_WORKSTATION_SN, M_SN, M_UNION_SN, M_CONTAINER_SN, M_LEVEL, M_ITEMVALUE,ref strJson);
+                                if(rObj.RES.ToUpper().Contains("NG")&&this.NodeID=="OPB007")//DCIR NG检测
+                                {
+                                    modList[i].checkResult = 2;
+                                    modList[i].palletBinded = false;
+                                    modBll.Update(modList[i]);
+                                }
                                 logRecorder.AddDebugLog(nodeName, string.Format("模组{0} CCD检测结果{1}上传MES，返回{2}", M_SN, M_ITEMVALUE, rObj.RES));
                                 this.currentTaskDescribe = string.Format("模组{0}UV结果{1}上传MES，返回{2}", M_SN, M_ITEMVALUE, rObj.RES);
                                 foreach (DBAccess.Model.BatteryModuleModel mod in modList)
@@ -373,6 +392,97 @@ namespace LineNodes
                     break;
             }
             return true;
+        }
+    }
+
+    public class CCDNGHandler
+    {
+        protected DBAccess.BLL.BatteryModuleBll modBll = new DBAccess.BLL.BatteryModuleBll();
+       
+        private IPlcRW PlcRw2 = null;
+        private string gzbRfid = "";
+        private int Step = 0;
+        private Dictionary<int, string> addrPosCfg = new Dictionary<int, string>();
+   
+        private string NGAddr = "D8734";
+        private ILogRecorder logRecorder = null;
+        public CCDNGHandler(IPlcRW plcRw2, string rfid, ILogRecorder logRec)
+        {
+         
+            this.PlcRw2 = plcRw2;
+            this.logRecorder = logRec;
+            this.gzbRfid = rfid;
+           
+            addrPosCfg[1] = "D8730";//A通道1位置
+            addrPosCfg[2] = "D8731";//A通道2位置
+        }
+ 
+     
+        public bool Execute()
+        {
+            List<DBAccess.Model.BatteryModuleModel> ngModList = modBll.GetModelList(string.Format("palletID='{0}' and checkResult=2", this.gzbRfid));
+            if (ngModList.Count() == 0)//没有NG产品
+            {
+                Console.WriteLine("ccd0");
+                if (this.PlcRw2.WriteDB(NGAddr, 2) == false)
+                {
+                    return false;
+                }
+                Console.WriteLine("ccd1");
+                return true;
+            }
+            else//有NG
+            {
+                switch (this.Step)
+                {
+                    case 0:
+                        {
+                            if (this.PlcRw2.WriteDB(NGAddr,1) == false)
+                            {
+                                return false;
+                            }
+
+                            Console.WriteLine("ccd2");
+                            foreach(DBAccess.Model.BatteryModuleModel mod in ngModList)
+                            {
+                                string ngPosAddr = addrPosCfg[int.Parse(mod.tag2)];
+                                if (this.PlcRw2.WriteDB(ngPosAddr, 1) == false)
+                                {
+                                    return false;
+                                }
+                            }
+                          
+                            this.Step++;
+                            Console.WriteLine("ccd6");
+                            return false;
+                        }
+                    case 1:
+                        {
+                            Console.WriteLine("ccd7");
+
+                            int manualStatus = 0;
+                            if (this.PlcRw2.ReadDB(NGAddr, ref manualStatus) == false)
+                            {
+                                return false;
+                            }
+                            Console.WriteLine("ccd8");
+                            if (manualStatus != 2)
+                            {
+                                return false;
+                            }
+
+                            Console.WriteLine("ccd9");
+
+                            return true;
+                        }
+                    default:
+                        {
+                            return false;
+                        }
+                }
+                 
+
+            }
         }
     }
 }

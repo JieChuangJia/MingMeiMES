@@ -32,3 +32,10 @@ F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\LicenceManager\obj\x8
 F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\LicenceManager\obj\x86\Release\LicenceManager.csproj.GenerateResource.Cache
 F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\LicenceManager\obj\x86\Release\LicenceManager.dll
 F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\LicenceManager\obj\x86\Release\LicenceManager.pdb
+E:\JCJ\MingmeiMES\MingmeiMES\LicenceManager\bin\Release\LicenceManager.dll
+E:\JCJ\MingmeiMES\MingmeiMES\LicenceManager\bin\Release\LicenceManager.pdb
+E:\JCJ\MingmeiMES\MingmeiMES\LicenceManager\obj\x86\Release\LicenceManager.csprojResolveAssemblyReference.cache
+E:\JCJ\MingmeiMES\MingmeiMES\LicenceManager\obj\x86\Release\LicenceManager.ActivativeFormView.resources
+E:\JCJ\MingmeiMES\MingmeiMES\LicenceManager\obj\x86\Release\LicenceManager.csproj.GenerateResource.Cache
+E:\JCJ\MingmeiMES\MingmeiMES\LicenceManager\obj\x86\Release\LicenceManager.dll
+E:\JCJ\MingmeiMES\MingmeiMES\LicenceManager\obj\x86\Release\LicenceManager.pdb

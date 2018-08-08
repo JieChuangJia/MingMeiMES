@@ -43,3 +43,12 @@ F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\用户控件\WarningR
 F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\用户控件\WarningRoll\obj\x86\Release\WarningRoll.csproj.GenerateResource.Cache
 F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\用户控件\WarningRoll\obj\x86\Release\WarningRoll.dll
 F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\用户控件\WarningRoll\obj\x86\Release\WarningRoll.pdb
+E:\JCJ\MingmeiMES\MingmeiMES\用户控件\WarningRoll\bin\Release\WarningRoll.dll
+E:\JCJ\MingmeiMES\MingmeiMES\用户控件\WarningRoll\bin\Release\WarningRoll.pdb
+E:\JCJ\MingmeiMES\MingmeiMES\用户控件\WarningRoll\bin\Release\GDICommon.dll
+E:\JCJ\MingmeiMES\MingmeiMES\用户控件\WarningRoll\bin\Release\GDICommon.pdb
+E:\JCJ\MingmeiMES\MingmeiMES\用户控件\WarningRoll\obj\x86\Release\WarningRoll.csprojResolveAssemblyReference.cache
+E:\JCJ\MingmeiMES\MingmeiMES\用户控件\WarningRoll\obj\x86\Release\WarningRoll.WarningRoll.resources
+E:\JCJ\MingmeiMES\MingmeiMES\用户控件\WarningRoll\obj\x86\Release\WarningRoll.csproj.GenerateResource.Cache
+E:\JCJ\MingmeiMES\MingmeiMES\用户控件\WarningRoll\obj\x86\Release\WarningRoll.dll
+E:\JCJ\MingmeiMES\MingmeiMES\用户控件\WarningRoll\obj\x86\Release\WarningRoll.pdb

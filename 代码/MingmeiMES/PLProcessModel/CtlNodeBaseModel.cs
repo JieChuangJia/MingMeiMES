@@ -2561,6 +2561,17 @@ namespace PLProcessModel
         }
         protected bool ProductTraceRecord()
         {
+             List<DBAccess.Model.BatteryModuleModel> rfidModList = modBll.GetModelList(string.Format("palletID='{0}' ", this.rfidUID));
+             if (rfidModList != null && rfidModList.Count() > 0)
+             {
+                 foreach (DBAccess.Model.BatteryModuleModel mod in rfidModList)//NG产品已经解绑了，但是需要更新状态
+                 {
+                     logRecorder.AddDebugLog(nodeName, "更新工艺名名称," + mod.curProcessStage+"为" + this.nodeName);
+                     mod.curProcessStage = this.nodeName;
+                     modBll.Update(mod);
+                     
+                 }
+             }
             List<DBAccess.Model.BatteryModuleModel> modList = modBll.GetModelList(string.Format("palletID='{0}' and palletBinded=1", this.rfidUID));
             if (modList != null && modList.Count() > 0)
             {

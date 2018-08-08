@@ -6,6 +6,7 @@ using PLProcessModel;
 using DevInterface;
 using System.Threading;
 using FTDataAccess.BLL;
+using LogInterface;
 namespace LineNodes
 {
     /// <summary>
@@ -17,6 +18,8 @@ namespace LineNodes
         protected DBAccess.BLL.BatteryModuleBll modBll = new DBAccess.BLL.BatteryModuleBll();
         private MTDBAccess.BLL.dbBLL blldb = new MTDBAccess.BLL.dbBLL();//码头螺丝数据
         private ALineScrewDB.BLL.dbBLL bllScrewDb = new ALineScrewDB.BLL.dbBLL();//A线锁螺丝数据库
+
+        private ScrewNGHandler screwNgHandler = null;
         //protected string ccdDevName = "A线锁螺丝机";
          public override bool BuildCfg(System.Xml.Linq.XElement xe, ref string reStr)
         {
@@ -86,7 +89,7 @@ namespace LineNodes
                             break;
                         }
                         currentTaskPhase++;
-
+                        this.screwNgHandler = new ScrewNGHandler(this.plcRW, this.plcRW2, this.channelIndex,this.logRecorder);
                         this.currentTask.TaskPhase = this.currentTaskPhase;
                         this.ctlTaskBll.Update(this.currentTask);
                         break;
@@ -136,19 +139,23 @@ namespace LineNodes
                         {
                             products.Add(m.batModuleID);
                         }
-                        if (products.Count() > 0)
-                        {
-                            if (ccdDevAcc != null)
+                        if (!SysCfgModel.SimMode)
+                        { 
+                        
+                            if (products.Count() > 0)
                             {
-                                if (!ccdDevAcc.StartDev(products, ccdDevName, ref reStr))
+                                if (ccdDevAcc != null)
                                 {
-                                    this.currentTaskDescribe = "发送设备加工启动命令失败:"+reStr;
-                                    //Console.WriteLine(string.Format("{0}发送设备加工启动命令失败,{1}", nodeName, reStr));
-                                    break;
-                                }
-                                else
-                                {
-                                    logRecorder.AddDebugLog(nodeName, "发送设备加工启动命令成功");
+                                    if (!ccdDevAcc.StartDev(products, ccdDevName, ref reStr))
+                                    {
+                                        this.currentTaskDescribe = "发送设备加工启动命令失败:" + reStr;
+                                        //Console.WriteLine(string.Format("{0}发送设备加工启动命令失败,{1}", nodeName, reStr));
+                                        break;
+                                    }
+                                    else
+                                    {
+                                        logRecorder.AddDebugLog(nodeName, "发送设备加工启动命令成功");
+                                    }
                                 }
                             }
                         }
@@ -196,79 +203,72 @@ namespace LineNodes
                         #endregion
                         //==更改为读取数据库形式，根据模块条码获取数据，判断所有条码的数据上传成功后执行下一步======//
                         int readDataApply = 0;
-                        Console.WriteLine("Screw0");
-                        bool isScrewCpt = true;//所有螺丝加工完成标识
+                        Console.WriteLine("sd1");
+                        bool isScrewCpt = false;//所有螺丝加工完成标识
                         List<DBAccess.Model.BatteryModuleModel> modList = modBll.GetModelList(string.Format("palletID='{0}' and palletBinded=1", this.rfidUID));
-                        foreach (DBAccess.Model.BatteryModuleModel module in modList)
+                        List<DBAccess.Model.BatteryModuleModel> uploadModList = modList.FindAll(mod => mod.tag3 == "1");//查询已经上传的条码，上传的为1，没有的为0或为空 
+                        if (uploadModList!=null&&uploadModList.Count == modList.Count)
                         {
-                            ALineScrewDB.dbModel screwModel = bllScrewDb.GetModelByModuleID(module.batModuleID);
-                            if (screwModel == null)
-                            {
-                                continue;
-                            }
-                            
-                            if (screwModel.UpLoad != "是")
-                            {
-                                isScrewCpt = false;
-                                break;
-                            }
+                            isScrewCpt = true;
                         }
+                       
+                        Console.WriteLine("sd2");
                         if (isScrewCpt == true)
                         {
-                            Console.WriteLine("Screw18");
                             currentTaskPhase++;
                             this.currentTask.TaskPhase = this.currentTaskPhase;
                             this.ctlTaskBll.Update(this.currentTask);
                             break;
                         }
+                        Console.WriteLine("sd3");
                         if (this.plcRW2.ReadDB("D9000", ref readDataApply) == false)
                         {
-                            Console.WriteLine("Screw1");
+                        
                             break;
                         }
-                        Console.WriteLine("Screw2");
+                        Console.WriteLine("sd4");
                         if (readDataApply != 1)
                         {
                             break;
                         }
-                    
-                        Console.WriteLine("Screw4");
-                        foreach (DBAccess.Model.BatteryModuleModel module in modList)
+
+                        Console.WriteLine("sd5");
+                        List<DBAccess.Model.BatteryModuleModel> unUploadModList = modList.FindAll(mod => mod.tag3 != "1");//
+                        foreach (DBAccess.Model.BatteryModuleModel module in unUploadModList)
                         {
                             ALineScrewDB.dbModel screwModel = bllScrewDb.GetModelByModuleID(module.batModuleID);
+
                             if (screwModel == null)
                             {
                                 continue;
                             }
-                            Console.WriteLine("Screw5");
-
-
-                            if (screwModel.UpLoad == "是")
-                            {
-                                continue;
-                            }
-                            Console.WriteLine("Screw6");
+            
                             string mesScrewData = "";
                             if (GetScrewData(screwModel, ref mesScrewData, ref reStr) == false)
                             {
                                 Console.WriteLine("模块:" + screwModel.二维码 + ",获取螺丝数据失败：" + reStr);
                                 continue;
                             }
-
+                         
                             int status = UploadMesScrewData(module.batModuleID, mesScrewData, ref reStr);
                             if (status == 0)
-                            {
-                                Console.WriteLine("Screw7");
+                            {                  
                                 if (this.plcRW2.WriteDB("D9000", 2) == false)
                                 {
                                     break;
                                 }
-                                logRecorder.AddDebugLog(nodeName, "上传MES锁螺丝数据成功！数据：" + mesScrewData + "返回：" + reStr);
+                                logRecorder.AddDebugLog(nodeName, "上传MES锁螺丝数据成功！数据：" + module.batModuleID+":"+ mesScrewData + "返回：" + reStr);
                             }
                             else if (status == 1)
                             {
-                                Console.WriteLine("Screw8");
-                                logRecorder.AddDebugLog(nodeName, "上传MES锁螺丝数据成功，但返回NG！" + reStr);
+                                ScrewNGModule screwNgMod = new ScrewNGModule();
+                                screwNgMod.ChannelIndex = this.channelIndex;
+                                screwNgMod.ModPos = int.Parse(module.tag2);
+                                Console.WriteLine("tag2:" + module.tag2);
+                                this.screwNgHandler.AddNgModule(screwNgMod);
+                                module.palletBinded =false;//NG解绑
+                                module.checkResult = 2;//NG
+                                logRecorder.AddDebugLog(nodeName, "上传MES锁螺丝数据成功，但返回NG！" + module.batModuleID + ":" + reStr);
                                 if (this.plcRW2.WriteDB("D9000", 3) == false)
                                 {
                                     break;
@@ -276,26 +276,28 @@ namespace LineNodes
                             }
                             else
                             {
-                                Console.WriteLine("Screw9");
                                 //Console.WriteLine();
                                 logRecorder.AddDebugLog(nodeName, "上传MES锁螺丝数据失败！" + reStr);
                                 continue;
                             }
-                            screwModel.UpLoad = "是";
+                            module.tag3 = "1";
+                            modBll.Update(module);
+                            //screwModel.UpLoad = "是";
                             
-                            bllScrewDb.Update(screwModel);
+                            //bllScrewDb.Update(screwModel);
                         }
                         //========================================================================================//
                         if (isScrewCpt == false)
                         {                          
                             break;
                         }
-                        Console.WriteLine("Screw11");
+                        Console.WriteLine("sd6");
                         currentTaskPhase++;
                         this.currentTask.TaskPhase = this.currentTaskPhase;
                         this.ctlTaskBll.Update(this.currentTask);
                         break;
                     }
+              
                 case 5:
                     {
                         //发送停止加工命令
@@ -315,6 +317,7 @@ namespace LineNodes
                         this.ctlTaskBll.Update(this.currentTask);
                         break;
                     }
+              
                 case 6:
                     {
                         currentTaskDescribe = "发送有料字";
@@ -335,8 +338,30 @@ namespace LineNodes
                 case 7:
                     {
                         db1ValsToSnd[2 + this.channelIndex - 1] = 3;
+                        currentStat.StatDescribe = "工装板放行";
+                        this.currentTaskPhase++;
+                        this.currentTask.TaskPhase = this.currentTaskPhase;
+                        this.ctlTaskBll.Update(this.currentTask);
+                        break;
+                    }
+                case 8:
+                    {
+                        currentStat.StatDescribe = "NG流程处理";
+                        Console.WriteLine("sd7");
+                        if (this.screwNgHandler.Execute() == false)
+                        {
+                            break;
+                        }
+                        List<DBAccess.Model.BatteryModuleModel> modList = modBll.GetModelList(string.Format("palletID='{0}'", this.rfidUID));
+                        foreach(DBAccess.Model.BatteryModuleModel mod in modList)//锁螺丝工位有拍出流程 不需要记录NG
+                        {
+                            mod.checkResult = 0;
+                            modBll.Update(mod);
+                        }
+                        
                         currentStat.StatDescribe = "流程完成";
-                       
+                        Console.WriteLine("sd8");
+                      
                         this.currentTask.TaskPhase = this.currentTaskPhase;
                         this.ctlTaskBll.Update(this.currentTask);
                         break;
@@ -347,6 +372,80 @@ namespace LineNodes
             return true;
            
         }
+
+        //private bool MesNGHandler(List<DBAccess.Model.BatteryModuleModel> modList, ref string reStr)
+        //{
+        //    try
+        //    {
+        //        bool NoNg = true; 
+                    
+        //        foreach (DBAccess.Model.BatteryModuleModel module in modList)
+        //        {
+        //            ALineScrewDB.dbModel screwModel = bllScrewDb.GetModelByModuleID(module.batModuleID);
+        //            if (screwModel == null)
+        //            {
+        //                continue;
+        //            }
+
+        //            if (screwModel.UpLoad == "是")
+        //            {
+        //                continue;
+        //            }
+
+        //            string mesScrewData = "";
+        //            if (GetScrewData(screwModel, ref mesScrewData, ref reStr) == false)
+        //            {
+        //                Console.WriteLine("模块:" + screwModel.二维码 + ",获取螺丝数据失败：" + reStr);
+        //                continue;
+        //            }
+
+        //            int status = UploadMesScrewData(module.batModuleID, mesScrewData, ref reStr);
+        //            if (status == 0)
+        //            {
+
+        //                if (this.plcRW2.WriteDB("D9000", 2) == false)
+        //                {
+        //                    break;
+        //                }
+        //                logRecorder.AddDebugLog(nodeName, "上传MES锁螺丝数据成功！数据：" + mesScrewData + "返回：" + reStr);
+        //            }
+        //            else if (status == 1)
+        //            {
+        //                NoNg = false;
+        //                if(this.channelIndex==1)//A通道
+        //                { 
+                            
+        //                }
+        //                else  //B通道
+        //                {
+                        
+        //                }
+        //                logRecorder.AddDebugLog(nodeName, "上传MES锁螺丝数据成功，但返回NG！" + reStr);
+        //                if (this.plcRW2.WriteDB("D9000", 3) == false)
+        //                {
+        //                    break;
+        //                }
+        //            }
+        //            else
+        //            {
+        //                //Console.WriteLine();
+        //                logRecorder.AddDebugLog(nodeName, "上传MES锁螺丝数据失败！" + reStr);
+        //                continue;
+        //            }
+        //            screwModel.UpLoad = "是";
+        //            bllScrewDb.Update(screwModel);
+        //            if(NoNg==true)//没有ng的处理
+        //            { }
+               
+        //        }
+        //        return true;
+        //    }
+        //    catch(Exception ex)
+        //    {
+        //        reStr = ex.Message;
+        //        return false;
+        //    }
+        //}
         private bool GetScrewData( ALineScrewDB.dbModel screwModel,ref string screwdata,ref string restr)
         {
             try
@@ -438,7 +537,7 @@ namespace LineNodes
             {
                 return 0;
             }
-            else if(rObj.RES.Contains("NG"))
+            else if(rObj.RES.ToUpper().Contains("NG"))
             {
                 return 1;
             }
@@ -794,5 +893,144 @@ namespace LineNodes
 
         //    return true;
         //}
+    }
+    public class ScrewNGHandler
+    {
+        private List<ScrewNGModule> NGModules= new List<ScrewNGModule>();
+        private IPlcRW PlcRw = null;
+        private IPlcRW PlcRw2 = null;
+        private int currChannelIndex = 0;//当前通道
+        private int Step = 0;
+        private Dictionary<string, string> addrPosCfg = new Dictionary<string, string>();
+        private Dictionary<int, string> addrChannelCfg = new Dictionary<int, string>();
+        private string NGAddr = "D8734";
+        private ILogRecorder logRecorder = null;
+        public ScrewNGHandler(IPlcRW plcRw,IPlcRW plcRw2,int channelIndex,ILogRecorder logRec)
+        {
+            this.PlcRw = plcRw;
+            this.PlcRw2 = plcRw2;
+            this.logRecorder = logRec;
+            this.currChannelIndex = channelIndex;
+            addrPosCfg["1-1"] = "D8730";//A通道1位置
+            addrPosCfg["1-2"] = "D8731";//A通道2位置
+            addrPosCfg["2-1"] = "D8732";//B通道1位置
+            addrPosCfg["2-2"] = "D8733";//B通道2位置
+
+            addrChannelCfg[1] = "D8000";//A通道
+            addrChannelCfg[2] = "D8001";//B通道
+        }
+
+        public void AddNgModule(ScrewNGModule ngMod)
+        {
+            List<ScrewNGModule> ngMods = this.NGModules.FindAll(n => n.ChannelIndex == ngMod.ChannelIndex && n.ModPos == ngMod.ModPos);
+            logRecorder.AddDebugLog("A线锁螺丝", "添加数据通道：" + ngMod.ChannelIndex + "，位置：" +ngMod.ModPos);
+            if (ngMods == null||ngMods.Count==0)
+            {
+                logRecorder.AddDebugLog("A线锁螺丝", "添加成功：" +ngMod.ChannelIndex+"-"+ ngMod.ModPos);
+                this.NGModules.Add(ngMod);
+            }
+        }
+        //public void Reset()
+        //{
+        //    this.Step = 0;
+        //    this.currChannelIndex = 0;
+
+        //    this.NGModules.Clear();
+        //}
+        public bool Execute()
+        {
+            Console.WriteLine("sw1");
+            if(this.NGModules.Count >0)//有NG
+            {
+                switch (this.Step)
+                {
+                    case 0:
+                        {
+                            Console.WriteLine("sw2");
+                            if (this.PlcRw2.WriteDB(NGAddr, 1) == false)
+                            {
+                                return false;
+                            }
+                            foreach (ScrewNGModule ngMod in this.NGModules)
+                            {                              
+                                Console.WriteLine("sw3");
+                                string key = ngMod.ChannelIndex.ToString() + "-" + ngMod.ModPos;
+                                string addr = addrPosCfg[key];
+                                Console.WriteLine("swAddr" + addr);
+
+                                if (this.PlcRw2.WriteDB(addr, 1) == false)
+                                {
+                                    return false;
+                                }
+                                logRecorder.AddDebugLog("A线锁螺丝", "写入地址：" + addr + "成功：值1");
+                                Console.WriteLine("sw4");
+                                string chennelAddr = addrChannelCfg[ngMod.ChannelIndex];
+                                if (this.PlcRw.WriteDB(chennelAddr, 1) == false)
+                                {
+                                    return false;
+                                }
+
+                                logRecorder.AddDebugLog("A线锁螺丝", "写入通道地址：" + chennelAddr + "成功：值1");
+                                Console.WriteLine("sw5");
+                            }
+                            this.Step++;
+                            Console.WriteLine("sw6");
+                            return false;
+                        }
+                    case 1:
+                        {
+                            Console.WriteLine("sw7");
+                            string chennelAddr = addrChannelCfg[currChannelIndex];
+                          
+                            int manualStatus = 0;
+                            if (this.PlcRw2.ReadDB(NGAddr, ref manualStatus) == false)
+                            {
+                                return false;
+                            }
+                            Console.WriteLine("sw8");
+                            if (manualStatus != 2)
+                            {
+                                return false;
+                            }
+                            if(this.PlcRw.WriteDB(chennelAddr,2) ==false)
+                            {
+                                return false;
+                            }
+                            Console.WriteLine("sw9");
+                            
+                            return true;
+                        }
+                    default:
+                        {
+                            return false;
+                        }
+                }
+            }
+            else//没有NG
+            {
+                Console.WriteLine("sw10");
+                if (this.PlcRw2.WriteDB(NGAddr, 2) == false)
+                {
+                    return false;
+                }
+                Console.WriteLine("sw11");
+                string chennelAddr = addrChannelCfg[currChannelIndex];
+                if (this.PlcRw.WriteDB(chennelAddr, 2) == false)
+                {
+                    return false;
+                }
+                Console.WriteLine("sw12");
+                 return true;
+            }
+           
+        }
+    }
+    public class ScrewNGModule
+    {
+        public int ChannelIndex { get; set; }
+        public int ModPos { get; set; }
+        public ScrewNGModule()
+        { }
+
     }
 }

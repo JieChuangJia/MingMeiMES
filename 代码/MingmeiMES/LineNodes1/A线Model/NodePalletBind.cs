@@ -466,7 +466,7 @@ namespace LineNodes
             }
             for (int i = 0; i < modelList.Count; i++)
             {
-                if (modelList[i].checkResult == null)
+                if (modelList[i].checkResult == null)//上传极性检测NG后要解绑模块
                 {
                     checkOK = false;
                 }

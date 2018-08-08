@@ -58,16 +58,26 @@ namespace LineNodes
                     string bakeData = "烘烤最高温度:" + this.highTemperature/10 + ":℃|烘烤最低温度:" + this.lowTemperature/10 + ":℃|烘烤时间:" + this.bakeTime/10 + ":s（这段时间内的最高温度和最低温度）";
                     if (this.nodeID == "OPA016")
                     {
-                        if (UploadMesProcessParam("Y00100901", bakeData) == false)
+                        int uploadStatus = UploadMesProcessParam("Y00100901", bakeData) ;
+                        if (uploadStatus == 2)//上传失败
                         {
                             break;
+                        }
+                        else if(uploadStatus ==1)//返回NG，要解绑
+                        {
+
                         }
                     }
                     else
                     {
-                        if (UploadMesProcessParam("Y00101201", bakeData) == false)
+                        int uploadStatus = UploadMesProcessParam("Y00101201", bakeData);
+                        if (uploadStatus == 2)
                         {
                             break;
+                        }
+                        else if (uploadStatus == 1)//返回NG，要解绑
+                        {
+
                         }
                     }
                     this.currentTask.TaskPhase = this.currentTaskPhase;
@@ -172,7 +182,7 @@ namespace LineNodes
             }
             return true;
         }
-        public bool UploadMesProcessParam(string workStationNum,string paramItems)
+        public int UploadMesProcessParam(string workStationNum,string paramItems)
         {
             string M_AREA = "Y001";
             string M_WORKSTATION_SN = workStationNum;
@@ -187,14 +197,20 @@ namespace LineNodes
 
             string strJson = "";
             rObj = ProcParamUpload(M_AREA, M_DEVICE_SN, M_WORKSTATION_SN, M_UNION_SN, M_CONTAINER_SN, M_LEVEL, M_ITEMVALUE, ref strJson);
-            if (rObj.RES.Contains("OK"))
+            if (rObj.RES.ToUpper().Contains("OK"))
             {
-                return true;
+                return 0;
+            }
+            else if (rObj.RES.ToUpper().Contains("NG"))
+            {
+                Console.WriteLine(this.nodeName + "上传过程数据成功，单返回NG：" + rObj.RES);
+                return 1;
             }
             else
             {
+
                 Console.WriteLine(this.nodeName + "上传过程数据失败：" + rObj.RES);
-                return false;
+                return 2;
             }
             
         }

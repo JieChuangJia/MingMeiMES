@@ -43,3 +43,12 @@ F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\用户控件\SuperTex
 F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\用户控件\SuperTextEdit\obj\x86\Release\SuperTextEdit.csproj.GenerateResource.Cache
 F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\用户控件\SuperTextEdit\obj\x86\Release\SuperTextEdit.dll
 F:\NpWork\others\JieChuangJia\MingMeiMES\代码\MingmeiMES\用户控件\SuperTextEdit\obj\x86\Release\SuperTextEdit.pdb
+E:\JCJ\MingmeiMES\MingmeiMES\用户控件\SuperTextEdit\bin\Release\SuperTextEdit.dll
+E:\JCJ\MingmeiMES\MingmeiMES\用户控件\SuperTextEdit\bin\Release\SuperTextEdit.pdb
+E:\JCJ\MingmeiMES\MingmeiMES\用户控件\SuperTextEdit\bin\Release\GDICommon.dll
+E:\JCJ\MingmeiMES\MingmeiMES\用户控件\SuperTextEdit\bin\Release\GDICommon.pdb
+E:\JCJ\MingmeiMES\MingmeiMES\用户控件\SuperTextEdit\obj\x86\Release\SuperTextEdit.csprojResolveAssemblyReference.cache
+E:\JCJ\MingmeiMES\MingmeiMES\用户控件\SuperTextEdit\obj\x86\Release\SuperTextEdit.SuperTextEdit.resources
+E:\JCJ\MingmeiMES\MingmeiMES\用户控件\SuperTextEdit\obj\x86\Release\SuperTextEdit.csproj.GenerateResource.Cache
+E:\JCJ\MingmeiMES\MingmeiMES\用户控件\SuperTextEdit\obj\x86\Release\SuperTextEdit.dll
+E:\JCJ\MingmeiMES\MingmeiMES\用户控件\SuperTextEdit\obj\x86\Release\SuperTextEdit.pdb
