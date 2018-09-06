@@ -82,9 +82,11 @@
     <Compile Include="A线Model\NodeScrewLock.cs" />
     <Compile Include="A线Model\NodeUpDownMachine.cs" />
     <Compile Include="A线Model\NodeUV.cs" />
+    <Compile Include="A线Model\RepairProcessALineBind.cs" />
     <Compile Include="B线Model\NodeLaserClean.cs" />
     <Compile Include="B线Model\NodeTailRobot.cs" />
     <Compile Include="B线Model\NodeWeld.cs" />
+    <Compile Include="B线Model\RepairProcessBLineBind.cs" />
     <Compile Include="C线Model\NodeCManualStation.cs" />
     <Compile Include="C线Model\NodePackFasten.cs" />
     <Compile Include="C线Model\NodePackLabel.cs" />

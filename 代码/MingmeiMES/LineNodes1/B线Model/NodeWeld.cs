@@ -75,7 +75,7 @@ namespace LineNodes
                             
                             break;
                         }
-
+                        stepIndex = 1;//初始化
                         currentTaskPhase++;
                         this.currentTask.TaskPhase = this.currentTaskPhase;
                         this.ctlTaskBll.Update(this.currentTask);
@@ -126,16 +126,7 @@ namespace LineNodes
            
             string weldStr = "";
             string reStr = "";
-
-
-            if (db2Vals[0] != 0 && stepIndex == 0)
-            {
-                stepIndex = 1;
-            }
-            if (db2Vals[0] == 0)
-            {
-                stepIndex = 0;
-            }
+             
             Console.WriteLine("weld当前步骤：" +stepIndex);
             switch (stepIndex)
             {
@@ -194,7 +185,7 @@ namespace LineNodes
                     {
                         if (db2Vals[4 + this.channelIndex] !=2)
                         {
-                            currentTaskDescribe = "等待PLC读取MES上下发数据完成";
+                            currentTaskDescribe = "等待PLC读取MES下发的加工数据完成";
                             break;
                         }
                         //if (NodeDB2Commit(4 + this.channelIndex, 0, ref reStr) == false)//焊接参数写入完成

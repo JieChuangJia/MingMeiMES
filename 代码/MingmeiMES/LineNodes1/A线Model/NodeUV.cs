@@ -43,6 +43,18 @@ namespace LineNodes
                         {
                             break;
                         }
+                        bool needReparid = false;
+                        if (this.repairProcess.GetNeedRepair(this.rfidUID, this.NodeID, ref needReparid, ref reStr) == false)
+                        {
+                            this.logRecorder.AddDebugLog(this.nodeName, "获取返修状态失败:" + reStr);
+                            break;
+                        }
+                        if (needReparid == false)
+                        {
+                            currentTaskPhase =5;//直接放行
+                            break;
+                        }
+
                         this.currentTask.TaskParam = rfidUID;
                         this.currentTask.TaskPhase = this.currentTaskPhase;
                         this.ctlTaskBll.Update(this.currentTask);

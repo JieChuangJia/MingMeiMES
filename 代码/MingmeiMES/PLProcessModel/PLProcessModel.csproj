@@ -79,6 +79,7 @@
     </Compile>
     <Compile Include="ParamCfgBase\ParamModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RepairProcessBase.cs" />
     <Compile Include="SysCfgModel.cs" />
     <Compile Include="ThreadBaseModel.cs" />
     <Compile Include="ThreadRunModel.cs" />

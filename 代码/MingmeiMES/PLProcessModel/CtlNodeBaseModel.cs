@@ -25,7 +25,7 @@ namespace PLProcessModel
         protected delegate bool DelegateUploadMes(string productBarcode, string[] mesProcessSeq, ref string reStr);
         #region 私有数据
         protected List<string> mesIDS = null;
-        protected int channelIndex = 0;
+        public int channelIndex = 0;
         protected DBAccess.BLL.BatteryModuleBll modBll = new DBAccess.BLL.BatteryModuleBll();
         protected DBAccess.BLL.BatteryPackBll bllPack = new DBAccess.BLL.BatteryPackBll();
         //protected DCIRDataAccess.dbBll dcirBll = new DCIRDataAccess.dbBll();
@@ -79,13 +79,13 @@ namespace PLProcessModel
         protected IDictionary<int, PLCDataDef> dicCommuDataDB1 = null;//通信功能项字典，DB1
         protected IDictionary<int, PLCDataDef> dicCommuDataDB2 = null;//通信功能项字典，DB2
         protected int currentTaskPhase = 0;//流程步号（状态机）,从1开始
-        protected string  rfidUID = ""; //读到的rfid UID
+        public string  rfidUID = ""; //读到的rfid UID
         protected string rfidUIDA = "";
         protected string rfidUIDB = "";
-        protected string currentTaskDescribe = "";// 当前任务描述
+        public string currentTaskDescribe = "";// 当前任务描述
         protected Int16[] db1ValsToSnd = null; //db1待发送数据
         protected Int16[] db1ValsReal = null; //PLC 实际DB1数据
-        protected Int16[] db2Vals = null;
+        public Int16[] db2Vals = null;
         protected string workerID = "";//员工号
       
         protected MingmeiDeviceAcc ccdDevAcc = null;
@@ -184,6 +184,9 @@ namespace PLProcessModel
         public string WorkerID { get { return workerID; } set { workerID = value; } }
         public bool MesStopstat { get; set; } //mes是否停机状态
         public string MesStopAddr { get; set; }
+
+        public RepairProcessBase repairProcess = null;
+         
         #endregion
         #region 公共数据
         public bool isWithMes = true;
@@ -200,6 +203,8 @@ namespace PLProcessModel
             localMesBasebll = new LOCAL_MES_STEP_INFOBll();
             localMesDetailbll = new LOCAL_MES_STEP_INFO_DETAILBll();
             onlineProductBll = new OnlineProductsBll();
+
+            repairProcess = new RepairProcessBase(this);
            // mesDataOpt = new MesDataOperate();
         }
         public virtual bool ReadDB1()
@@ -1705,9 +1710,9 @@ namespace PLProcessModel
            
             return reObj;
         }
-        protected RootObject ProcParamUpload(string M_AREA,string M_DEVICE_SN, string M_WORKSTATION_SN, string M_UNION_SN, string M_CONTAINER_SN, string M_LEVEL, string M_ITEMVALUE,ref string strJson)
+        protected RootObject ProcParamUpload(string M_AREA,string M_DEVICE_SN, string M_WORKSTATION_SN,string M_SN, string M_UNION_SN, string M_CONTAINER_SN, string M_LEVEL, string M_ITEMVALUE,ref string strJson)
         {
-            RootObject reObj = WShelper.ProcParamUpload(M_AREA, M_DEVICE_SN, M_WORKSTATION_SN, M_UNION_SN, M_CONTAINER_SN, M_LEVEL, M_ITEMVALUE, ref strJson, "");
+            RootObject reObj = WShelper.ProcParamUpload(M_AREA, M_DEVICE_SN, M_WORKSTATION_SN, M_SN, M_UNION_SN, M_CONTAINER_SN, M_LEVEL, M_ITEMVALUE, ref strJson, "");
             if (SysCfgModel.MesOfflineMode == true)
             {
                 logRecorder.AddDebugLog(nodeName, "离线模式，加工数据保存本地成功！" + reObj.RES);
@@ -1729,7 +1734,7 @@ namespace PLProcessModel
                     logRecorder.AddDebugLog(nodeName, string.Format("收到MES停机，发送停机命令到PLC,发送结果:{0}", re));
                 }
                 //上传MES 停机
-                reObj = WShelper.ProcParamUpload(M_AREA, M_DEVICE_SN, M_WORKSTATION_SN, M_UNION_SN, M_CONTAINER_SN, M_LEVEL, M_ITEMVALUE, ref strJson, "STOP");
+                reObj = WShelper.ProcParamUpload(M_AREA, M_DEVICE_SN, M_WORKSTATION_SN, M_SN, M_UNION_SN, M_CONTAINER_SN, M_LEVEL, M_ITEMVALUE, ref strJson, "STOP");
                 logRecorder.AddDebugLog(nodeName, string.Format("上传MES停机，返回结果{0}，发送Json{1}", reObj.RES, strJson));
             }
            
@@ -2508,7 +2513,17 @@ namespace PLProcessModel
                 //}
             }
             this.currentStat.StatDescribe = "RFID识别完成";
-            List<DBAccess.Model.BatteryModuleModel> modList = modBll.GetModelList(string.Format("palletID='{0}' and palletBinded=1", this.rfidUID));
+            List<DBAccess.Model.BatteryModuleModel> modList = null;
+
+            if (this.nodeID == "OPB009")
+            {
+                modList = modBll.GetModelList(string.Format("palletID='{0}' and palletBinded=1 or checkResult=2", this.rfidUID));
+            }
+            else
+            {
+                modList = modBll.GetModelList(string.Format("palletID='{0}' and palletBinded=1", this.rfidUID));
+            }
+           
             if (modList == null || modList.Count() < 1)
             {
                 db1ValsToSnd[0] = 4;//

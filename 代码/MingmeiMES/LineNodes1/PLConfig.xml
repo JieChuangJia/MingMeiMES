@@ -4,8 +4,8 @@
     <RunMode sim="true" debugMode="True" manualMode1="True" manualMode3="True">仿真运行模式</RunMode>
     <Printer Enable="True">是否启动自动贴标</Printer>
     <QRCodeRequire requireMes="false">是否从MES请求二维码，true是，false从本地数据库中获取</QRCodeRequire>
-    
     <Mes LineID="L11" Enable="True" OfflineMode="False" MesAutodown="False">是否启动MES判断</Mes>
+    <RepairProcess RequireFromMes ="false" StartWorkStationID="Y00100301" ProcessID="A1">是否从MES请求返修流程，true是，false从配置文件中获取</RepairProcess>
     <!--MES下线查询最长时间-->
     <MesDownTimeout>20</MesDownTimeout>
     <!--RFID失败判断，最长允许时间-->
@@ -13,7 +13,7 @@
     <!--线体控制，速度，启动/停止-->
     <LineCtl addrStart="D4000" blockNum="3">线体控制</LineCtl>
     <SysParam>[{"ParamName":"C线电池包模块数量","ParamVal":"4","ParamType":"VAR_INT"}]</SysParam>
-    <WelderParam batteryNumInMod="361"> </WelderParam>
+    <WelderParam batteryNumInMod="361"></WelderParam>
   </sysSet>
   <!--通信设备配置-->
   <CommDevCfg>
@@ -95,31 +95,24 @@
       <RFID id="30" CommAddr="192.168.0.232:3001">C线扫描及打码</RFID>
       <RFID id="31" CommAddr="192.168.0.233:3001">C线连接片焊接</RFID>
       <RFID id="32" CommAddr="192.168.0.234:3001">C线绑机器人出料</RFID>
-
       <RFID id="33" CommAddr="192.168.0.203:3001">A线上下支架机A通道</RFID>
       <RFID id="34" CommAddr="192.168.0.204:3001">A线上下支架机B通道</RFID>
       <RFID id="35" CommAddr="192.168.0.205:3001">A线点胶机1A通道</RFID>
       <RFID id="36" CommAddr="192.168.0.206:3001">A线点胶机1B通道</RFID>
       <RFID id="37" CommAddr="192.168.0.207:3001">A线点胶机2A通道</RFID>
       <RFID id="38" CommAddr="192.168.0.208:3001">A线点胶机2B通道</RFID>
-
       <RFID id="39" CommAddr="192.168.0.240:3001">A线人工位1A通道</RFID>
       <RFID id="40" CommAddr="192.168.0.241:3001">A线人工位1B通道</RFID>
       <RFID id="41" CommAddr="192.168.0.242:3001">A线人工位2A通道</RFID>
       <RFID id="42" CommAddr="192.168.0.243:3001">A线人工位2B通道</RFID>
       <RFID id="43" CommAddr="192.168.0.244:3001">A线人工位3A通道</RFID>
       <RFID id="44" CommAddr="192.168.0.245:3001">A线人工位3B通道</RFID>
-
-
       <RFID id="45" CommAddr="192.168.0.225:3001">B线末端机器人</RFID>
-      
       <RFID id="46" CommAddr="192.168.0.235:3001">C线绝缘板锁螺丝机</RFID>
       <RFID id="47" CommAddr="192.168.0.236:3001">C线人工位1</RFID>
       <RFID id="48" CommAddr="192.168.0.237:3001">C线人工位2</RFID>
       <RFID id="49" CommAddr="192.168.0.238:3001">C线人工位3</RFID>
       <RFID id="50" CommAddr="192.168.0.239:3001">C线人工位4</RFID>
-
-
     </RfidCfg>
     <CCDCfg>
       <!--<CCD id="1" CommAddr="127.0.0.1:6666" role="A线锁螺丝CCD检测"></CCD>-->
@@ -1098,7 +1091,7 @@
         </Dev>
       </DevCfg>
       <NodeCfg>
-        <Node id="OPZ001" nodeName="支线电芯入支架"  className="LineNodes.NodeBatteryAsm">
+        <Node id="OPZ001" nodeName="支线电芯入支架" className="LineNodes.NodeBatteryAsm">
           <BaseDatainfo plcID="4" ccdDevName="电池极性检测">
             <DB1Addr addrStart="D2000" blockNum="10">DB1数据区地址信息</DB1Addr>
             <DB2Addr addrStart="D3000" blockNum="10">DB2数据区地址信息</DB2Addr>
@@ -1113,49 +1106,49 @@
           <DevContain></DevContain>
         </Node>-->
         <Node id="OPA010" nodeName="A线上下支架机" mesID="Y00100101" stopAddr="D4000" className="LineNodes.NodeUpDownMachine">
-          <BaseDatainfo plcID="9"  plcID2="1" rfid="33,34"  >
+          <BaseDatainfo plcID="9" plcID2="1" rfid="33,34">
             <DB1Addr addrStart="D9100" blockNum="10">DB1数据区地址信息</DB1Addr>
             <DB2Addr addrStart="D9000" blockNum="10">DB2数据区地址信息</DB2Addr>
           </BaseDatainfo>
         </Node>
         <Node id="OPA011" nodeName="A线点胶机1" mesID="Y00100201" stopAddr="D4002" className="LineNodes.NodeDianjiao">
-          <BaseDatainfo plcID="1"  rfid="35,36"  >
+          <BaseDatainfo plcID="1" rfid="35,36">
             <DB1Addr addrStart="D2160" blockNum="10">DB1数据区地址信息</DB1Addr>
             <DB2Addr addrStart="D3160" blockNum="10">DB2数据区地址信息</DB2Addr>
           </BaseDatainfo>
         </Node>
         <Node id="OPA012" nodeName="A线点胶机2" mesID="Y00100201" stopAddr="D4004" className="LineNodes.NodeDianjiao">
-          <BaseDatainfo plcID="1"  rfid="37,38"  >
+          <BaseDatainfo plcID="1" rfid="37,38">
             <DB1Addr addrStart="D2170" blockNum="10">DB1数据区地址信息</DB1Addr>
             <DB2Addr addrStart="D3170" blockNum="10">DB2数据区地址信息</DB2Addr>
           </BaseDatainfo>
         </Node>
         <Node id="OPA013" nodeName="A线人工工位1" mesID="Y00100501" stopAddr="D4008" className="LineNodes.NodeManualStation">
-          <BaseDatainfo plcID="1"  rfid="39,40"  >
+          <BaseDatainfo plcID="1" rfid="39,40">
             <DB1Addr addrStart="D2180" blockNum="10">DB1数据区地址信息</DB1Addr>
             <DB2Addr addrStart="D3180" blockNum="10">DB2数据区地址信息</DB2Addr>
           </BaseDatainfo>
         </Node>
         <Node id="OPA014" nodeName="A线人工工位2" mesID="Y00101001" stopAddr="D4018" className="LineNodes.NodeManualStation">
-          <BaseDatainfo plcID="1"  rfid="41,42"  >
+          <BaseDatainfo plcID="1"  rfid="41,42">
             <DB1Addr addrStart="D2190" blockNum="10">DB1数据区地址信息</DB1Addr>
             <DB2Addr addrStart="D3190" blockNum="10">DB2数据区地址信息</DB2Addr>
           </BaseDatainfo>
         </Node>
         <Node id="OPA015" nodeName="A线人工工位3" mesID="Y00101301" stopAddr="D4024" className="LineNodes.NodeManualStation">
-          <BaseDatainfo plcID="1"  rfid="43,44"  >
+          <BaseDatainfo plcID="1" rfid="43,44">
             <DB1Addr addrStart="D2200" blockNum="10">DB1数据区地址信息</DB1Addr>
             <DB2Addr addrStart="D3200" blockNum="10">DB2数据区地址信息</DB2Addr>
           </BaseDatainfo>
         </Node>
         <Node id="OPA016" nodeName="A线烘烤工位1" mesID="Y00100901" stopAddr="D4016" className="LineNodes.BakeStation">
-          <BaseDatainfo plcID="1"   >
+          <BaseDatainfo plcID="1">
             <DB1Addr addrStart="D2210" blockNum="10">DB1数据区地址信息</DB1Addr>
             <DB2Addr addrStart="D3210" blockNum="10">DB2数据区地址信息</DB2Addr>
           </BaseDatainfo>
         </Node>
         <Node id="OPA017" nodeName="A线烘烤工位2" mesID="Y00101201" stopAddr="D4022" className="LineNodes.BakeStation">
-          <BaseDatainfo plcID="1" >
+          <BaseDatainfo plcID="1">
             <DB1Addr addrStart="D2220" blockNum="10">DB1数据区地址信息</DB1Addr>
             <DB2Addr addrStart="D3220" blockNum="10">DB2数据区地址信息</DB2Addr>
           </BaseDatainfo>
@@ -1202,7 +1195,6 @@
             <DB2Addr addrStart="D3140" blockNum="10">DB2数据区地址信息</DB2Addr>
           </BaseDatainfo>
         </Node>
-
         <!--<Node id="OPA001" nodeName="A线下支架点胶" className="LineNodes.NodeDianjiao" >
           <BaseDatainfo plcID="1" rfid="1">
             <DB1Addr addrStart="D2010" blockNum="10">DB1数据区地址信息</DB1Addr>
@@ -1519,7 +1511,7 @@
       </DevCfg>
       <NodeCfg>
         <Node id="OPB001" nodeName="B线模组-工装板绑定" stopAddr="D4028" className="LineNodes.NodePalletBind">
-          <BaseDatainfo plcID="2" plcID2="5" rfid="13" barScanner="3">
+          <BaseDatainfo plcID="5" plcID2="2" rfid="13" barScanner="3">
             <DB1Addr addrStart="D2050" blockNum="10">DB1数据区地址信息</DB1Addr>
             <DB2Addr addrStart="D3000" blockNum="10">DB2数据区地址信息</DB2Addr>
           </BaseDatainfo>
@@ -1985,7 +1977,7 @@
           </BaseDatainfo>
         </Node>
         <Node id="OPC001" nodeName="C线模块堆叠" mesID="Y00102201" stopAddr="D4048" className="LineNodes.NodeSwitchBind">
-          <BaseDatainfo plcID="3" barScanner="4" barScanner2="6"  plcID2="21" rfid="28">
+          <BaseDatainfo plcID="3" barScanner="4" barScanner2="6" plcID2="21" rfid="28">
             <DB1Addr addrStart="D2000" blockNum="20">DB1数据区地址信息</DB1Addr>
             <DB2Addr addrStart="D3000" blockNum="20">DB2数据区地址信息</DB2Addr>
           </BaseDatainfo>
@@ -2020,28 +2012,24 @@
             <DB2Addr addrStart="D3090" blockNum="10">DB2数据区地址信息</DB2Addr>
           </BaseDatainfo>
         </Node>
-        
         <Node id="OPC004" nodeName="C线模组焊接" mesID="M00100601" stopAddr="D4060" className="LineNodes.NodePackWeld">
           <BaseDatainfo plcID="3" rfid="31" plcID2="22">
             <DB1Addr addrStart="D2040" blockNum="10">DB1数据区地址信息</DB1Addr>
             <DB2Addr addrStart="D3040" blockNum="10">DB2数据区地址信息</DB2Addr>
           </BaseDatainfo>
         </Node>
-
         <Node id="OPC010" nodeName="C线安装侧板2" mesID="M00100701" stopAddr="D4062" className="LineNodes.NodeCManualStation">
           <BaseDatainfo plcID="3" rfid="50">
             <DB1Addr addrStart="D2100" blockNum="10">DB1数据区地址信息</DB1Addr>
             <DB2Addr addrStart="D3100" blockNum="10">DB2数据区地址信息</DB2Addr>
           </BaseDatainfo>
         </Node>
-
         <Node id="OPC005" nodeName="C线机器人出料" mesID="M00100801" stopAddr="D4064" className="LineNodes.NodePackOutput">
           <BaseDatainfo plcID="3" rfid="32" plcID2="23">
             <DB1Addr addrStart="D2050" blockNum="10">DB1数据区地址信息</DB1Addr>
             <DB2Addr addrStart="D3050" blockNum="10">DB2数据区地址信息</DB2Addr>
           </BaseDatainfo>
         </Node>
-     
       </NodeCfg>
     </Line>
   </LineCfg>
@@ -2050,7 +2038,6 @@
     <Thread id="1" name="线程1" loopInterval="100">
       <NodeContainer>
         <NodeID>OPA004</NodeID>
-
       </NodeContainer>
     </Thread>
     <Thread id="2" name="线程2" loopInterval="100">
@@ -2067,7 +2054,6 @@
         <NodeID>OPA007</NodeID>
         <NodeID>OPA008</NodeID>
         <NodeID>OPA009</NodeID>
-
       </NodeContainer>
     </Thread>
     <Thread id="4" name="线程4" loopInterval="100">
@@ -2118,7 +2104,7 @@
         <NodeID>OPA017</NodeID>
       </NodeContainer>
     </Thread>
-   <Thread id="11" name="线程11" loopInterval="100">
+    <Thread id="11" name="线程11" loopInterval="100">
       <NodeContainer>
         <NodeID>OPC007</NodeID>
         <NodeID>OPC008</NodeID>

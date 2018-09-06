@@ -15,7 +15,7 @@ namespace LineNodes
     public class NodeScrewLock: CtlNodeBaseModel
     {
         protected System.DateTime devOpenSt = DateTime.Now;
-        protected DBAccess.BLL.BatteryModuleBll modBll = new DBAccess.BLL.BatteryModuleBll();
+        //protected DBAccess.BLL.BatteryModuleBll modBll = new DBAccess.BLL.BatteryModuleBll();
         private MTDBAccess.BLL.dbBLL blldb = new MTDBAccess.BLL.dbBLL();//码头螺丝数据
         private ALineScrewDB.BLL.dbBLL bllScrewDb = new ALineScrewDB.BLL.dbBLL();//A线锁螺丝数据库
 
@@ -78,6 +78,18 @@ namespace LineNodes
                         {
                             break;
                         }
+                        bool needReparid = false;
+                        if (this.repairProcess.GetNeedRepair(this.rfidUID, this.NodeID, ref needReparid, ref reStr) == false)
+                        {
+                            this.logRecorder.AddDebugLog(this.nodeName,"获取返修状态失败:" + reStr);
+                            break;
+                        }
+                        if (needReparid == false)
+                        {
+                            currentTaskPhase = 9;//直接放行
+                            break;
+                        }
+
                         this.currentTask.TaskParam = rfidUID;
                         this.currentTask.TaskPhase = this.currentTaskPhase;
                         this.ctlTaskBll.Update(this.currentTask);
@@ -338,6 +350,7 @@ namespace LineNodes
                 case 7:
                     {
                         db1ValsToSnd[2 + this.channelIndex - 1] = 3;
+                      
                         currentStat.StatDescribe = "工装板放行";
                         this.currentTaskPhase++;
                         this.currentTask.TaskPhase = this.currentTaskPhase;
@@ -366,13 +379,26 @@ namespace LineNodes
                         this.ctlTaskBll.Update(this.currentTask);
                         break;
                     }
+                case 9://返修流程不要返修的直接放行
+                    {
+                        db1ValsToSnd[2 + this.channelIndex - 1] = 3;
+                        if (this.repairProcess.NeedRepair == false)
+                        {
+                            string chennelAddr = this.screwNgHandler.addrChannelCfg[this.channelIndex];
+                            if (this.PlcRW.WriteDB(chennelAddr, 2) == false)
+                            {
+                                break;
+                            }
+                        }
+                        break;
+                    }
                 default:
                     break;
             }
             return true;
            
         }
-
+       
         //private bool MesNGHandler(List<DBAccess.Model.BatteryModuleModel> modList, ref string reStr)
         //{
         //    try
@@ -902,7 +928,7 @@ namespace LineNodes
         private int currChannelIndex = 0;//当前通道
         private int Step = 0;
         private Dictionary<string, string> addrPosCfg = new Dictionary<string, string>();
-        private Dictionary<int, string> addrChannelCfg = new Dictionary<int, string>();
+        public Dictionary<int, string> addrChannelCfg = new Dictionary<int, string>();
         private string NGAddr = "D8734";
         private ILogRecorder logRecorder = null;
         public ScrewNGHandler(IPlcRW plcRw,IPlcRW plcRw2,int channelIndex,ILogRecorder logRec)

@@ -862,7 +862,7 @@ namespace LineNodes
         }
         private int UploadToMesProcessData(string workStationNum,string itemValue,ref string restr)
         {
-            RootObject rObj = WShelper.ProcParamUpload("L001","",workStationNum,"","","",itemValue,ref restr,"");
+            RootObject rObj = WShelper.ProcParamUpload("L001","",workStationNum,"","","","",itemValue,ref restr,"");
 
             restr = "上传过程数据："+rObj.RES;
             if (rObj.RES.ToUpper().Contains("OK"))

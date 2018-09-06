@@ -217,7 +217,7 @@ namespace LineNodes
                         {
                             barcode = "";
                             M_FLAG = 6;
-                            rObj = ProcParamUpload(M_AREA, M_DEVICE_SN, M_WORKSTATION_SN, M_UNION_SN, M_CONTAINER_SN, M_LEVEL, M_ITEMVALUE, ref strJson);
+                            rObj = ProcParamUpload(M_AREA, M_DEVICE_SN, M_WORKSTATION_SN, "", M_UNION_SN, M_CONTAINER_SN, M_LEVEL, M_ITEMVALUE, ref strJson);
                         }
                        // LogRecorder.AddDebugLog(nodeName, rObj.RES);
                         logRecorder.AddDebugLog(nodeName, string.Format("打码结果{0}上传MES，返回{1}", checkResult,rObj.RES));

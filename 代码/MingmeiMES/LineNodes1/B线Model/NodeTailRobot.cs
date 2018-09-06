@@ -36,6 +36,11 @@ namespace LineNodes
                         if (!RfidReadC())
                         {
                             break;
+                        } 
+                        if (!ProductTraceRecord())
+                        {
+
+                            break;
                         }
                         this.currentTask.TaskPhase = this.currentTaskPhase;
                         this.currentTask.TaskParam = rfidUID;
@@ -48,12 +53,9 @@ namespace LineNodes
                 case 2:
                     {
                         db1ValsToSnd[1] = 2;//
-                        if (!ProductTraceRecord())
-                        {
-                            break;
-                        }
+                        
                         //添加发送NG品的位置信息
-                        List<DBAccess.Model.BatteryModuleModel> modList = modBll.GetModelList(string.Format("palletID='{0}' and palletBinded=1", this.rfidUID));
+                        List<DBAccess.Model.BatteryModuleModel> modList = modBll.GetModelList(string.Format("palletID='{0}' and palletBinded=1 or checkResult=2", this.rfidUID));//有NG产品也不能放行
                         if (modList.Count() < 1) //空板直接放行
                         {
                             currentTaskPhase = 3;
@@ -64,7 +66,9 @@ namespace LineNodes
                         //    Console.WriteLine(string.Format("{0},{1}", nodeName, reStr));
                         //    break;
                         //}
-                        if (!SendCheckResult(modList, ref reStr))
+                        List<DBAccess.Model.BatteryModuleModel> workModList = modBll.GetModelList(string.Format("palletID='{0}' ", this.rfidUID));
+
+                        if (!SendCheckResult(workModList, ref reStr))
                         {
                             Console.WriteLine(string.Format("{0},{1}", nodeName, reStr));
                             break;

@@ -26,3 +26,7 @@ E:\JCJ\MingmeiMES\MingmeiMES\FTDataAccess\bin\Release\DBAccess.pdb
 E:\JCJ\MingmeiMES\MingmeiMES\FTDataAccess\obj\x86\Release\DBAccess.csprojResolveAssemblyReference.cache
 E:\JCJ\MingmeiMES\MingmeiMES\FTDataAccess\obj\x86\Release\DBAccess.dll
 E:\JCJ\MingmeiMES\MingmeiMES\FTDataAccess\obj\x86\Release\DBAccess.pdb
+E:\JieChuangJia\MingMei\代码\MingmeiMES\FTDataAccess\bin\Release\DBAccess.dll
+E:\JieChuangJia\MingMei\代码\MingmeiMES\FTDataAccess\bin\Release\DBAccess.pdb
+E:\JieChuangJia\MingMei\代码\MingmeiMES\FTDataAccess\obj\x86\Release\DBAccess.dll
+E:\JieChuangJia\MingMei\代码\MingmeiMES\FTDataAccess\obj\x86\Release\DBAccess.pdb

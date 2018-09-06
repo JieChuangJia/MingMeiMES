@@ -47,6 +47,19 @@ namespace LineNodes
                         {
                             break;
                         }
+
+                        bool needReparid = false;
+                        if (this.repairProcess.GetNeedRepair(this.rfidUID, this.NodeID, ref needReparid, ref reStr) == false)
+                        {
+                            this.logRecorder.AddDebugLog(this.nodeName, "获取返修状态失败:" + reStr);
+                            break;
+                        }
+                        this.logRecorder.AddDebugLog(this.nodeName, "获取返修状态成功:" + reStr);
+                        if (needReparid == false)
+                        {
+                            currentTaskPhase = 9;//直接放行
+                            break;
+                        }
                      //   db1ValsToSnd[1] = 2;//
                         if (!ProductTraceRecord())
                         {

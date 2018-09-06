@@ -51,6 +51,11 @@ namespace PLProcessModel
 
         public static int MesTimeout { get; set; }
         public static int RfidDelayTimeout { get; set; }
+        //======================模拟MES下发返修流程起始加工中心及流程代号====//
+        public static bool IsRequireRequireFromMes { get; set; }
+        public static string StartWorkStationID { get; set; }
+        public static string ProcessID { get; set; }
+        //================================================================//
         public static bool SaveCfg(ref string reStr)
         {
             return SaveCfg(cfgFilePath, ref reStr);
@@ -178,6 +183,10 @@ namespace PLProcessModel
                 XElement sysSetXE = root.Element("sysSet");
                 XElement sysParamXE = sysSetXE.Element("SysParam");
                 XElement qrCodewReqXe = sysSetXE.Element("QRCodeRequire");
+                XElement requireRepairProcssXe = sysSetXE.Element("RepairProcess");
+                StartWorkStationID = requireRepairProcssXe.Attribute("StartWorkStationID").Value.ToString();
+                IsRequireRequireFromMes = bool.Parse(requireRepairProcssXe.Attribute("RequireFromMes").Value.ToString());
+                ProcessID = requireRepairProcssXe.Attribute("ProcessID").Value.ToString();
                 string strParam = sysParamXE.Value.ToString();
                 if(!string.IsNullOrWhiteSpace(strParam))
                 {
