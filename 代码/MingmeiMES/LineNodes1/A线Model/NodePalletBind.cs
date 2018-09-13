@@ -19,6 +19,7 @@ namespace LineNodes
         private int bindModeCt = 0;//当前绑定的模块数量
         private RepairProcessALineBind aLineRepairProcess = null;//a线返修对象
         private RepairProcessBLineBind bLineRepairProcess = null;//b线返修对象
+        private int bLineBindCount = 4;//b线绑定个数，正常模式是4，返修模式读取D8地址
       
         bool isAtALineStation = false;
         public NodePalletBind()
@@ -167,13 +168,13 @@ namespace LineNodes
         }
         protected bool ExeBindALine(ref string reStr)
         {
-            
+            Console.WriteLine("bindA11");
             
             if(!ExeBusinessAB(ref reStr))
             {
                 return false;
             }
-           
+            Console.WriteLine("bindA12");
             switch(currentTaskPhase)
             {
                 case 1:
@@ -226,9 +227,14 @@ namespace LineNodes
                             logRecorder.AddDebugLog(nodeName, "获取是否需要返修失败：" + reStr);
                             break;
                         }
+                        this.aLineRepairProcess.SetNeedRepair(needRepair);
                         Console.WriteLine("repair 22");
                         logRecorder.AddDebugLog(nodeName, "获取是否需要返修成功：" + needRepair);
-                        this.aLineRepairProcess.StartStep();//启动步骤
+                        if(needRepair == true)
+                        {
+                            this.aLineRepairProcess.StartStep();//启动步骤
+                        }
+                    
                         currentTaskPhase++;
                         this.currentTask.TaskPhase = this.currentTaskPhase;
                         this.ctlTaskBll.Update(this.currentTask);
@@ -267,36 +273,36 @@ namespace LineNodes
                             {
                                 break;
                             }
+                         
                         }
+
                         currentTaskPhase++;
                         this.currentTask.TaskPhase = this.currentTaskPhase;
                         this.ctlTaskBll.Update(this.currentTask);
-
-                       
                         break;
  
                     }
              
+                //case 5:
+                //    {
+                //        if(this.aLineRepairProcess.GetIsAtBindStation(ref isAtALineStation,ref reStr)==false)
+                //        {
+                //            this.logRecorder.AddDebugLog(this.nodeName, "获取是否在A线绑定工位失败：" + reStr);
+                //            break;
+                //        }
+                //        if(this.aLineRepairProcess.AtBindStationBusiness(isAtALineStation,ref reStr)==false)
+                //        {
+                //            this.logRecorder.AddDebugLog(this.nodeName, "执行在A线绑定工位逻辑失败：" + reStr);
+                //            break;
+                //        }
+                //        this.logRecorder.AddDebugLog(this.nodeName, "MES下发开始工作中心号："
+                //            + this.aLineRepairProcess.repairParam.StartDevStation+",流程代号：" + this.aLineRepairProcess.repairParam.ProcessNum);
+                //        currentTaskPhase++;
+                //        this.currentTask.TaskPhase = this.currentTaskPhase;
+                //        this.ctlTaskBll.Update(this.currentTask);
+                //        break;
+                //    }
                 case 5:
-                    {
-                        if(this.aLineRepairProcess.GetIsAtBindStation(ref isAtALineStation,ref reStr)==false)
-                        {
-                            this.logRecorder.AddDebugLog(this.nodeName, "获取是否在A线绑定工位失败：" + reStr);
-                            break;
-                        }
-                        if(this.aLineRepairProcess.AtBindStationBusiness(isAtALineStation,ref reStr)==false)
-                        {
-                            this.logRecorder.AddDebugLog(this.nodeName, "执行在A线绑定工位逻辑失败：" + reStr);
-                            break;
-                        }
-                        this.logRecorder.AddDebugLog(this.nodeName, "MES下发开始工作中心号："
-                            + this.aLineRepairProcess.repairParam.StartDevStation+",流程代号：" + this.aLineRepairProcess.repairParam.ProcessNum);
-                        currentTaskPhase++;
-                        this.currentTask.TaskPhase = this.currentTaskPhase;
-                        this.ctlTaskBll.Update(this.currentTask);
-                        break;
-                    }
-                case 6:
                     {
                         //二维码和档位及位置信息绑定完成
                         this.db1ValsToSnd[3] = 2;
@@ -307,7 +313,7 @@ namespace LineNodes
                         this.ctlTaskBll.Update(this.currentTask);
                         break;
                     }
-                case 7:
+                case 6:
                     {
 
                         if(this.aLineRepairProcess.NeedRepair == true)
@@ -325,11 +331,14 @@ namespace LineNodes
                         else
                         {
                             currentTaskDescribe = "模组-工装板数据绑定完成，下一步:极性检测";
+                            this.currentTask.TaskPhase = this.currentTaskPhase;
+                            this.currentTask.TaskStatus = EnumTaskStatus.已完成.ToString();
+                            this.ctlTaskBll.Update(this.currentTask);
                         }
                        
                         break;
                     }
-                case 8:
+                case 7:
                     {
                         currentTaskDescribe = "模组-工装板绑定流程完成";
                         break;
@@ -574,16 +583,22 @@ namespace LineNodes
             int requiredBindCt = Math.Max(2,(int)db2Vals[7]); //A通道要求绑定数量
             bool checkOK = true;
             int posBase = 10;
+           //this.logRecorder.AddDebugLog(this.nodeName,"300");
             for(int i=1;i<requiredBindCt+1;i++)
             {
-                DBAccess.Model.BatteryModuleModel model = modBll.GetModelByPalletIDAndTag2(tempRfidUID, i.ToString(), this.nodeName); ;
+
+                //  this.logRecorder.AddDebugLog(this.nodeName, "tempRfidUID=" + tempRfidUID + ",I=" + i.ToString() + ",nodename:" + this.nodeName);
+                DBAccess.Model.BatteryModuleModel model = modBll.GetModelByPalletIDAndTag2(tempRfidUID, i.ToString(), this.nodeName); 
                 if(model == null)
                 {
                     continue;
                 }
+
+                // this.logRecorder.AddDebugLog(this.nodeName, "A通道rfid：" + tempRfidUID);
                 if (this.db2Vals[posBase + i] == 1)
                 {
-                    model.checkResult = this.db1ValsToSnd[6];
+                    // this.logRecorder.AddDebugLog(this.nodeName, "303");
+                    model.checkResult = this.db2Vals[6];
                     if(!modBll.Update(model))
                     {
                         reStr = "模组极性检测状态提交到数据库失败";
@@ -595,22 +610,29 @@ namespace LineNodes
                         return false;
                     }
                 }
+                //this.logRecorder.AddDebugLog(this.nodeName, "304");
             }
             List<DBAccess.Model.BatteryModuleModel> modelList = modBll.GetBindedMods(tempRfidUID);//modBll.GetModelByPalletID(tempRfidUID, this.nodeName);
             if (modelList == null || modelList.Count == 0)
             {
                 return true;
             }
+            // this.logRecorder.AddDebugLog(this.nodeName, "305");
             for (int i = 0; i < modelList.Count; i++)
             {
-                if (modelList[i].checkResult == null||modelList[i].checkResult==2)//上传极性检测NG后要解绑模块
+                // this.logRecorder.AddDebugLog(this.nodeName, "306");
+                if (modelList[i].checkResult==null)//上传极性检测NG后要解绑模块
                 {
+                    // this.logRecorder.AddDebugLog(this.nodeName, "307");
                     checkOK = false;
-                    modelList[i].palletBinded = false;
-                    modBll.Update(modelList[i]);
-                    logRecorder.AddDebugLog(nodeName, "模块二维码："+modelList[i].batModuleID+",极性检测失败与工装板：" +this.rfidID+"解绑！");
-                    
+                 
                 }
+                //if(modelList[i].checkResult ==2)
+                //{
+                //    modelList[i].palletBinded = false;
+                //    modBll.Update(modelList[i]);
+                //    logRecorder.AddDebugLog(nodeName, "模块二维码：" + modelList[i].batModuleID + ",极性检测失败与工装板：" + this.RfidUID + "解绑！"); 
+                //}
             }
             if(checkOK)
             {
@@ -687,7 +709,7 @@ namespace LineNodes
                 }
                 if (this.db2Vals[posBase + i] == 1)
                 {
-                    model.checkResult = this.db1ValsToSnd[6];
+                    model.checkResult = this.db2Vals[6];
                     if (!modBll.Update(model))
                     {
                         reStr = "模组极性检测状态提交到数据库失败";
@@ -1045,15 +1067,63 @@ namespace LineNodes
                     }
                 case 2:
                     {
-                       
-                        if (bindModeCt > 3)
+                        bool needRepair = false;
+                        if (this.bLineRepairProcess.GetNeedRepair(ref needRepair, ref reStr) == false)
                         {
+                            logRecorder.AddDebugLog(nodeName, "获取是否需要返修失败：" + reStr);
+                            break;
+                        }
+                        logRecorder.AddDebugLog(nodeName, "获取返修模式成功：" + needRepair+"," + reStr);
+                        if (needRepair == true)
+                        {
+                            this.bLineRepairProcess.StartStep();
+                             
+                        }
+                    
+                        currentTaskPhase++;
+                        this.currentTask.TaskPhase = this.currentTaskPhase;
+                        this.ctlTaskBll.Update(this.currentTask);
+                        break;
+                    }
+                case 3:
+                    {
+                         
+                       if(this.bLineRepairProcess.NeedRepair == true)
+                       {
+                           int bBindCount = 2;
+                           if (this.PlcRW.ReadDB("D8", ref bBindCount) == false)
+                           {
+                               break;
+                           }
+                           this.bLineBindCount = bBindCount - 1;
+                           this.logRecorder.AddDebugLog(this.nodeName, "返修读取绑定个数：" + bBindCount);
+                       }
+                       else
+                       {
+                           this.bLineBindCount = 3;
+                       }
+                       currentTaskPhase++;
+                       this.currentTask.TaskPhase = this.currentTaskPhase;
+                       this.ctlTaskBll.Update(this.currentTask);
+                       break;
+                    }
+                case 4:
+                    {
+                        if (bindModeCt > this.bLineBindCount)
+                        {
+                            if(this.bLineRepairProcess.NeedRepair == false)
+                            {
+                                currentTaskPhase = 6;
+                                this.currentTask.TaskPhase = this.currentTaskPhase;
+                                this.ctlTaskBll.Update(this.currentTask);
+                                break;
+                            }
                             currentTaskPhase++;
                             this.currentTask.TaskPhase = this.currentTaskPhase;
                             this.ctlTaskBll.Update(this.currentTask);
                             break;
                         }
-                        if(db2Vals[1] == 0)
+                        if (db2Vals[1] == 0)
                         {
                             db2Vals[2] = 0;
                             if (!NodeDB2Commit(2, this.db2Vals[2], ref reStr))
@@ -1070,16 +1140,16 @@ namespace LineNodes
                             if (SysCfgModel.SimMode)
                             {
                                 //生成模拟数据
-                               // GenerateSimBatterys();
+                                // GenerateSimBatterys();
                                 modBarcode = SimBarcode;
                             }
                             else
                             {
                                 modBarcode = barcodeRW.ReadBarcode();
                             }
-                          
+
                             modBarcode = modBarcode.Trim(new char[] { '\0', '\r', '\n', '\t', ' ' }).ToUpper();
-                            if(string.IsNullOrWhiteSpace(modBarcode))
+                            if (string.IsNullOrWhiteSpace(modBarcode))
                             {
                                 this.db2Vals[2] = 2;
                                 this.currentTaskDescribe = "扫条码失败";
@@ -1092,12 +1162,12 @@ namespace LineNodes
                             }
                             else
                             {
-                                this.currentTaskDescribe = "扫到条码："+modBarcode;
-                               
+                                this.currentTaskDescribe = "扫到条码：" + modBarcode;
+
                             }
                             DBAccess.Model.BatteryModuleModel mod = modBll.GetModel(modBarcode);
-                           
-                            if(mod == null)
+
+                            if (mod == null)
                             {
                                 this.db1ValsToSnd[2] = 3;
                                 break;
@@ -1108,9 +1178,9 @@ namespace LineNodes
                                 logRecorder.AddDebugLog(nodeName, "发送PLC数据失败，" + reStr);
                                 break;
                             }
-                            if(mod.palletBinded=true && mod.palletID== rfidUID)
+                            if (mod.palletBinded = true && mod.palletID == rfidUID)
                             {
-                                logRecorder.AddDebugLog(nodeName, string.Format("模块条码:{0}重复绑定到RFID{1}",modBarcode,rfidUID));
+                                logRecorder.AddDebugLog(nodeName, string.Format("模块条码:{0}重复绑定到RFID{1}", modBarcode, rfidUID));
                                 this.db2Vals[2] = 3;
                                 if (!NodeDB2Commit(2, this.db2Vals[2], ref reStr))
                                 {
@@ -1131,45 +1201,24 @@ namespace LineNodes
                             mod.palletID = this.rfidUID;
                             mod.palletBinded = true;
                             mod.curProcessStage = nodeName;
-                            mod.tag2 = (bindModeCt+1).ToString();
+                            mod.tag2 = (bindModeCt + 1).ToString();
                             modBll.Update(mod);
                             logRecorder.AddDebugLog(nodeName, string.Format("绑定，RFID:{0},模块条码:{1}", rfidUID, modBarcode));
-                           // AddProcessRecord(mod.batModuleID, this.nodeName, "");
+                            // AddProcessRecord(mod.batModuleID, this.nodeName, "");
                             AddProcessRecord(mod.batModuleID, "模块", "追溯记录", string.Format("绑定，RFID:{0},模块条码:{1}", rfidUID, modBarcode), "");
-                           
-                            
-                            this.bindModeCt =  modBll.GetRecordCount(string.Format("palletID='{0}' and palletBinded=1", this.rfidUID));
+
+
+                            this.bindModeCt = modBll.GetRecordCount(string.Format("palletID='{0}' and palletBinded=1", this.rfidUID));
                             this.db1ValsToSnd[1] = (short)this.bindModeCt;
                         }
 
                         break;
                     }
-                case 3:
-                    {
-                        bool needRepair = false;
-                        if(this.bLineRepairProcess.GetNeedRepair(ref needRepair,ref reStr) == false)
-                        {
-                            logRecorder.AddDebugLog(nodeName, "获取是否需要返修失败：" + reStr);
-                            break;
-                        }
-                        this.bLineRepairProcess.StartStep();
-                        if (needRepair == true)
-                        {
-                            currentTaskPhase++;
-                        }
-                        else
-                        {
-                            currentTaskPhase = 5;//到最后一步
-                        }
-                      
-                        this.currentTask.TaskPhase = this.currentTaskPhase;
-                        this.ctlTaskBll.Update(this.currentTask);
-                        break;
-                    }
-                case 4:
+            
+                case 5:
                     {
                         bool isComplete = false;
-                        this.aLineRepairProcess.RepairBusiness(ref isComplete);
+                        this.bLineRepairProcess.RepairBusiness(ref isComplete);
                         if (isComplete == true)
                         {
                             currentTaskPhase++;
@@ -1180,14 +1229,18 @@ namespace LineNodes
                         break;
                     }
 
-                case 5:
+                case 6:
                     {
-                        List<DBAccess.Model.BatteryModuleModel> modList = modBll.GetModelList(string.Format("palletID='{0}' and palletBinded=1", this.rfidUID));
-
-                        if (!PreMech(modList, ref reStr))
+                        if (this.bLineRepairProcess.NeedRepair == false)//正常模式
                         {
-                            Console.WriteLine(string.Format("{0},{1}", nodeName, reStr));
-                            break;
+
+                            List<DBAccess.Model.BatteryModuleModel> modList = modBll.GetModelList(string.Format("palletID='{0}' and palletBinded=1", this.rfidUID));
+
+                            if (!PreMech(modList, ref reStr))
+                            {
+                                Console.WriteLine(string.Format("{0},{1}", nodeName, reStr));
+                                break;
+                            }
                         }
                         db1ValsToSnd[2] = 2;
                         currentTaskDescribe = "流程完成";

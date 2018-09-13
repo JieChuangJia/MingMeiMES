@@ -206,12 +206,12 @@ namespace LineNodes
             {
                 channel = "B";
             }
-            if (ReadBakeData(bakeName,channel, ref highTemperature, ref lowTemperature, ref bakeTime) == true)
+            if (ReadBakeData(bakeName,channel, ref highTemperature, ref lowTemperature, ref bakeTime) == false)
             {
                 restr = "读取烘烤数据失败！";
                 return false;
             }
-            string bakeData = "烘烤最高温度:" + highTemperature / 10 + ":℃|烘烤最低温度:" + lowTemperature / 10 + ":℃|烘烤时间:" + bakeTime / 10 + ":s（这段时间内的最高温度和最低温度）";
+            string bakeData = "烘烤最高温度:" + (float)highTemperature / 10 + ":℃|烘烤最低温度:" + (float)lowTemperature / 10 + ":℃|烘烤时间:" + (float)bakeTime / 10 + ":s（这段时间内的最高温度和最低温度）";
             int uploadStatus = 0;
             if (bakeName == "OPA016")
             {
@@ -257,23 +257,25 @@ namespace LineNodes
             string lowTemperatureAddr = bakeName + "-" + rfidPos + "-Low";
             string bakeTimeAddr = bakeName + "-" + rfidPos + "-Time";
 
-            logRecorder.AddDebugLog(this.nodeName, "高温地址：" + bakeAddrDic[highTemperatureAddr]);
-            logRecorder.AddDebugLog(this.nodeName, "低温地址：" + bakeAddrDic[lowTemperatureAddr]);
-            logRecorder.AddDebugLog(this.nodeName, "时间：" + bakeAddrDic[bakeTimeAddr]);
-
-            if (this.plcRW.ReadDB(highTemperatureAddr, ref highTemperature) == false)
+            //logRecorder.AddDebugLog(this.nodeName, "高温地址：" + bakeAddrDic[highTemperatureAddr]);
+            //logRecorder.AddDebugLog(this.nodeName, "低温地址：" + bakeAddrDic[lowTemperatureAddr]);
+            //logRecorder.AddDebugLog(this.nodeName, "时间：" + bakeAddrDic[bakeTimeAddr]);
+            logRecorder.AddDebugLog(this.nodeName, "开始读取烘烤数据：" + highTemperature);
+            if (this.plcRW.ReadDB(bakeAddrDic[highTemperatureAddr], ref highTemperature) == false)
             {
                 return false;
             }
-            if (this.plcRW.ReadDB(lowTemperatureAddr, ref lowTemperature) == false)
+            logRecorder.AddDebugLog(this.nodeName, "高温：" + highTemperature);
+            if (this.plcRW.ReadDB(bakeAddrDic[lowTemperatureAddr], ref lowTemperature) == false)
             {
                 return false;
             }
-            if (this.plcRW.ReadDB(bakeTimeAddr, ref bakeTime) == false)
+            logRecorder.AddDebugLog(this.nodeName, "低温：" + lowTemperature );
+            if (this.plcRW.ReadDB(bakeAddrDic[bakeTimeAddr], ref bakeTime) == false)
             {
                 return false;
             }
-
+            logRecorder.AddDebugLog(this.nodeName, "时间：" + bakeTime);
             return true;
         }
         /// <summary>
@@ -284,6 +286,7 @@ namespace LineNodes
         /// <returns></returns>
         private int UploadMesProcessParam(string workStationNum, string paramItems)
         {
+            int reStatus = 0;
             string M_AREA = "Y001";
             string M_WORKSTATION_SN = workStationNum;
             string M_DEVICE_SN = "";
@@ -299,29 +302,34 @@ namespace LineNodes
             {
                 this.logRecorder.AddDebugLog(this.nodeName, "空板直接放行！" + this.rfidUID);
              
-                return 3;
+                reStatus= 3;
             }
-            string barcode = modelList[0].batModuleID;
-            string strJson = "";
-            rObj = ProcParamUpload(M_AREA, M_DEVICE_SN, M_WORKSTATION_SN, barcode, M_UNION_SN, M_CONTAINER_SN, M_LEVEL, M_ITEMVALUE, ref strJson);
-            if (rObj.RES.ToUpper().Contains("OK"))
+            for(int i=0;i<modelList.Count;i++)
             {
-                logRecorder.AddDebugLog(this.nodeName, "上传过程数据成功；上传数据：二维码[" + barcode + "],数据[" + paramItems + "]，MES返回：" + rObj.RES);
-                
-                return 0;
+                string barcode = modelList[i].batModuleID;
+                string strJson = "";
+                rObj = ProcParamUpload(M_AREA, M_DEVICE_SN, M_WORKSTATION_SN, barcode, M_UNION_SN, M_CONTAINER_SN, M_LEVEL, M_ITEMVALUE, ref strJson);
+                if (rObj.RES.ToUpper().Contains("OK"))
+                {
+                    logRecorder.AddDebugLog(this.nodeName, "上传过程数据成功；上传数据：二维码[" + barcode + "],数据[" + paramItems + "]，MES返回：" + rObj.RES);
+
+                    reStatus= 0;
+                }
+                else if (rObj.RES.ToUpper().Contains("NG"))
+                {
+                    //Console.WriteLine(this.nodeName + "上传过程数据成功，但返回NG：" + rObj.RES);
+                    logRecorder.AddDebugLog(this.nodeName, "上传过程数据成功，但返回NG；上传数据：二维码[" + barcode + "],数据[" + paramItems + "]，MES返回：" + rObj.RES);
+                    reStatus= 1;
+                }
+                else
+                {
+                    logRecorder.AddDebugLog(this.nodeName, "上传过程数据失败，上传数据：二维码[" + barcode + "],数据[" + paramItems + "]，MES返回：" + rObj.RES);
+
+                    reStatus= 2;
+                }
             }
-            else if (rObj.RES.ToUpper().Contains("NG"))
-            {
-                //Console.WriteLine(this.nodeName + "上传过程数据成功，但返回NG：" + rObj.RES);
-                logRecorder.AddDebugLog(this.nodeName, "上传过程数据成功，但返回NG；上传数据：二维码["+barcode +"],数据["+paramItems+"]，MES返回："  + rObj.RES);
-                return 1;
-            }
-            else
-            {
-                logRecorder.AddDebugLog(this.nodeName, "上传过程数据失败，上传数据：二维码[" + barcode + "],数据[" + paramItems + "]，MES返回：" + rObj.RES);
-               
-                return 2;
-            }
+            return reStatus;
+          
 
         }
         /// <summary>
@@ -352,30 +360,32 @@ namespace LineNodes
                     this.logRecorder.AddDebugLog(this.nodeName, "空板直接放行！" + this.rfidUID);
                     return 3;
                 }
-                string barcode = modelList[0].batModuleID;
-                string strJson = "";
+                int uploadStatus = 0;
+                for (int i = 0; i < modelList.Count; i++)
+                {
+                    string barcode = modelList[i].batModuleID;
+                    string strJson = "";
 
-                rObj = DevDataUpload(flag, M_DEVICE_SN, M_WORKSTATION_SN, barcode, M_UNION_SN, M_CONTAINER_SN, M_LEVEL, M_ITEMVALUE, ref strJson);
-                restr = rObj.RES;
-                if (rObj.RES.ToUpper().Contains("OK"))
-                {
-                    logRecorder.AddDebugLog(this.nodeName, "上传过程数据成功，上传数据：二维码[" + barcode + "],MES返回：" + rObj.RES);
-               
-                    return 0;
+                    rObj = DevDataUpload(flag, M_DEVICE_SN, M_WORKSTATION_SN, barcode, M_UNION_SN, M_CONTAINER_SN, M_LEVEL, M_ITEMVALUE, ref strJson);
+                    restr = rObj.RES;
+                    if (rObj.RES.ToUpper().Contains("OK"))
+                    {
+                        logRecorder.AddDebugLog(this.nodeName, "上传过程数据成功，上传数据：二维码[" + barcode + "],MES返回：" + rObj.RES);
+                        uploadStatus= 0;
+                    }
+                    else if (rObj.RES.ToUpper().Contains("NG"))
+                    {
+                        logRecorder.AddDebugLog(this.nodeName, "上传过程数据成功，但返回NG；上传数据：二维码[" + barcode + "]，MES返回：" + rObj.RES);
+                        uploadStatus = 1;
+                    }
+                    else
+                    {
+                        logRecorder.AddDebugLog(this.nodeName, "上传过程数据失败，上传数据：二维码[" + barcode + "]，MES返回：" + rObj.RES);
+                        //  Console.WriteLine(this.nodeName + "上传MES二维码信息错误：" + rObj.RES);
+                        uploadStatus= 2;
+                    }
                 }
-                else if (rObj.RES.ToUpper().Contains("NG"))
-                {
-                    logRecorder.AddDebugLog(this.nodeName, "上传过程数据成功，但返回NG；上传数据：二维码[" + barcode + "]，MES返回：" + rObj.RES);
-               
-                    return 1;
-                }
-                else
-                {
-                    logRecorder.AddDebugLog(this.nodeName, "上传过程数据失败，上传数据：二维码[" + barcode + "]，MES返回：" + rObj.RES);
-               
-                    //  Console.WriteLine(this.nodeName + "上传MES二维码信息错误：" + rObj.RES);
-                    return 2;
-                }
+                return uploadStatus;
             }
             catch(Exception ex)
             {

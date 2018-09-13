@@ -78,12 +78,15 @@ namespace LineNodes
                         {
                             break;
                         }
+                        this.screwNgHandler = new ScrewNGHandler(this.plcRW, this.plcRW2, this.channelIndex, this.logRecorder);
+
                         bool needReparid = false;
                         if (this.repairProcess.GetNeedRepair(this.rfidUID, this.NodeID, ref needReparid, ref reStr) == false)
                         {
                             this.logRecorder.AddDebugLog(this.nodeName,"获取返修状态失败:" + reStr);
                             break;
                         }
+                        this.logRecorder.AddDebugLog(this.nodeName, "获取返修状态成功:" + reStr);
                         if (needReparid == false)
                         {
                             currentTaskPhase = 9;//直接放行
@@ -101,7 +104,7 @@ namespace LineNodes
                             break;
                         }
                         currentTaskPhase++;
-                        this.screwNgHandler = new ScrewNGHandler(this.plcRW, this.plcRW2, this.channelIndex,this.logRecorder);
+                     
                         this.currentTask.TaskPhase = this.currentTaskPhase;
                         this.ctlTaskBll.Update(this.currentTask);
                         break;
@@ -280,6 +283,7 @@ namespace LineNodes
                                 this.screwNgHandler.AddNgModule(screwNgMod);
                                 module.palletBinded =false;//NG解绑
                                 module.checkResult = 2;//NG
+                                modBll.Update(module);
                                 logRecorder.AddDebugLog(nodeName, "上传MES锁螺丝数据成功，但返回NG！" + module.batModuleID + ":" + reStr);
                                 if (this.plcRW2.WriteDB("D9000", 3) == false)
                                 {

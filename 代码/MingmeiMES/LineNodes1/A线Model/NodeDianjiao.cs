@@ -174,6 +174,7 @@ namespace LineNodes
                             this.logRecorder.AddDebugLog(this.nodeName,"获取返修状态失败:" + reStr);
                             break;
                         }
+
                         if (needReparid == false)
                         {
                             currentTaskPhase =4;//直接放行
@@ -411,8 +412,13 @@ namespace LineNodes
                     
                         if (IsAllModComplete() == true)
                         {
-                            currWorkMod.tag4 = "";
-                            modBll.Update(currWorkMod);
+                            List<DBAccess.Model.BatteryModuleModel> modList = modBll.GetModelList(string.Format("palletID='{0}' and palletBinded=1", this.dianjiaoDev.RfidUID));
+                            foreach (DBAccess.Model.BatteryModuleModel mod in modList)
+                            {
+                                mod.tag4 = "";
+                                modBll.Update(mod);
+                            }
+                      
                             stepIndex = 0;
                             this.dianjiaoDev.LogRecorder.AddDebugLog(this.dianjiaoDev.NodeName, "点胶流程完成！");
                         

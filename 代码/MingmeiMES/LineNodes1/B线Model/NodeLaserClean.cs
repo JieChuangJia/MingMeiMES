@@ -52,6 +52,19 @@ namespace LineNodes
                         {
                             break;
                         }
+                          bool needRepari = false;
+                        if (this.repairProcess.GetNeedRepairBLine(this.rfidUID, this.nodeID, ref needRepari,ref reStr) ==false)
+                        {
+                            this.logRecorder.AddDebugLog(this.nodeName, "获取返修模式失败：" + reStr);
+                        }
+                        this.logRecorder.AddDebugLog(this.nodeName, "当前工位是否需要加工：" +needRepari+","+ reStr);
+                        if (needRepari == false)//直接放行
+                        {
+                            currentTaskPhase = 4;
+                            this.currentTask.TaskPhase = this.currentTaskPhase;
+                            this.ctlTaskBll.Update(this.currentTask);
+                            break;
+                        }
                         this.currentTask.TaskPhase = this.currentTaskPhase;
                         this.currentTask.TaskParam = rfidUID;
                         this.ctlTaskBll.Update(this.currentTask);

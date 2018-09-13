@@ -67,6 +67,19 @@ namespace LineNodes
                           
                             break;
                         }
+                        bool needRepari = false;
+                        if (this.repairProcess.GetNeedRepairBLine(this.rfidUID, this.nodeID, ref needRepari,ref reStr) ==false)
+                        {
+                            this.logRecorder.AddDebugLog(this.nodeName, "获取返修模式失败：" + reStr);
+                        }
+                        this.logRecorder.AddDebugLog(this.nodeName, "当前工位是否需要加工：" +needRepari+","+ reStr);
+                        if(needRepari == false)//直接放行
+                        {
+                            currentTaskPhase=3;
+                            this.currentTask.TaskPhase = this.currentTaskPhase;
+                            this.ctlTaskBll.Update(this.currentTask);
+                            break;
+                        }
                         this.currentTask.TaskPhase = this.currentTaskPhase;
                         this.currentTask.TaskParam = rfidUID;
                         this.ctlTaskBll.Update(this.currentTask);
@@ -95,6 +108,13 @@ namespace LineNodes
                         Console.WriteLine("isAllComplete =" + isAllComplete.ToString());
                         if (isAllComplete == true)
                         {
+                            List<DBAccess.Model.BatteryModuleModel> modList2 = modBll.GetModelList(string.Format("palletID='{0}' and palletBinded=1", this.RfidUID));
+                            foreach (DBAccess.Model.BatteryModuleModel mod in modList2)
+                            {
+                                mod.tag4 = "";
+                                modBll.Update(mod);
+                            }
+                      
                             currentTaskPhase++;
                             this.currentTask.TaskPhase = this.currentTaskPhase;
                             this.ctlTaskBll.Update(this.currentTask);

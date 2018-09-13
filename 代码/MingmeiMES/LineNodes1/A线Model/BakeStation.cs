@@ -55,7 +55,7 @@ namespace LineNodes
                     }
                     // SetReadStatus(2);//读取失败
 
-                    string bakeData = "烘烤最高温度:" + this.highTemperature/10 + ":℃|烘烤最低温度:" + this.lowTemperature/10 + ":℃|烘烤时间:" + this.bakeTime/10 + ":s（这段时间内的最高温度和最低温度）";
+                    string bakeData = "烘烤最高温度:" + (float)this.highTemperature / 10 + ":℃|烘烤最低温度:" + (float)this.lowTemperature / 10 + ":℃|烘烤时间:" + (float)this.bakeTime / 10 + ":s（这段时间内的最高温度和最低温度）";
                     if (this.nodeID == "OPA016")
                     {
                         int uploadStatus = UploadMesProcessParam("Y00100901", bakeData) ;
