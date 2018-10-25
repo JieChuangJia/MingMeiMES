@@ -60,6 +60,10 @@
             this.bt_AddQR = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.dgv_CodeList = new System.Windows.Forms.DataGridView();
+            this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.bt_SetStandard = new System.Windows.Forms.Button();
+            this.tb_TestStandardData = new System.Windows.Forms.TextBox();
+            this.bt_GetTestStandardData = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -71,12 +75,14 @@
             this.panel2.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgv_CodeList)).BeginInit();
+            this.tabPage3.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
             // 
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
@@ -427,6 +433,50 @@
             this.dgv_CodeList.Size = new System.Drawing.Size(893, 350);
             this.dgv_CodeList.TabIndex = 0;
             // 
+            // tabPage3
+            // 
+            this.tabPage3.Controls.Add(this.bt_SetStandard);
+            this.tabPage3.Controls.Add(this.tb_TestStandardData);
+            this.tabPage3.Controls.Add(this.bt_GetTestStandardData);
+            this.tabPage3.Location = new System.Drawing.Point(4, 22);
+            this.tabPage3.Name = "tabPage3";
+            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage3.Size = new System.Drawing.Size(911, 462);
+            this.tabPage3.TabIndex = 2;
+            this.tabPage3.Text = "获取测试标准";
+            this.tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // bt_SetStandard
+            // 
+            this.bt_SetStandard.Location = new System.Drawing.Point(182, 15);
+            this.bt_SetStandard.Name = "bt_SetStandard";
+            this.bt_SetStandard.Size = new System.Drawing.Size(158, 23);
+            this.bt_SetStandard.TabIndex = 53;
+            this.bt_SetStandard.Text = "设定测试标准";
+            this.bt_SetStandard.UseVisualStyleBackColor = true;
+            this.bt_SetStandard.Click += new System.EventHandler(this.bt_SetStandard_Click);
+            // 
+            // tb_TestStandardData
+            // 
+            this.tb_TestStandardData.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tb_TestStandardData.Location = new System.Drawing.Point(3, 44);
+            this.tb_TestStandardData.Multiline = true;
+            this.tb_TestStandardData.Name = "tb_TestStandardData";
+            this.tb_TestStandardData.Size = new System.Drawing.Size(905, 412);
+            this.tb_TestStandardData.TabIndex = 52;
+            // 
+            // bt_GetTestStandardData
+            // 
+            this.bt_GetTestStandardData.Location = new System.Drawing.Point(8, 15);
+            this.bt_GetTestStandardData.Name = "bt_GetTestStandardData";
+            this.bt_GetTestStandardData.Size = new System.Drawing.Size(158, 23);
+            this.bt_GetTestStandardData.TabIndex = 51;
+            this.bt_GetTestStandardData.Text = "从MES获取测试标准";
+            this.bt_GetTestStandardData.UseVisualStyleBackColor = true;
+            this.bt_GetTestStandardData.Click += new System.EventHandler(this.bt_GetTestStandardData_Click);
+            // 
             // MesOfflineView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -450,6 +500,8 @@
             this.panel2.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgv_CodeList)).EndInit();
+            this.tabPage3.ResumeLayout(false);
+            this.tabPage3.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -488,6 +540,10 @@
         private System.Windows.Forms.Button bt_ChangeMode;
         private System.Windows.Forms.ComboBox cb_StationNum;
         private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.TabPage tabPage3;
+        private System.Windows.Forms.TextBox tb_TestStandardData;
+        private System.Windows.Forms.Button bt_GetTestStandardData;
+        private System.Windows.Forms.Button bt_SetStandard;
 
     }
 }

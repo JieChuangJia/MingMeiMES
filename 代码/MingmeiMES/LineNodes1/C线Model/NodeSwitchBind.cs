@@ -22,7 +22,7 @@ namespace LineNodes
         private int readCodeTimes = 0;//扫码器读3次不成工认为失败，需要通知plc
         int modPalletMax = 4; //每个模组最多码放模块数量
         private int bindCountGlobal = 0;
-
+        private bool switchUploadMes = false;//分档的时候上传MES标识
         private int SwitchTaskIndex = 0;//分档索引
         public override bool BuildCfg(System.Xml.Linq.XElement xe, ref string reStr)
         {
@@ -54,10 +54,11 @@ namespace LineNodes
             return true;
         }
 
-        private bool UploadMesLogic(int swichDw,string barcode,ref string reStr)
+        private bool UploadMesLogic(int swichDw,string barcode,ref bool isNG,ref string reStr)
         {
             PLNodesBll plNodesBll = new PLNodesBll();
             plNodeModel = plNodesBll.GetModel(this.nodeID);
+            isNG = false;
             string swichDwAll = "";
             switch(swichDw)
             {
@@ -99,13 +100,14 @@ namespace LineNodes
                 else if (uploadStatus == 1)
                 {
                     this.logRecorder.AddDebugLog(this.nodeName, "上传打螺丝数据成功！，返回NG" + reStr);
+                    isNG = true;
                 }
                 else
                 {
                     Console.WriteLine(this.nodeName + "，上传打螺丝数据失败：" + reStr);
                     return false;
                 }
-
+                this.TxtLogRecorder.WriteLog("上传MES数据：工装板号：" + this.rfidUID + ",模块号：" + barcode);
             }
             return true;
         }
@@ -149,6 +151,7 @@ namespace LineNodes
             else
             {
                 Console.WriteLine(this.nodeName+ "读取条码成功：" + barcode);
+                this.TxtLogRecorder.WriteLog("读取条码成功：" +barcode);
             }
             DBAccess.Model.BatteryModuleModel mod = modBll.GetModel(barcode);
             if(mod == null)
@@ -185,11 +188,44 @@ namespace LineNodes
                 return;
             }
             //short groupSeq = 1;//测试默认为1档位
-         
 
-            if (UploadMesLogic(groupSeq,barcode,ref reStr) == false)
+            bool isNg = false;
+            if(switchUploadMes == false)//保证只传一次
             {
+                if (UploadMesLogic(groupSeq, barcode, ref isNg, ref reStr) == false)
+                {
+                    return;
+                }
+                switchUploadMes = true;
+            }
+          
+            if (isNg == true)//NG处理
+            {
+                if (this.plcRW.WriteDB("D9000", 2) == false)
+                {
+                    return;
+                }
+                if (this.plcRW2.WriteDB("D9000", 2) == false)
+                {
+                    return;
+                }
+                if (!NodeDB2Commit(0, 2, ref reStr))//流程结束
+                {
+                    logRecorder.AddDebugLog(nodeName, "发送PLC数据失败");
+                }
+                LogRecorder.AddDebugLog(nodeName,"模块二维码："+barcode+",MES分析NG，线体服务器流程处理结束！");
                 return;
+            }
+            else
+            {
+                if (this.plcRW.WriteDB("D9000", 1) == false)
+                {
+                    return;
+                }
+                if (this.plcRW2.WriteDB("D9000", 1) == false)
+                {
+                    return;
+                }
             }
           
             this.db1ValsToSnd[0] = 1;
@@ -212,11 +248,13 @@ namespace LineNodes
                         {
                             plNodeModel.tag1 = plNodeModel.tag1 + barcode + ",";
                             LogRecorder.AddDebugLog(nodeName, string.Format("模块：{0}分档完成,档位：{1}", barcode, mod.tag1));
+                            this.TxtLogRecorder.WriteLog(string.Format("模块：{0}分档完成,档位：{1}", barcode, mod.tag1));
                             
                         }
                         else
                         {
                             LogRecorder.AddDebugLog(nodeName, string.Format("模块：{0}分档缓存数据已经存在，分档完成,档位：{1}", barcode, mod.tag1));
+                           
                         }
                         break;
                     }
@@ -233,6 +271,7 @@ namespace LineNodes
                         {
                             plNodeModel.tag2 = plNodeModel.tag2 + barcode + ",";
                             LogRecorder.AddDebugLog(nodeName, string.Format("模块：{0}分档完成,档位：{1}", barcode, mod.tag1));
+                            this.TxtLogRecorder.WriteLog(string.Format("模块：{0}分档完成,档位：{1}", barcode, mod.tag1));
                         }
                         else
                         {
@@ -253,6 +292,7 @@ namespace LineNodes
                         {
                             plNodeModel.tag3 = plNodeModel.tag3 + barcode + ",";
                             LogRecorder.AddDebugLog(nodeName, string.Format("模块：{0}分档完成,档位：{1}", barcode, mod.tag1));
+                            this.TxtLogRecorder.WriteLog(string.Format("模块：{0}分档完成,档位：{1}", barcode, mod.tag1));
                         }
                         else
                         {
@@ -273,6 +313,7 @@ namespace LineNodes
                         {
                             plNodeModel.tag4 = plNodeModel.tag4 + barcode + ",";
                             LogRecorder.AddDebugLog(nodeName, string.Format("模块：{0}分档完成,档位：{1}", barcode, mod.tag1));
+                            this.TxtLogRecorder.WriteLog(string.Format("模块：{0}分档完成,档位：{1}", barcode, mod.tag1));
                         }
                         else
                         {
@@ -291,6 +332,7 @@ namespace LineNodes
             {
                 logRecorder.AddDebugLog(nodeName, "发送PLC数据失败");
             }
+            switchUploadMes = false;
             //else
             //{
             //    Console.WriteLine("扫码完成信号写入2");
@@ -396,6 +438,7 @@ namespace LineNodes
                             else
                             {
                                 this.logRecorder.AddDebugLog(this.nodeName, "请求模组二维码成功!" + this.mesReqGroupCode);
+                                this.TxtLogRecorder.WriteLog("请求模组二维码成功!" + this.mesReqGroupCode);
                             }
                            
                             //bindCount = 2;//现场条码不正确
@@ -443,7 +486,7 @@ namespace LineNodes
                         this.currentTask.TaskPhase = this.currentTaskPhase;
                         this.ctlTaskBll.Update(this.currentTask);
                         logRecorder.AddDebugLog(nodeName, string.Format("读到RFID:{0}，开始绑定", this.rfidUID));
-
+                        this.TxtLogRecorder.WriteLog(string.Format("读到RFID:{0}，开始绑定", this.rfidUID));
                        
                         break;
                     }
@@ -573,6 +616,7 @@ namespace LineNodes
                                 mod.batModuleID = modID;
                                 mod.palletID = this.rfidUID;
                                 mod.palletBinded = true;
+                                mod.checkResult = 1;
                                 mod.batPackID = this.mesReqGroupCode;
                                 mod.curProcessStage = nodeName;
                                 mod.asmTime = System.DateTime.Now;
@@ -581,6 +625,7 @@ namespace LineNodes
                             }
                             else
                             {
+                                mod.checkResult = 1;
                                 mod.palletBinded = true;
                                 mod.palletID = this.rfidUID;
                                 mod.curProcessStage = nodeName;
@@ -644,6 +689,7 @@ namespace LineNodes
                         currentTaskPhase++;
                         this.currentTask.TaskPhase = this.currentTaskPhase;
                         this.ctlTaskBll.Update(this.currentTask);
+                        this.TxtLogRecorder.WriteLog("工装板数据绑定完成！");
                         currentTaskDescribe = "绑定完成！";
                         break;
                     }
@@ -666,6 +712,7 @@ namespace LineNodes
                             this.logRecorder.AddDebugLog(this.nodeName, "上传MES数据失败：" + restr);//需要重复上传
                             break;
                         }
+                        this.TxtLogRecorder.WriteLog("上传MES数据：工装板号" +this.rfidUID);
                         #endregion
                         currentTaskPhase++;
                         this.db1ValsToSnd[4] = 2;
@@ -689,6 +736,7 @@ namespace LineNodes
                         this.currentTask.TaskPhase = this.currentTaskPhase;
                         this.currentTask.TaskStatus = EnumTaskStatus.已完成.ToString();
                         this.ctlTaskBll.Update(this.currentTask);
+                        this.TxtLogRecorder.WriteLog("工位流程处理完成！");
                         break;
                     }
                

@@ -52,3 +52,12 @@ E:\JCJ\MingmeiMES\MingmeiMES\用户控件\WarningRoll\obj\x86\Release\WarningRol
 E:\JCJ\MingmeiMES\MingmeiMES\用户控件\WarningRoll\obj\x86\Release\WarningRoll.csproj.GenerateResource.Cache
 E:\JCJ\MingmeiMES\MingmeiMES\用户控件\WarningRoll\obj\x86\Release\WarningRoll.dll
 E:\JCJ\MingmeiMES\MingmeiMES\用户控件\WarningRoll\obj\x86\Release\WarningRoll.pdb
+E:\软件\MineProject\Projects\明美\明美\代码\MingmeiMES\用户控件\WarningRoll\bin\Release\WarningRoll.dll
+E:\软件\MineProject\Projects\明美\明美\代码\MingmeiMES\用户控件\WarningRoll\bin\Release\WarningRoll.pdb
+E:\软件\MineProject\Projects\明美\明美\代码\MingmeiMES\用户控件\WarningRoll\bin\Release\GDICommon.dll
+E:\软件\MineProject\Projects\明美\明美\代码\MingmeiMES\用户控件\WarningRoll\bin\Release\GDICommon.pdb
+E:\软件\MineProject\Projects\明美\明美\代码\MingmeiMES\用户控件\WarningRoll\obj\x86\Release\WarningRoll.csprojResolveAssemblyReference.cache
+E:\软件\MineProject\Projects\明美\明美\代码\MingmeiMES\用户控件\WarningRoll\obj\x86\Release\WarningRoll.WarningRoll.resources
+E:\软件\MineProject\Projects\明美\明美\代码\MingmeiMES\用户控件\WarningRoll\obj\x86\Release\WarningRoll.csproj.GenerateResource.Cache
+E:\软件\MineProject\Projects\明美\明美\代码\MingmeiMES\用户控件\WarningRoll\obj\x86\Release\WarningRoll.dll
+E:\软件\MineProject\Projects\明美\明美\代码\MingmeiMES\用户控件\WarningRoll\obj\x86\Release\WarningRoll.pdb

@@ -37,6 +37,16 @@ namespace LineNodes
                         {
                             break;
                         }
+                        this.TxtLogRecorder.WriteLog("工装板数据读取成功:" + this.rfidUID);
+                        if (GetPalletCheckNg() == true)//NG处理
+                        {
+                            db1ValsToSnd[0] = 5;//
+                            currentTaskPhase = 3;
+                            this.TxtLogRecorder.WriteLog("绑定数据有NG产品，线体服务器处理流程结束！直接放行！");
+                            this.logRecorder.AddDebugLog(this.nodeName, "绑定数据有NG产品，线体服务器处理流程结束！");
+                            break;
+                        }
+
                         int bindModeCt = modBll.GetRecordCount(string.Format("palletID='{0}' and palletBinded=1", this.rfidUID));
                         if (plcRW2 != null)
                         {
@@ -46,7 +56,7 @@ namespace LineNodes
                                 break;
                             }
                         }
-
+                       
                         this.currentTask.TaskPhase = this.currentTaskPhase;
                         this.currentTask.TaskParam = rfidUID;
                         this.ctlTaskBll.Update(this.currentTask);
@@ -74,7 +84,7 @@ namespace LineNodes
                             break;
 
                         }
-
+                      
                         db1ValsToSnd[1] = 2;//
                         if (!ProductTraceRecord())
                         {
@@ -99,6 +109,7 @@ namespace LineNodes
                         this.currentTask.TaskPhase = this.currentTaskPhase;
                         this.currentTask.TaskStatus = EnumTaskStatus.已完成.ToString();
                         this.ctlTaskBll.Update(this.currentTask);
+                        this.TxtLogRecorder.WriteLog("工位流程处理完毕！");
                     
                         break;
                     }
@@ -129,6 +140,8 @@ namespace LineNodes
 
             rObj = DevDataUpload(1, M_DEVICE_SN, M_WORKSTATION_SN, barcode, M_UNION_SN, M_CONTAINER_SN, M_LEVEL, M_ITEMVALUE, ref strJson);
             reStr = rObj.RES+"：上报模组调组条码：" +barcode;
+
+            this.TxtLogRecorder.WriteLog("上传MES数据：" + this.rfidUID + ",工作中心号：M00100801，模组条码："+ barcode);
             if (rObj.RES.ToUpper().Contains("OK"))
             {
                 

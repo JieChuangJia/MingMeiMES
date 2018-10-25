@@ -40,7 +40,14 @@ namespace LineNodes
                         {
                             break;
                         }
-                        
+                        if (GetPalletCheckNg() == true)//NG处理
+                        {
+                            db1ValsToSnd[0] = 5;//
+                            currentTaskPhase = 4;
+                            this.logRecorder.AddDebugLog(this.nodeName, "绑定数据有NG产品，线体服务器处理流程结束！");
+                            break;
+                        }
+                        this.TxtLogRecorder.WriteLog("读取工装板成功：" + this.rfidUID);
                         this.currentTask.TaskPhase = this.currentTaskPhase;
                         this.currentTask.TaskParam = rfidUID;
                         this.ctlTaskBll.Update(this.currentTask);
@@ -116,6 +123,7 @@ namespace LineNodes
                     }
                 case 4:
                     {
+                        this.TxtLogRecorder.WriteLog("工位流程处理完毕！");
                         currentTaskDescribe = "流程完成";
                         break;
                     }
@@ -196,6 +204,7 @@ namespace LineNodes
             }
 
             RootObject rObj = DevDataUpload(flag, "", workStationNum, batteryModuleList[0].batPackID, "", "", "", "", ref reStr);
+            this.TxtLogRecorder.WriteLog("上传MES数据，工作中心号：" + workStationNum + ",模组条码：" + batteryModuleList[0].batPackID);
             reStr = rObj.RES;
             if (rObj.RES.ToUpper().Contains("OK"))
             {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using PLProcessModel;
+using DBAccess.Model;
 
 namespace LineNodes
 {
@@ -17,7 +18,7 @@ namespace LineNodes
        private string AtALineBindAddr="D3057";//是否在A线绑定工位，1是，2否
        private string ALineWorkStationNum = "Y00100301";
        private string ALineBindProcessNum = "A1";
-       private int stepIndex = 0;
+       //private int stepIndex = 0;
     
 
    
@@ -82,7 +83,8 @@ namespace LineNodes
            }
            return true;
        }
-       public bool AddRepairProcess(ref string restr)
+    
+       public bool AddRepairProcess(ref string restr,string isSpecial)
        {
            List<DBAccess.Model.BatteryModuleModel> modelList = modBll.GetModelList(string.Format("palletID='{0}'  and palletBinded=1", this.nodeBase.rfidUID)); //modBll.GetModelByPalletID(this.rfidUID, this.nodeName);
            if (modelList == null || modelList.Count == 0)
@@ -92,14 +94,23 @@ namespace LineNodes
            }
            foreach (DBAccess.Model.BatteryModuleModel battery in modelList)
            {
+               DBAccess.Model.RepairRecordModel existModule = bllRepairRecord.GetModel(battery.batModuleID);
+
                DBAccess.Model.RepairRecordModel repairModel = new DBAccess.Model.RepairRecordModel();
                repairModel.BatteryModuleID = battery.batModuleID;
                repairModel.PalletID = this.nodeBase.rfidUID;
-               
+               repairModel.RepairRec_Reserve1 = isSpecial;
                repairModel.RepairProcessNum = this.repairParam.ProcessNum;
                repairModel.RepairStartStationNum = this.repairParam.StartDevStation;
 
-               bllRepairRecord.Add(repairModel);
+               if (existModule == null)
+               {
+                   bllRepairRecord.Add(repairModel);
+               }
+               else
+               {
+                   bllRepairRecord.Update(repairModel);
+               }
            }
        
            return true;
@@ -142,13 +153,17 @@ namespace LineNodes
                    {
                        string restr = "";
                        Console.WriteLine("Repair1");
-                       if (GetRepairProcessParam(this.nodeBase.rfidUID, ref repairParam, ref restr) == false)
+                       if (GetRepairProcessParamByRfid(this.nodeBase.rfidUID, ref repairParam, ref restr) == false)
                        {
                            this.nodeBase.LogRecorder.AddDebugLog(this.nodeBase.NodeName, restr);
                            break;
                        }
-                       Console.WriteLine("Repair2");
-                       if(AddRepairProcess(ref restr) ==false)
+                       string isSpecialProcess= false.ToString();
+                       IsSpecialProcess(repairParam, ref isSpecialProcess, ref restr);
+                   
+                       this.nodeBase.LogRecorder.AddDebugLog(this.nodeBase.NodeName, restr);
+                     
+                       if (AddRepairProcess(ref restr, isSpecialProcess) == false)
                        {
                            this.nodeBase.LogRecorder.AddDebugLog(this.nodeBase.NodeName, restr);
                            break;

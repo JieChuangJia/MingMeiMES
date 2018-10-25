@@ -47,8 +47,15 @@ namespace LineNodes
                                 break;
                             }
                         }
-                           
-                        
+                        if (GetPalletCheckNg() == true)//NG处理
+                        {
+                            db1ValsToSnd[0] = 5;//
+                            currentTaskPhase = 4;
+                            this.logRecorder.AddDebugLog(this.nodeName, "绑定数据有NG产品，线体服务器处理流程结束！");
+                            this.TxtLogRecorder.WriteLog("绑定数据有NG产品，线体服务器处理流程结束！直接放行！");
+                            break;
+                        }
+                        this.TxtLogRecorder.WriteLog("读取工装板成功:"+this.rfidUID+"，开始加工！");
                         this.currentTask.TaskPhase = this.currentTaskPhase;
                         this.currentTask.TaskParam = rfidUID;
                         this.ctlTaskBll.Update(this.currentTask);
@@ -116,6 +123,22 @@ namespace LineNodes
                             break;
                         }
                         currentTaskDescribe = "焊接数据读取成功：" + uploadMesData;
+
+                        int handleStatus = 0;
+                        if (this.plcRW2.ReadDB("D9200", ref handleStatus) == false)//NG处理
+                        {
+                            break;
+                        }
+                        if (handleStatus == 1)//NG
+                        {
+                            UpdatePalletCheckResult(2);
+                            db1ValsToSnd[0] = 5;
+                            //db1ValsToSnd[1] = 3;
+                            currentTaskPhase = 4;//流程完成
+                            this.logRecorder.AddDebugLog(this.nodeName, "设备加工NG，线体服务器处理流程结束！");
+                            break;
+                        }
+
                         int uploadMesStatus = UploadToMesData(3, moduleList[0].batPackID, "M00100601", uploadMesData, ref reStr);
                         if (uploadMesStatus == 0)
                         {
@@ -124,13 +147,19 @@ namespace LineNodes
                         else if (uploadMesStatus == 1)
                         {
                             this.logRecorder.AddDebugLog(this.nodeName, "上传MES数据成功，返回NG：" + uploadMesData);
+                            db1ValsToSnd[0] = 5;
 
+                            currentTaskPhase = 4;//流程完成
+
+                            UpdatePalletCheckResult(2);
+                            this.logRecorder.AddDebugLog(this.nodeName, "MES分析数据NG，线体服务器处理流程结束！");
                         }
                         else
                         {
                             Console.WriteLine(this.nodeName + ":"+reStr);
                             break;
                         }
+                        this.TxtLogRecorder.WriteLog("上传MES数据：模组码：" + moduleList[0].batPackID + ",工作中心号：M00100601，加工数据：" + uploadMesData);
                         currentTaskPhase++;
                         this.currentTask.TaskPhase = this.currentTaskPhase;
                         this.ctlTaskBll.Update(this.currentTask);
@@ -143,6 +172,7 @@ namespace LineNodes
                         this.currentTask.TaskPhase = this.currentTaskPhase;
                         this.currentTask.TaskStatus = EnumTaskStatus.已完成.ToString();
                         this.ctlTaskBll.Update(this.currentTask);
+                        this.TxtLogRecorder.WriteLog("工位流程处理完成！");
                         break;
                     }
                 default:

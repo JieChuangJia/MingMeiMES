@@ -62,20 +62,37 @@ namespace LineNodes
                         }
                         if (plcRW2.ReadDB("D9000", ref modulePres) == false)
                         {
-                            this.currentTaskDescribe = "服务模组压力失败！";
+                            this.currentTaskDescribe = "读取服务模组压力失败！";
                             break;
                         }
                         if (plcRW2.ReadDB("D9002", ref mouduleLen) == false)
                         {
-                            this.currentTaskDescribe = "服务模组长度失败！";
+                            this.currentTaskDescribe = "读取服务模组长度失败！";
                             break;
                         }
 
                         if (plcRW2.WriteDB("D9100", 2) == false)
                         {
-                            this.currentTaskDescribe = "读取服务模组压力、长度完成写入失败！";
+                            this.currentTaskDescribe = "服务模组压力、长度完成写入失败！";
                             break;
                         }
+
+                        int handleStatus = 0;
+                        if (this.plcRW2.ReadDB("D9200", ref handleStatus) == false)//NG处理
+                        {
+                            break;
+                        }
+                        if(handleStatus == 1)//NG
+                        {
+                            db1ValsToSnd[0] = 5;
+                            //db1ValsToSnd[1] = 3;
+                            currentTaskPhase = 2;//流程完成
+                            UpdatePalletCheckResult(2);
+                            this.logRecorder.AddDebugLog(this.nodeName, "设备加工NG，线体服务器处理流程结束！");
+                            this.TxtLogRecorder.WriteLog("设备加工NG，线体服务器处理流程结束,直接放行！");
+                            break;
+                        }
+                        
                         string restr = "";
                         //上报MES压力和长度
                          int uploadStatus =  UploadDataToMes(3, "M00100201", this.rfidUID, mouduleLen, modulePres, ref restr);
@@ -83,9 +100,16 @@ namespace LineNodes
                         {
                             this.logRecorder.AddDebugLog(this.nodeName, "上传MES数据成功：" + restr);
                         }
-                        else if(uploadStatus==1)
+                        else if(uploadStatus==1)//NG处理
                         {
                             this.logRecorder.AddDebugLog(this.nodeName, "上传MES数据成功，返回NG：" + restr);
+                            db1ValsToSnd[0] = 5;
+                            //db1ValsToSnd[1] = 3;
+                            currentTaskPhase = 2;//流程完成
+                            UpdatePalletCheckResult(2);
+                            this.logRecorder.AddDebugLog(this.nodeName, "MES分析数据NG，线体服务器处理流程结束！");
+                            break;
+
                         }
                         else
                         {
@@ -97,7 +121,7 @@ namespace LineNodes
                         this.currentTask.TaskPhase = this.currentTaskPhase;
                         this.currentTask.TaskParam = rfidUID+"," + mouduleLen+","+modulePres;
                         this.logRecorder.AddDebugLog(this.nodeName, "读取数据：压力值：" + modulePres + ";长度：" + mouduleLen);
-                        
+                        this.TxtLogRecorder.WriteLog("工装板号：" + this.rfidUID + ",工作中心号：M00100201，上传MES数据：：压力值：" + modulePres + ";长度：" + mouduleLen);
                         currentTaskPhase++;
                       
                         this.currentTask.TaskPhase = this.currentTaskPhase;
@@ -115,6 +139,7 @@ namespace LineNodes
                         }
                         db1ValsToSnd[1] = 3;
                         currentTaskPhase++;
+                     
                         this.currentTask.TaskPhase = this.currentTaskPhase;
                         this.ctlTaskBll.Update(this.currentTask);
                         break;
@@ -125,6 +150,7 @@ namespace LineNodes
                         this.currentTask.TaskPhase = this.currentTaskPhase;
                         this.currentTask.TaskStatus = EnumTaskStatus.已完成.ToString();
                         this.ctlTaskBll.Update(this.currentTask);
+                        this.TxtLogRecorder.WriteLog("工位流程处理完成！");
                       
                         break;
                     }

@@ -94,7 +94,7 @@ namespace LineNodes
                         break;
                     }
                     bool needReparid = false;
-                    if (this.repairProcess.GetNeedRepair(this.rfidUID, this.NodeID, ref needReparid, ref reStr) == false)
+                    if (this.repairProcess.GetNeedRepairALine(this.rfidUID, this.NodeID, ref needReparid, ref reStr) == false)
                     {
                         this.logRecorder.AddDebugLog(this.nodeName, "获取返修状态失败:" + reStr);
                         break;
@@ -102,6 +102,8 @@ namespace LineNodes
                     if (needReparid == false)
                     {
                         currentTaskPhase = 3;//直接放行
+                        this.repairProcess.ReportToMesByProcessStationID(this.nodeID, this.rfidUID);
+                        this.TxtLogRecorder.WriteLog("当前工艺此工位不需要加工，直接放行，工装板号:" + this.rfidUID);
                         break;
                     }
 
@@ -114,7 +116,7 @@ namespace LineNodes
                     currentTaskPhase++;
                     this.currentTask.TaskPhase = this.currentTaskPhase;
 
-
+                    this.TxtLogRecorder.WriteLog("当前工位开始加工！");
                     this.ctlTaskBll.Update(this.currentTask);
                     break;
                 case 2:
@@ -172,6 +174,7 @@ namespace LineNodes
 
 
                     this.ctlTaskBll.Update(this.currentTask);
+                    this.TxtLogRecorder.WriteLog(string.Format("上传MES二位码成功：{0}", this.rfidUID));
                     LogRecorder.AddDebugLog(nodeName, string.Format("上传MES二位码成功：{0}", this.rfidUID));
                     this.currentTaskDescribe = string.Format("上传MES二维码成功！");
                     break;
@@ -183,6 +186,7 @@ namespace LineNodes
                         this.ctlTaskBll.Update(this.currentTask);
                         db1ValsToSnd[2 + this.channelIndex - 1] = 3;
                         currentTaskDescribe = "流程完成";
+                        this.TxtLogRecorder.WriteLog("工位加工处理完成！");
                         break;
                     }
                 default:
@@ -411,6 +415,7 @@ namespace LineNodes
                         }
                         LogRecorder.AddDebugLog(nodeName, string.Format("RFID：{0}", this.rfidUID));
                         currentTaskPhase++;
+                        this.TxtLogRecorder.WriteLog("读取工装板号成功:" + this.rfidUID);
                         break;
                     }
                 case 2:
@@ -420,6 +425,7 @@ namespace LineNodes
                         this.currentTask.TaskPhase = this.currentTaskPhase;
                         this.ctlTaskBll.Update(this.currentTask);
                         this.currentTask.TaskStatus = EnumTaskStatus.已完成.ToString();
+                        this.TxtLogRecorder.WriteLog("此工位加工处理完成！");
                         break;
                     }
                 default:

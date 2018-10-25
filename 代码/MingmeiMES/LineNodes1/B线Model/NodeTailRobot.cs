@@ -48,6 +48,7 @@ namespace LineNodes
                         currentTaskPhase++;
                         this.currentTask.TaskPhase = this.currentTaskPhase;
                         this.ctlTaskBll.Update(this.currentTask);
+                        this.TxtLogRecorder.WriteLog("读取工装板号成功：" +this.rfidUID);
                         break;
                     }
                 case 2:
@@ -58,6 +59,8 @@ namespace LineNodes
                         List<DBAccess.Model.BatteryModuleModel> modList = modBll.GetModelList(string.Format("palletID='{0}' and palletBinded=1 or checkResult=2", this.rfidUID));//有NG产品也不能放行
                         if (modList.Count() < 1) //空板直接放行
                         {
+                            this.repairProcess.ReportToMesByProcessStationID(this.nodeID, this.rfidUID);
+                            this.TxtLogRecorder.WriteLog("空板直接放行！");
                             currentTaskPhase = 3;
                             break;
                         }
@@ -86,6 +89,7 @@ namespace LineNodes
                         this.currentTask.TaskPhase = this.currentTaskPhase;
                         this.ctlTaskBll.Update(this.currentTask);
                         this.currentTask.TaskStatus = EnumTaskStatus.已完成.ToString();
+                        this.TxtLogRecorder.WriteLog("工位流程处理完毕！");
                         break;
                     }
                 default:

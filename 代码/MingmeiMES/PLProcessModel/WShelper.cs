@@ -404,7 +404,66 @@ namespace PLProcessModel
             }
 
         }
+        /// <summary>
+        /// 直接发json数据
+        /// </summary>
+        /// <param name="jsonData"></param>
+        /// <returns></returns>
+        public static RootObject UploadDataByJson(string jsonData)
+        {
+            object objJson = jsonData;
+            object[] addParams = new object[] { objJson };
 
+            object result = WShelper.InvokeWebService(url, "DxDataUploadJson", addParams);
+            string strRES = result.ToString();
+          
+            RootObject rObj = JsonConvert.DeserializeObject<RootObject>(strRES);
+            return rObj;
+        }
+        /// <summary>
+        /// 从MES获取测试标准数据
+        /// </summary>
+        /// <param name="M_FLAG"></param>
+        /// <param name="M_AREA"></param>
+        /// <param name="M_ITEM_TYPE"></param>
+        /// <returns></returns>
+        public static RootObject GetTestStandardDataFromMES(int M_FLAG, string M_AREA, int M_ITEM_TYPE)
+        {
+            RootObject rObj = null;
+            if (SysCfgModel.SimMode)
+            {
+                rObj = new RootObject();
+                rObj.RES = "NG，仿真模式不支持获取标准！";
+
+                return rObj;
+            }
+            if (SysCfgModel.MesOfflineMode == true)//只有在线模式才能申请标准
+            {
+                rObj = new RootObject();
+                rObj.RES = "NG，离线模式不支持获取标准";
+
+                return rObj;
+            }
+            List<ContentDetail> CList = new List<ContentDetail>();
+            ContentDetail tail = new ContentDetail();
+            tail.M_FLAG = M_FLAG;
+            tail.M_AREA = M_AREA;
+            tail.M_ITEM_TYPE = M_ITEM_TYPE;
+            CList.Add(tail);
+            string CONTROL_TYPE = "";
+            //上传参数
+            string strJson = WShelper.ReturnJsonData("OK", CONTROL_TYPE, CList);
+            object objJson = strJson;
+            object[] addParams = new object[] { objJson };
+
+            object result = WShelper.InvokeWebService(url, "DxDataUploadJson", addParams);
+            string strRES = result.ToString();
+            rObj = new RootObject();
+            rObj = JsonConvert.DeserializeObject<RootObject>(strRES);
+
+            return rObj;
+
+        }
         /// <summary>
         /// 设备数据上传
         /// </summary>
@@ -456,6 +515,14 @@ namespace PLProcessModel
                 string strRES = result.ToString();
                 rObj = new RootObject();
                 rObj = JsonConvert.DeserializeObject<RootObject>(strRES);
+                FTDataAccess.Model.OfflineDataModel offlineModel = new FTDataAccess.Model.OfflineDataModel();
+                offlineModel.OfflineDataID = Guid.NewGuid().ToString();
+                offlineModel.IsUpLoad = EnumUploadStatus.已上传.ToString();
+                offlineModel.DataType = EnumUpLoadDataType.数据上报.ToString();
+                offlineModel.WorkStationID = M_WORKSTATION_SN;
+                offlineModel.UploadJsonData = strJson;
+                offlineModel.CreateTime = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+                bllOfflineData.Add(offlineModel);
                 return rObj;
             }
          
@@ -519,6 +586,15 @@ namespace PLProcessModel
                 string strRES = result.ToString();
                 rObj = new RootObject();
                 rObj = JsonConvert.DeserializeObject<RootObject>(strRES);
+                FTDataAccess.Model.OfflineDataModel offlineModel = new FTDataAccess.Model.OfflineDataModel();
+                offlineModel.OfflineDataID = Guid.NewGuid().ToString();
+                offlineModel.IsUpLoad = EnumUploadStatus.已上传.ToString();
+                offlineModel.DataType = EnumUpLoadDataType.过程数据.ToString();
+                offlineModel.WorkStationID = M_WORKSTATION_SN;
+                offlineModel.CreateTime = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+                offlineModel.UploadJsonData = strJson;
+                bllOfflineData.Add(offlineModel);
+
                 return rObj;
             }
         }

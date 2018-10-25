@@ -49,15 +49,34 @@ namespace LineNodes
                         }
 
                         bool needReparid = false;
-                        if (this.repairProcess.GetNeedRepair(this.rfidUID, this.NodeID, ref needReparid, ref reStr) == false)
+                        if (this.NodeID == "OPA009")//A线的
                         {
-                            this.logRecorder.AddDebugLog(this.nodeName, "获取返修状态失败:" + reStr);
-                            break;
+                            if (this.repairProcess.GetNeedRepairALine(this.rfidUID, this.NodeID, ref needReparid, ref reStr) == false)
+                            {
+                                this.logRecorder.AddDebugLog(this.nodeName, "获取返修状态失败:" + reStr);
+                                break;
+                            }
                         }
-                        this.logRecorder.AddDebugLog(this.nodeName, "获取返修状态成功:" + reStr);
+                        else//b线的
+                        {
+                            if (this.repairProcess.GetNeedRepairBLine(this.rfidUID, this.NodeID, ref needReparid, ref reStr) == false)
+                            {
+                                this.logRecorder.AddDebugLog(this.nodeName, "获取返修状态失败:" + reStr);
+                                break;
+                            }
+                        }
+                     
+                        this.logRecorder.AddDebugLog(this.nodeName,    reStr);
                         if (needReparid == false)
                         {
                             currentTaskPhase = 9;//直接放行
+                            if (!TryUnbind(this.rfidUID, ref reStr))//A线最后一个工位需要解绑
+                            {
+                                this.currentTaskDescribe = "工装板解绑失败:" + reStr;
+                                break;
+                            }
+                            this.TxtLogRecorder.WriteLog("当前工位不需要加工,直接放行,工装板号："+this.rfidUID);
+                            this.repairProcess. ReportToMesByProcessStationID(this.nodeID,this.rfidUID);
                             break;
                         }
                      //   db1ValsToSnd[1] = 2;//
@@ -66,6 +85,7 @@ namespace LineNodes
                             break;
                         }
                         currentTaskPhase++;
+                        this.TxtLogRecorder.WriteLog("读取工装板成功，工装板号：" + this.rfidUID);
                         ccdNgHandler = new CCDNGHandler(this.plcRW2, this.rfidUID, this.logRecorder);//创建NG检查对象
                         this.currentTask.TaskParam = rfidUID;
                         this.currentTask.TaskPhase = this.currentTaskPhase;
@@ -143,6 +163,7 @@ namespace LineNodes
                                 else
                                 {
                                     logRecorder.AddDebugLog(nodeName, "发送设备加工启动命令成功,发送数据:"+reStr);
+                                    this.TxtLogRecorder.WriteLog("发送设备加工启动命令成功,发送数据:" + reStr);
                                 }
                             }
                         }
@@ -201,6 +222,7 @@ namespace LineNodes
                            else
                            {
                                logRecorder.AddDebugLog(nodeName, "发送设备停止命令成功");
+                               this.TxtLogRecorder.WriteLog("发送设备停止命令成功");
                            }
                        
                        }
@@ -332,6 +354,9 @@ namespace LineNodes
                                     modBll.Update(modList[i]);
                                 }
                                 logRecorder.AddDebugLog(nodeName, string.Format("模组{0} CCD检测结果{1}上传MES，返回{2}", M_SN, M_ITEMVALUE, rObj.RES));
+
+                                this.TxtLogRecorder.WriteLog(string.Format("模组{0} CCD检测结果{1}上传MES", M_SN, M_ITEMVALUE));
+
                                 this.currentTaskDescribe = string.Format("模组{0}UV结果{1}上传MES，返回{2}", M_SN, M_ITEMVALUE, rObj.RES);
                                 foreach (DBAccess.Model.BatteryModuleModel mod in modList)
                                 {
@@ -398,6 +423,7 @@ namespace LineNodes
                         currentTaskDescribe = "流程完成";
                         this.currentTask.TaskPhase = this.currentTaskPhase;
                         this.ctlTaskBll.Update(this.currentTask);
+                        this.TxtLogRecorder.WriteLog("流程处理完毕！");
                         break;
                     }
               
@@ -458,6 +484,8 @@ namespace LineNodes
                             Console.WriteLine("ccd2");
                             foreach(DBAccess.Model.BatteryModuleModel mod in ngModList)
                             {
+                                mod.palletBinded = false;
+                                modBll.Update(mod);
                                 string ngPosAddr = addrPosCfg[int.Parse(mod.tag2)];
                                 if (this.PlcRw2.WriteDB(ngPosAddr, 1) == false)
                                 {

@@ -86,6 +86,7 @@ namespace LineNodes
                             break;
                         }
                         currentTaskPhase++;
+                        this.TxtLogRecorder.WriteLog("设备开始加工！");
                         this.db1ValsToSnd[2] = 2;
                         break;
                     }
@@ -141,6 +142,7 @@ namespace LineNodes
                         string strJson = "";
                         rObj = ProcParamUpload(M_AREA, M_DEVICE_SN, M_WORKSTATION_SN,"", M_UNION_SN, M_CONTAINER_SN, M_LEVEL, M_ITEMVALUE, ref strJson);
                         logRecorder.AddDebugLog(nodeName, string.Format("点胶机结果{0}上传MES，返回{1}", mesItemStr, rObj.RES));
+                        this.TxtLogRecorder.WriteLog(string.Format("点胶机结果{0}上传MES", mesItemStr));
                         this.currentTaskDescribe = string.Format("点胶机结果{0}上传MES，返回{1}", mesItemStr, rObj.RES);
                         this.db1ValsToSnd[2] = 3;
                         currentTaskPhase++;
@@ -149,6 +151,7 @@ namespace LineNodes
                 case 3:
                     {
                         this.currentTaskDescribe = "流程完成";
+                        this.TxtLogRecorder.WriteLog("流程处理完毕！");
                         break;
                     }
              
@@ -169,7 +172,7 @@ namespace LineNodes
                         }
 
                         bool needReparid = false;
-                        if (this.repairProcess.GetNeedRepair(this.rfidUID, this.NodeID, ref needReparid, ref reStr) == false)
+                        if (this.repairProcess.GetNeedRepairALine(this.rfidUID, this.NodeID, ref needReparid, ref reStr) == false)
                         {
                             this.logRecorder.AddDebugLog(this.nodeName,"获取返修状态失败:" + reStr);
                             break;
@@ -178,6 +181,8 @@ namespace LineNodes
                         if (needReparid == false)
                         {
                             currentTaskPhase =4;//直接放行
+                          this.repairProcess.  ReportToMesByProcessStationID(this.nodeID, this.rfidUID);
+                          this.TxtLogRecorder.WriteLog("当前工艺此工位不需要加工，直接放行，工装板号:" + this.rfidUID);
                             break;
                         }
                         this.currentTask.TaskPhase = this.currentTaskPhase;
@@ -191,6 +196,7 @@ namespace LineNodes
                         currentTaskPhase++;
                         this.currentTask.TaskPhase = this.currentTaskPhase;
                         this.ctlTaskBll.Update(this.currentTask);
+                        this.TxtLogRecorder.WriteLog("工位开始加工，工装板号:" + this.rfidUID);
                         break;
                     }
                 case 2:
@@ -299,6 +305,7 @@ namespace LineNodes
                         string strJson = "";
                         rObj = ProcParamUpload(M_AREA, M_DEVICE_SN, M_WORKSTATION_SN, "",M_UNION_SN, M_CONTAINER_SN, M_LEVEL, M_ITEMVALUE, ref strJson);
                         logRecorder.AddDebugLog(nodeName, string.Format("点胶机结果{0}上传MES，返回{1}", mesItemStr, rObj.RES));
+                        this.TxtLogRecorder.WriteLog(string.Format("点胶机结果{0}上传MES", mesItemStr));
                         this.currentTaskDescribe = string.Format("点胶机结果{0}上传MES，返回{1}", mesItemStr, rObj.RES);
                         currentTaskPhase++;
                         this.currentTask.TaskPhase = this.currentTaskPhase;
@@ -313,6 +320,7 @@ namespace LineNodes
                         this.currentTask.TaskPhase = this.currentTaskPhase;
                         this.ctlTaskBll.Update(this.currentTask);
                         this.currentTask.TaskStatus = EnumTaskStatus.已完成.ToString();
+                        this.TxtLogRecorder.WriteLog("此工位加工完成!");
                         break;
                     }
                 default:

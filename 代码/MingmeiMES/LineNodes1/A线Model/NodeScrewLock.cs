@@ -81,15 +81,17 @@ namespace LineNodes
                         this.screwNgHandler = new ScrewNGHandler(this.plcRW, this.plcRW2, this.channelIndex, this.logRecorder);
 
                         bool needReparid = false;
-                        if (this.repairProcess.GetNeedRepair(this.rfidUID, this.NodeID, ref needReparid, ref reStr) == false)
+                        if (this.repairProcess.GetNeedRepairALine(this.rfidUID, this.NodeID, ref needReparid, ref reStr) == false)
                         {
                             this.logRecorder.AddDebugLog(this.nodeName,"获取返修状态失败:" + reStr);
                             break;
                         }
-                        this.logRecorder.AddDebugLog(this.nodeName, "获取返修状态成功:" + reStr);
+                        this.logRecorder.AddDebugLog(this.nodeName, "获取返修状态成功:" + needReparid +","+ reStr);
                         if (needReparid == false)
                         {
                             currentTaskPhase = 9;//直接放行
+                            this.TxtLogRecorder.WriteLog("工艺流程当前工位不需要加工，直接放行，工装板号：" + this.rfidUID);
+                            this.repairProcess.ReportToMesByProcessStationID(this.nodeID, this.rfidUID);
                             break;
                         }
 
@@ -104,7 +106,7 @@ namespace LineNodes
                             break;
                         }
                         currentTaskPhase++;
-                     
+                        this.TxtLogRecorder.WriteLog("工位流程开始加工！");
                         this.currentTask.TaskPhase = this.currentTaskPhase;
                         this.ctlTaskBll.Update(this.currentTask);
                         break;
@@ -273,6 +275,7 @@ namespace LineNodes
                                     break;
                                 }
                                 logRecorder.AddDebugLog(nodeName, "上传MES锁螺丝数据成功！数据：" + module.batModuleID+":"+ mesScrewData + "返回：" + reStr);
+                            
                             }
                             else if (status == 1)
                             {
@@ -294,8 +297,10 @@ namespace LineNodes
                             {
                                 //Console.WriteLine();
                                 logRecorder.AddDebugLog(nodeName, "上传MES锁螺丝数据失败！" + reStr);
+                                this.TxtLogRecorder.WriteLog("上传MES锁螺丝数据失败！" + reStr);
                                 continue;
                             }
+                            this.TxtLogRecorder.WriteLog("上传MES锁螺丝数据成功！数据：" + module.batModuleID + ":" + mesScrewData);
                             module.tag3 = "1";
                             modBll.Update(module);
                             //screwModel.UpLoad = "是";
@@ -307,7 +312,7 @@ namespace LineNodes
                         {                          
                             break;
                         }
-                        Console.WriteLine("sd6");
+                       // Console.WriteLine("sd6");
                         currentTaskPhase++;
                         this.currentTask.TaskPhase = this.currentTaskPhase;
                         this.ctlTaskBll.Update(this.currentTask);
@@ -331,6 +336,7 @@ namespace LineNodes
                         currentTaskPhase++;
                         this.currentTask.TaskPhase = this.currentTaskPhase;
                         this.ctlTaskBll.Update(this.currentTask);
+                        this.TxtLogRecorder.WriteLog("停止设备成功！");
                         break;
                     }
               
@@ -377,8 +383,8 @@ namespace LineNodes
                         }
                         
                         currentStat.StatDescribe = "流程完成";
-                        Console.WriteLine("sd8");
-                      
+                       // Console.WriteLine("sd8");
+                        this.TxtLogRecorder.WriteLog("此工位流程处理完成！");
                         this.currentTask.TaskPhase = this.currentTaskPhase;
                         this.ctlTaskBll.Update(this.currentTask);
                         break;
@@ -394,6 +400,7 @@ namespace LineNodes
                                 break;
                             }
                         }
+                        this.TxtLogRecorder.WriteLog("此工位流程处理完成！");
                         break;
                     }
                 default:
@@ -653,8 +660,15 @@ namespace LineNodes
                     }
                 case 3:
                     {
-                      
 
+                        List<DBAccess.Model.BatteryModuleModel> modList = modBll.GetModelList(string.Format("palletID='{0}' and palletBinded=1", this.rfidUID));
+                        foreach(DBAccess.Model.BatteryModuleModel battery in modList)
+                        {
+                            battery.palletID = "";
+                            battery.palletBinded = false;
+                            battery.checkResult = null;
+                            modBll.Update(battery);
+                        }
                         db1ValsToSnd[1] = 3;
                         currentStat.StatDescribe = "流程完成";
                         currentTaskDescribe = "流程完成";

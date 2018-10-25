@@ -132,6 +132,7 @@ namespace LineNodes
                             break;
                         }
                         LogRecorder.AddDebugLog(nodeName, "申请到模块码:" + M_SN);
+                        this.TxtLogRecorder.WriteLog("工位申请到模块条码成功：" + M_SN);
                         this.currentTaskDescribe = "申请到模块码:" + M_SN;
                         currentTaskPhase++;
                         break;
@@ -161,6 +162,7 @@ namespace LineNodes
                         writter.Close();
                         this.db1ValsToSnd[0] = 2;
                         LogRecorder.AddDebugLog(nodeName, string.Format("模块码{0}写到打码内容文本中", M_SN));
+                        this.TxtLogRecorder.WriteLog("工位下发打码内容到设备种成功，条码：" + M_SN);
                         this.currentTaskDescribe = string.Format("模块码{0}写到打码内容文本中", M_SN);
                         currentTaskPhase++;
                         break;
@@ -221,6 +223,7 @@ namespace LineNodes
                         }
                        // LogRecorder.AddDebugLog(nodeName, rObj.RES);
                         logRecorder.AddDebugLog(nodeName, string.Format("打码结果{0}上传MES，返回{1}", checkResult,rObj.RES));
+                        this.TxtLogRecorder.WriteLog(string.Format("打码结果{0}上传MES", checkResult));
                         this.currentTaskDescribe = string.Format("打码结果{0}上传MES，返回{1}", checkResult, rObj.RES);
                         //清空文件
                         System.IO.StreamWriter writter = new System.IO.StreamWriter(modCodeFile, false);
@@ -238,6 +241,7 @@ namespace LineNodes
                         else
                         {
                             currentTaskPhase = 0;
+                            this.TxtLogRecorder.WriteLog("此工位流程处理完成！");
                         }
                         break;
                     }
@@ -289,6 +293,7 @@ namespace LineNodes
                 return false;
             }
             LogRecorder.AddDebugLog(nodeName, "从MES申请到模块码:" + M_SN);
+            this.TxtLogRecorder.WriteLog("从MES申请到模块码:" + M_SN);
             //写条码到文件
             string modCodeFile = "";
             modCodeFile = string.Format(@"\\{0}\打标文件\加工文件\打码内容.txt", machionIP);

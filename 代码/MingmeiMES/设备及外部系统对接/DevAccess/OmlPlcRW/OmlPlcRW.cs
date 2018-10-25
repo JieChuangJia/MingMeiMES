@@ -84,81 +84,91 @@ namespace DevAccess
         /// <returns></returns>
         public bool ConnectPLC(ref string reStr)
         {
-            lock (lockObj)
+            try
             {
-                int reworkNum = 0;
-                if (this.mySocket == null)
+
+
+                lock (lockObj)
                 {
-                    reStr = "通讯对象为空！连接失败！";
-                    return false;
-                }
-                if (this.PlcType == EnumPLCType.OML_TCP)
-                {
-                    bool connStatus = this.mySocket.Connect(this.PLCIP, this.PLCPort, ref reStr);
-                    if (connStatus == false)
+                    int reworkNum = 0;
+                    if (this.mySocket == null)
                     {
+                        reStr = "通讯对象为空！连接失败！";
                         return false;
                     }
-                    byte[] handCmd = null;
-                    //发送fins握手协议
-                    bool handCmdSta =this.omlFinsPtl.HandCmd(ref handCmd,ref reStr);
-                    if (handCmdSta == false)
+                    if (this.PlcType == EnumPLCType.OML_TCP)
                     {
-                        reStr += "：获取握手协议失败！";
-                     
-                        return false;
-                    }
-                    this.OnLog("发送握手协议：" + DataConvert.ByteToHexStr(handCmd));
-                    this.recBuffer.Clear();//每次发送前要清空缓存
-                    bool sendSta = this.mySocket.Send(handCmd, ref reStr);
-                    if(sendSta == false)
-                    {
-                        reStr += ":数据发送失败！";
-                        return false;
-                    }
-                    if (this.recvAutoEvent.WaitOne(TIMEWAITOUT) == true)
-                    {
-                        while(reworkNum < MAXREWORKNUM)
+                        bool connStatus = this.mySocket.Connect(this.PLCIP, this.PLCPort, ref reStr);
+                        if (connStatus == false)
                         {
-                           if( this.omlFinsPtl.HandCmdResponse(this.recBuffer.ToArray(), ref reStr)== false)
-                           {
-                               reworkNum++;
-                               OnLog("接收握手数据：" + DataConvert.ByteToHexStr(this.recBuffer.ToArray()));
-                               System.Threading.Thread.Sleep(WAITTIME);
-                           }
-                           else
-                           {
-                               break;
-                           }
-                        }
-                        if (reworkNum >= MAXREWORKNUM)
-                        {
-                            OnLog("握手协议反馈数据错误！");
                             return false;
                         }
+                        byte[] handCmd = null;
+                        //发送fins握手协议
+                        bool handCmdSta = this.omlFinsPtl.HandCmd(ref handCmd, ref reStr);
+                        if (handCmdSta == false)
+                        {
+                            reStr += "：获取握手协议失败！";
+
+                            return false;
+                        }
+                        this.OnLog("发送握手协议：" + DataConvert.ByteToHexStr(handCmd));
+                        this.recBuffer.Clear();//每次发送前要清空缓存
+                        bool sendSta = this.mySocket.Send(handCmd, ref reStr);
+                        if (sendSta == false)
+                        {
+                            reStr += ":数据发送失败！";
+                            return false;
+                        }
+                        if (this.recvAutoEvent.WaitOne(TIMEWAITOUT) == true)
+                        {
+                            while (reworkNum < MAXREWORKNUM)
+                            {
+                                if (this.omlFinsPtl.HandCmdResponse(this.recBuffer.ToArray(), ref reStr) == false)
+                                {
+                                    reworkNum++;
+                                    OnLog("接收握手数据：" + DataConvert.ByteToHexStr(this.recBuffer.ToArray()));
+                                    System.Threading.Thread.Sleep(WAITTIME);
+                                }
+                                else
+                                {
+                                    break;
+                                }
+                            }
+                            if (reworkNum >= MAXREWORKNUM)
+                            {
+                                OnLog("握手协议反馈数据错误！");
+                                return false;
+                            }
+                            return true;
+                        }
+                        else
+                        {
+                            reStr = "FINS 握手反馈超时！";
+                            return false;
+                        }
+                    }
+                    else if (this.PlcType == EnumPLCType.OML_UDP)
+                    {
+                        bool connStatus = this.mySocket.Connect(this.PLCIP, this.PLCPort, ref reStr);//不需要握手了
+                        if (connStatus == false)
+                        {
+                            return false;
+                        }
+                        reStr = "连接成功！";
                         return true;
                     }
                     else
                     {
-                        reStr = "FINS 握手反馈超时！";
+                        reStr = "plc类型错误！";
                         return false;
                     }
                 }
-                else if (this.PlcType == EnumPLCType.OML_UDP)
-                {
-                    bool connStatus = this.mySocket.Connect(this.PLCIP, this.PLCPort, ref reStr);//不需要握手了
-                    if (connStatus == false)
-                    {
-                        return false;
-                    }
-                    reStr = "连接成功！";
-                    return true;
-                }
-                else
-                {
-                    reStr = "plc类型错误！";
-                    return false;
-                }
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine("PLC底层数据连接接口错误：" + ex.Message);
+                return false;
             }
         }
 
@@ -225,128 +235,139 @@ namespace DevAccess
         }
         public bool ReadMultiDB(string addr, int blockNum, ref short[] vals)
         {
-            lock (lockObj)
+            try
             {
-                if(addr.Length<1)
-                {
-                    return false;
-                }
-                string addrArea = addr.Substring(0, 1).ToUpper();
-                addr = addr.Substring(1, addr.Length - 1);    
-                string restr = "";
-                byte[] cmdBytes = null;
-                int reworkNum = 0;
-                if (addrArea == EnumAddrArea.D.ToString())
-                {
-                    //获取读取地址指令
-                    bool readCmd = this.omlFinsPtl.ReadDMAddrCmd(short.Parse(addr), (short)blockNum, ref cmdBytes, ref restr);
-                    if (readCmd == false)
-                    {
-                        return false;
-                    }
-                    this.recBuffer.Clear();
-                    bool sendStatus = this.mySocket.Send(cmdBytes, ref restr);
-                 
-                    if (sendStatus == false)
-                    {
-                        return false;
-                    }
-                    this.OnLog("协议：" + DataConvert.ByteToHexStr(cmdBytes));
-                    this.recvAutoEvent.Reset();
-                    if (this.recvAutoEvent.WaitOne(TIMEWAITOUT) == true)
-                    {
 
-                        while (reworkNum < MAXREWORKNUM)
+
+                lock (lockObj)
+                {
+                    if (addr.Length < 1)
+                    {
+                        return false;
+                    }
+                    string addrArea = addr.Substring(0, 1).ToUpper();
+                    addr = addr.Substring(1, addr.Length - 1);
+                    string restr = "";
+                    byte[] cmdBytes = null;
+                    int reworkNum = 0;
+                    if (addrArea == EnumAddrArea.D.ToString())
+                    {
+                        //获取读取地址指令
+                        bool readCmd = this.omlFinsPtl.ReadDMAddrCmd(short.Parse(addr), (short)blockNum, ref cmdBytes, ref restr);
+                        if (readCmd == false)
                         {
-                            if (this.omlFinsPtl.ReadDMAddrCmdResponse(this.recBuffer.ToArray(), (short)blockNum, ref vals, ref restr) == false)
-                            {
-                                reworkNum++;
-                                OnLog("接收反馈数据：" + DataConvert.ByteToHexStr(this.recBuffer.ToArray()));
-                                System.Threading.Thread.Sleep(WAITTIME);
-                            }
-                            else
-                            {
-                                break;
-                            }
-                        }
-                        if (reworkNum  >= MAXREWORKNUM)
-                        {
-                            OnLog("写入数据反馈数据错误！");
                             return false;
                         }
-                        return true;
+                        this.recBuffer.Clear();
+                        bool sendStatus = this.mySocket.Send(cmdBytes, ref restr);
 
+                        if (sendStatus == false)
+                        {
+                            return false;
+                        }
+                        this.OnLog("协议：" + DataConvert.ByteToHexStr(cmdBytes));
+                        this.recvAutoEvent.Reset();
+                        if (this.recvAutoEvent.WaitOne(TIMEWAITOUT) == true)
+                        {
+
+                            while (reworkNum < MAXREWORKNUM)
+                            {
+                                if (this.omlFinsPtl.ReadDMAddrCmdResponse(this.recBuffer.ToArray(), (short)blockNum, ref vals, ref restr) == false)
+                                {
+                                    reworkNum++;
+                                    OnLog("接收反馈数据：" + DataConvert.ByteToHexStr(this.recBuffer.ToArray()));
+                                    System.Threading.Thread.Sleep(WAITTIME);
+                                }
+                                else
+                                {
+                                    break;
+                                }
+                            }
+                            if (reworkNum >= MAXREWORKNUM)
+                            {
+                                OnLog("写入数据反馈数据错误！");
+                                return false;
+                            }
+                            return true;
+
+                        }
+                        else
+                        {
+                            OnLog("读取超时！");
+                            //if(!PingIp(this.PLCIP) )//在外部控制断开连接
+                            //{
+                            //    Console.WriteLine("PLC:{0}网络不通，将尝试重连", this.PLCIP);
+                            //}
+                            //string reStr = "";
+                            //if(!ConnectPLC(ref reStr))
+                            //{
+                            //    Console.WriteLine("连接PLC{0}失败", this.PLCIP);
+                            //}
+                            //else
+                            //{
+                            //    Console.WriteLine("连接PLC{0}成功", this.PLCIP);
+                            //}
+                            return false;
+                        }
+                        //指令发出后要等待接收可用信号
+                    }
+                    else if (addrArea == EnumAddrArea.W.ToString())
+                    {
+                        //获取读取地址指令
+                        bool readCmd = this.omlFinsPtl.ReadCIOAddrCmd(float.Parse(addr), (short)blockNum, ref cmdBytes, ref restr);
+                        if (readCmd == false)
+                        {
+                            return false;
+                        }
+                        this.recBuffer.Clear();
+                        bool sendStatus = this.mySocket.Send(cmdBytes, ref restr);
+
+                        if (sendStatus == false)
+                        {
+                            return false;
+                        }
+                        this.OnLog("协议：" + DataConvert.ByteToHexStr(cmdBytes));
+                        this.recvAutoEvent.Reset();
+                        if (this.recvAutoEvent.WaitOne(TIMEWAITOUT) == true)
+                        {
+
+                            while (reworkNum < MAXREWORKNUM)
+                            {
+                                if (this.omlFinsPtl.ReadCIOAddrCmdResponse(this.recBuffer.ToArray(), (short)blockNum, ref vals, ref restr) == false)
+                                {
+                                    reworkNum++;
+                                    OnLog("接收反馈数据：" + DataConvert.ByteToHexStr(this.recBuffer.ToArray()));
+                                    System.Threading.Thread.Sleep(WAITTIME);
+                                }
+                                else
+                                {
+                                    return true;
+                                }
+                            }
+                            if (reworkNum >= MAXREWORKNUM)
+                            {
+                                OnLog("写入数据反馈数据错误！");
+                                return false;
+                            }
+                        }
+                        else
+                        {
+                            OnLog("读取超时！");
+                            return false;
+                        }
                     }
                     else
                     {
-                        OnLog("读取超时！" );
-                        //if(!PingIp(this.PLCIP) )//在外部控制断开连接
-                        //{
-                        //    Console.WriteLine("PLC:{0}网络不通，将尝试重连", this.PLCIP);
-                        //}
-                        //string reStr = "";
-                        //if(!ConnectPLC(ref reStr))
-                        //{
-                        //    Console.WriteLine("连接PLC{0}失败", this.PLCIP);
-                        //}
-                        //else
-                        //{
-                        //    Console.WriteLine("连接PLC{0}成功", this.PLCIP);
-                        //}
                         return false;
                     }
-                    //指令发出后要等待接收可用信号
+                    return true;
                 }
-                else if (addrArea == EnumAddrArea.W.ToString())
-                {
-                    //获取读取地址指令
-                    bool readCmd = this.omlFinsPtl.ReadCIOAddrCmd(float.Parse(addr), (short)blockNum, ref cmdBytes, ref restr);
-                    if (readCmd == false)
-                    {
-                        return false;
-                    }
-                    this.recBuffer.Clear();
-                    bool sendStatus = this.mySocket.Send(cmdBytes, ref restr);
-                   
-                    if (sendStatus == false)
-                    {
-                        return false;
-                    }
-                    this.OnLog("协议：" + DataConvert.ByteToHexStr(cmdBytes));
-                    this.recvAutoEvent.Reset();
-                    if (this.recvAutoEvent.WaitOne(TIMEWAITOUT) == true)
-                    {
-
-                        while (reworkNum < MAXREWORKNUM)
-                        {
-                            if (this.omlFinsPtl.ReadCIOAddrCmdResponse(this.recBuffer.ToArray(), (short)blockNum, ref vals, ref restr) == false)
-                            {
-                                reworkNum++;
-                                OnLog("接收反馈数据：" + DataConvert.ByteToHexStr(this.recBuffer.ToArray()));
-                                System.Threading.Thread.Sleep(WAITTIME);
-                            }
-                            else
-                            {
-                                return true;
-                            }
-                        }
-                        if (reworkNum >= MAXREWORKNUM)
-                        {
-                            OnLog("写入数据反馈数据错误！");
-                            return false;
-                        }
-                    }
-                    else
-                    {
-                        OnLog("读取超时！");
-                        return false;
-                    }
-                }
-                else
-                {
-                    return false;
-                }
-                return true;
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine("底层PLC读接口错误：" + ex.Message);
+                return false;
+                     
             }
         }
 
@@ -364,116 +385,126 @@ namespace DevAccess
        }
        public bool WriteMultiDB(string addr, int blockNum, short[] vals)
        {
-           lock (lockObj)
+           try
            {
-               //int reworkNum = 0;
-               //EnumAddrArea addrArea = EnumAddrArea.DM;
-               //string restr = "";
-               //bool isAddr = AddrCheck(addr, ref addrArea);
-               //byte[] cmdBytes = null;
-               //if (isAddr == false)
-               //{
-               //    return false;
-               //}
 
-               string addrArea = addr.Substring(0, 1).ToUpper();
-               addr = addr.Substring(1, addr.Length - 1);
-               string restr = "";
-               byte[] cmdBytes = null;
-               int reworkNum = 0;
-               if (addrArea == EnumAddrArea.D.ToString())
+
+               lock (lockObj)
                {
-                   //获取读取地址指令
-                   bool readCmd = this.omlFinsPtl.WriteDMAddrCmd(short.Parse(addr), vals, ref cmdBytes, ref restr);
-                   if (readCmd == false)
+                   //int reworkNum = 0;
+                   //EnumAddrArea addrArea = EnumAddrArea.DM;
+                   //string restr = "";
+                   //bool isAddr = AddrCheck(addr, ref addrArea);
+                   //byte[] cmdBytes = null;
+                   //if (isAddr == false)
+                   //{
+                   //    return false;
+                   //}
+
+                   string addrArea = addr.Substring(0, 1).ToUpper();
+                   addr = addr.Substring(1, addr.Length - 1);
+                   string restr = "";
+                   byte[] cmdBytes = null;
+                   int reworkNum = 0;
+                   if (addrArea == EnumAddrArea.D.ToString())
                    {
-                       return false;
-                   }
-                   this.recBuffer.Clear();
-                   bool sendStatus = this.mySocket.Send(cmdBytes, ref restr);
-                 
-                   if (sendStatus == false)
-                   {
-                       return false;
-                   }
-                   this.OnLog("协议：" + DataConvert.ByteToHexStr(cmdBytes));
-                   this.recvAutoEvent.Reset();
-                   if (this.recvAutoEvent.WaitOne(TIMEWAITOUT) == true)
-                   {
-                       while (reworkNum < MAXREWORKNUM)
+                       //获取读取地址指令
+                       bool readCmd = this.omlFinsPtl.WriteDMAddrCmd(short.Parse(addr), vals, ref cmdBytes, ref restr);
+                       if (readCmd == false)
                        {
-                           if (this.omlFinsPtl.WriteDMAddrCmdResponse(this.recBuffer.ToArray(), ref restr) == false)
-                           {
-                               reworkNum++;
-                               OnLog("接收反馈数据：" + DataConvert.ByteToHexStr(this.recBuffer.ToArray()));
-                               System.Threading.Thread.Sleep(WAITTIME);
-                           }
-                           else
-                           {
-                             
-                               return true;
-                           }
-                       }
-                       if (reworkNum >= MAXREWORKNUM)
-                       {
-                           OnLog("写入数据反馈数据错误！");
                            return false;
                        }
-                      
-                   }
-                   else
-                   {
-                       OnLog("写入超时！");
-                       return false;
-                   }
-                   //指令发出后要等待接收可用信号
-               }
-               else if (addrArea == EnumAddrArea.W.ToString())
-               {
-                   //获取读取地址指令
+                       this.recBuffer.Clear();
+                       bool sendStatus = this.mySocket.Send(cmdBytes, ref restr);
 
-                   bool readCmd = this.omlFinsPtl.WriteCIOAddrCmd(float.Parse(addr), vals, ref cmdBytes, ref restr);
-                   if (readCmd == false)
-                   {
-                       return false;
-                   }
-                   this.recBuffer.Clear();
-                   bool sendStatus = this.mySocket.Send(cmdBytes, ref restr);
-                   if (sendStatus == false)
-                   {
-                       return false;
-                   }
-                   this.OnLog("协议：" + DataConvert.ByteToHexStr(cmdBytes));
-                   this.recvAutoEvent.Reset();
-                   if (this.recvAutoEvent.WaitOne(TIMEWAITOUT) == true)
-                   {
-                       while (reworkNum < MAXREWORKNUM)
+                       if (sendStatus == false)
                        {
-                           if (this.omlFinsPtl.WriteDMAddrCmdResponse(this.recBuffer.ToArray(), ref restr) == false)
-                           {
-                               reworkNum++;
-                               OnLog("接收反馈数据：" + DataConvert.ByteToHexStr(this.recBuffer.ToArray()));
-                               System.Threading.Thread.Sleep(WAITTIME);
-                           }
-                           else
-                           {
-                               return true;
-                           }
-                       }
-                       if (reworkNum >= MAXREWORKNUM)
-                       {
-                           OnLog("写入数据反馈数据错误！");
                            return false;
                        }
+                       this.OnLog("协议：" + DataConvert.ByteToHexStr(cmdBytes));
+                       this.recvAutoEvent.Reset();
+                       if (this.recvAutoEvent.WaitOne(TIMEWAITOUT) == true)
+                       {
+                           while (reworkNum < MAXREWORKNUM)
+                           {
+                               if (this.omlFinsPtl.WriteDMAddrCmdResponse(this.recBuffer.ToArray(), ref restr) == false)
+                               {
+                                   reworkNum++;
+                                   OnLog("接收反馈数据：" + DataConvert.ByteToHexStr(this.recBuffer.ToArray()));
+                                   System.Threading.Thread.Sleep(WAITTIME);
+                               }
+                               else
+                               {
 
+                                   return true;
+                               }
+                           }
+                           if (reworkNum >= MAXREWORKNUM)
+                           {
+                               OnLog("写入数据反馈数据错误！");
+                               return false;
+                           }
+
+                       }
+                       else
+                       {
+                           OnLog("写入超时！");
+                           return false;
+                       }
+                       //指令发出后要等待接收可用信号
                    }
-                   else
+                   else if (addrArea == EnumAddrArea.W.ToString())
                    {
-                       OnLog("接收超时！" );
-                       return false;
+                       //获取读取地址指令
+
+                       bool readCmd = this.omlFinsPtl.WriteCIOAddrCmd(float.Parse(addr), vals, ref cmdBytes, ref restr);
+                       if (readCmd == false)
+                       {
+                           return false;
+                       }
+                       this.recBuffer.Clear();
+                       bool sendStatus = this.mySocket.Send(cmdBytes, ref restr);
+                       if (sendStatus == false)
+                       {
+                           return false;
+                       }
+                       this.OnLog("协议：" + DataConvert.ByteToHexStr(cmdBytes));
+                       this.recvAutoEvent.Reset();
+                       if (this.recvAutoEvent.WaitOne(TIMEWAITOUT) == true)
+                       {
+                           while (reworkNum < MAXREWORKNUM)
+                           {
+                               if (this.omlFinsPtl.WriteDMAddrCmdResponse(this.recBuffer.ToArray(), ref restr) == false)
+                               {
+                                   reworkNum++;
+                                   OnLog("接收反馈数据：" + DataConvert.ByteToHexStr(this.recBuffer.ToArray()));
+                                   System.Threading.Thread.Sleep(WAITTIME);
+                               }
+                               else
+                               {
+                                   return true;
+                               }
+                           }
+                           if (reworkNum >= MAXREWORKNUM)
+                           {
+                               OnLog("写入数据反馈数据错误！");
+                               return false;
+                           }
+
+                       }
+                       else
+                       {
+                           OnLog("接收超时！");
+                           return false;
+                       }
                    }
+                   return true;
                }
-               return true;
+           }
+           catch(Exception ex)
+           {
+               Console.WriteLine("底层PLC写接口错误：" + ex.Message);
+               return false;
            }
        }
        public void PlcRWStatUpdate()
@@ -488,147 +519,165 @@ namespace DevAccess
        #region 实现IPlcEd扩展接口
        public bool ReadMultiDB(string addr, int blockNum, ref int[] vals)
        {
-           lock (lockObj)
+           try
            {
-               if (addr.Length < 1)
+
+
+               lock (lockObj)
                {
-                   return false;
-               }
-               string addrArea = addr.Substring(0, 1).ToUpper();
-               addr = addr.Substring(1, addr.Length - 1);
-               string restr = "";
-               byte[] cmdBytes = null;
-               int reworkNum = 0;
-               if (addrArea == EnumAddrArea.D.ToString())
-               {
-                   //获取读取地址指令,32位读取4个字节
-                   
-                   bool readCmd = this.omlFinsPtl.ReadDMAddrCmd(short.Parse(addr), (short)(blockNum*2), ref cmdBytes, ref restr);
-                   if (readCmd == false)
+                   if (addr.Length < 1)
                    {
                        return false;
                    }
-                   this.recBuffer.Clear();
-                   bool sendStatus = this.mySocket.Send(cmdBytes, ref restr);
-
-                   if (sendStatus == false)
+                   string addrArea = addr.Substring(0, 1).ToUpper();
+                   addr = addr.Substring(1, addr.Length - 1);
+                   string restr = "";
+                   byte[] cmdBytes = null;
+                   int reworkNum = 0;
+                   if (addrArea == EnumAddrArea.D.ToString())
                    {
-                       return false;
-                   }
-                   this.OnLog("协议：" + DataConvert.ByteToHexStr(cmdBytes));
-                   this.recvAutoEvent.Reset();
-                   if (this.recvAutoEvent.WaitOne(TIMEWAITOUT) == true)
-                   {
+                       //获取读取地址指令,32位读取4个字节
 
-                       while (reworkNum < MAXREWORKNUM)
+                       bool readCmd = this.omlFinsPtl.ReadDMAddrCmd(short.Parse(addr), (short)(blockNum * 2), ref cmdBytes, ref restr);
+                       if (readCmd == false)
                        {
-                           if (this.omlFinsPtl.ReadDMAddrCmdResponse(this.recBuffer.ToArray(), (short)blockNum, ref vals, ref restr) == false)
-                           {
-                               reworkNum++;
-                               OnLog("接收反馈数据：" + DataConvert.ByteToHexStr(this.recBuffer.ToArray()));
-                               System.Threading.Thread.Sleep(WAITTIME);
-                           }
-                           else
-                           {
-                               break;
-                           }
-                       }
-                       if (reworkNum >= MAXREWORKNUM)
-                       {
-                           OnLog("写入数据反馈数据错误！");
                            return false;
                        }
-                       return true;
+                       this.recBuffer.Clear();
+                       bool sendStatus = this.mySocket.Send(cmdBytes, ref restr);
 
+                       if (sendStatus == false)
+                       {
+                           return false;
+                       }
+                       this.OnLog("协议：" + DataConvert.ByteToHexStr(cmdBytes));
+                       this.recvAutoEvent.Reset();
+                       if (this.recvAutoEvent.WaitOne(TIMEWAITOUT) == true)
+                       {
+
+                           while (reworkNum < MAXREWORKNUM)
+                           {
+                               if (this.omlFinsPtl.ReadDMAddrCmdResponse(this.recBuffer.ToArray(), (short)blockNum, ref vals, ref restr) == false)
+                               {
+                                   reworkNum++;
+                                   OnLog("接收反馈数据：" + DataConvert.ByteToHexStr(this.recBuffer.ToArray()));
+                                   System.Threading.Thread.Sleep(WAITTIME);
+                               }
+                               else
+                               {
+                                   break;
+                               }
+                           }
+                           if (reworkNum >= MAXREWORKNUM)
+                           {
+                               OnLog("写入数据反馈数据错误！");
+                               return false;
+                           }
+                           return true;
+
+                       }
+                       else
+                       {
+                           OnLog("读取超时！");
+                           return false;
+                       }
+                       //指令发出后要等待接收可用信号
+                   }
+                   else if (addrArea == EnumAddrArea.W.ToString())
+                   {
+                       return false;//目前针对明美项目只实现了D数据的读写
                    }
                    else
                    {
-                       OnLog("读取超时！");
                        return false;
                    }
-                   //指令发出后要等待接收可用信号
+
                }
-               else if (addrArea == EnumAddrArea.W.ToString())
-               {
-                   return false;//目前针对明美项目只实现了D数据的读写
-               }
-               else
-               {
-                   return false;
-               }
-             
+           }
+           catch(Exception ex)
+           {
+               Console.WriteLine("底层PLC扩展读接口错误：" + ex.Message);
+               return false;
            }
        }
 
 
        public bool WriteMultiDB(string addr, int blockNum, int[] vals)
        {
-           lock (lockObj)
+           try
            {
-              
-               string addrArea = addr.Substring(0, 1).ToUpper();
-               addr = addr.Substring(1, addr.Length - 1);
-               string restr = "";
-               byte[] cmdBytes = null;
-               int reworkNum = 0;
-               if (addrArea == EnumAddrArea.D.ToString())
+               lock (lockObj)
                {
-                   //获取读取地址指令
-                   bool readCmd = this.omlFinsPtl.WriteDMAddrCmd(short.Parse(addr), vals, ref cmdBytes, ref restr);
-                   if (readCmd == false)
-                   {
-                       return false;
-                   }
-                   this.recBuffer.Clear();
-                   bool sendStatus = this.mySocket.Send(cmdBytes, ref restr);
 
-                   if (sendStatus == false)
+                   string addrArea = addr.Substring(0, 1).ToUpper();
+                   addr = addr.Substring(1, addr.Length - 1);
+                   string restr = "";
+                   byte[] cmdBytes = null;
+                   int reworkNum = 0;
+                   if (addrArea == EnumAddrArea.D.ToString())
                    {
-                       return false;
-                   }
-                   this.OnLog("协议：" + DataConvert.ByteToHexStr(cmdBytes));
-                   this.recvAutoEvent.Reset();
-                   if (this.recvAutoEvent.WaitOne(TIMEWAITOUT) == true)
-                   {
-                       while (reworkNum < MAXREWORKNUM)
+                       //获取读取地址指令
+                       bool readCmd = this.omlFinsPtl.WriteDMAddrCmd(short.Parse(addr), vals, ref cmdBytes, ref restr);
+                       if (readCmd == false)
                        {
-                           if (this.omlFinsPtl.WriteDMAddrCmdResponse(this.recBuffer.ToArray(), ref restr) == false)
-                           {
-                               reworkNum++;
-                               OnLog("接收反馈数据：" + DataConvert.ByteToHexStr(this.recBuffer.ToArray()));
-                               System.Threading.Thread.Sleep(WAITTIME);
-                           }
-                           else
-                           {
-
-                               return true;
-                           }
-                       }
-                       if (reworkNum >= MAXREWORKNUM)
-                       {
-                           OnLog("写入数据反馈数据错误！");
                            return false;
                        }
+                       this.recBuffer.Clear();
+                       bool sendStatus = this.mySocket.Send(cmdBytes, ref restr);
 
+                       if (sendStatus == false)
+                       {
+                           return false;
+                       }
+                       this.OnLog("协议：" + DataConvert.ByteToHexStr(cmdBytes));
+                       this.recvAutoEvent.Reset();
+                       if (this.recvAutoEvent.WaitOne(TIMEWAITOUT) == true)
+                       {
+                           while (reworkNum < MAXREWORKNUM)
+                           {
+                               if (this.omlFinsPtl.WriteDMAddrCmdResponse(this.recBuffer.ToArray(), ref restr) == false)
+                               {
+                                   reworkNum++;
+                                   OnLog("接收反馈数据：" + DataConvert.ByteToHexStr(this.recBuffer.ToArray()));
+                                   System.Threading.Thread.Sleep(WAITTIME);
+                               }
+                               else
+                               {
+
+                                   return true;
+                               }
+                           }
+                           if (reworkNum >= MAXREWORKNUM)
+                           {
+                               OnLog("写入数据反馈数据错误！");
+                               return false;
+                           }
+
+                       }
+                       else
+                       {
+                           OnLog("写入超时！");
+                           return false;
+                       }
+                       //指令发出后要等待接收可用信号
+                   }
+                   else if (addrArea == EnumAddrArea.W.ToString())
+                   {
+
+                       return true;
+                       //暂未实现
                    }
                    else
                    {
-                       OnLog("写入超时！");
                        return false;
                    }
-                   //指令发出后要等待接收可用信号
-               }
-               else if (addrArea == EnumAddrArea.W.ToString())
-               {
-
                    return true;
-                    //暂未实现
                }
-               else
-               {
-                   return false;
-               }
-               return true;
+           }
+           catch(Exception ex)
+           {
+               Console.WriteLine("底层PLC扩展写接口错误：" + ex.Message);
+               return false;
            }
        }
       

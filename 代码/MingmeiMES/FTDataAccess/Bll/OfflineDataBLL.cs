@@ -146,6 +146,19 @@ namespace FTDataAccess.BLL
             string sqlStr = "IsUpload ='" + isUpload + "'";
             return GetModelList(sqlStr);
         }
+        public OfflineDataModel GetLastDataByWorkStationID(string workStaionID)
+        {
+            string sqlStr = "WorkStationID = '" +workStaionID +"' order by CreateTime Desc";
+            List<OfflineDataModel> lastDataList = GetModelList(sqlStr);
+            if(lastDataList!= null&&lastDataList.Count>0)
+            {
+                return lastDataList[0];
+            }
+            else
+            {
+                return null;
+            }
+        }
         public bool UpdateRefuseUpload(string isUpload,string status)
         {
             string sqlStr = "IsUpload ='" + isUpload + "'";

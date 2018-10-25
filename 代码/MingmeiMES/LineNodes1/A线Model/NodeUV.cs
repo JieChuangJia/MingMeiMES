@@ -44,14 +44,16 @@ namespace LineNodes
                             break;
                         }
                         bool needReparid = false;
-                        if (this.repairProcess.GetNeedRepair(this.rfidUID, this.NodeID, ref needReparid, ref reStr) == false)
+                        if (this.repairProcess.GetNeedRepairALine(this.rfidUID, this.NodeID, ref needReparid, ref reStr) == false)
                         {
                             this.logRecorder.AddDebugLog(this.nodeName, "获取返修状态失败:" + reStr);
                             break;
                         }
                         if (needReparid == false)
                         {
-                            currentTaskPhase =5;//直接放行
+                            currentTaskPhase = 5;//直接放行
+                            this.repairProcess.ReportToMesByProcessStationID(this.nodeID, this.rfidUID);
+                            this.TxtLogRecorder.WriteLog("工艺流程当前工位不需要加工，直接放行，工装板号：" +this.rfidUID);
                             break;
                         }
 
@@ -146,6 +148,7 @@ namespace LineNodes
                              }
                              
                             logRecorder.AddDebugLog(nodeName, string.Format("模组{0}UV结果{1}上传MES，返回{2}", M_SN,mesItemVal, rObj.RES));
+                            this.TxtLogRecorder.WriteLog(string.Format("模组{0}UV结果{1}上传MES", M_SN, mesItemVal));
                             this.currentTaskDescribe = string.Format("模组{0}UV结果{1}上传MES，返回{2}", M_SN, mesItemVal, rObj.RES);
                         }
                         currentTaskPhase++;
@@ -162,6 +165,7 @@ namespace LineNodes
                        
                         this.currentTask.TaskStatus = EnumTaskStatus.已完成.ToString();
                         this.ctlTaskBll.Update(this.currentTask);
+                        this.TxtLogRecorder.WriteLog("此工位流程处理完毕！");
                         break;
                     }
                 default:

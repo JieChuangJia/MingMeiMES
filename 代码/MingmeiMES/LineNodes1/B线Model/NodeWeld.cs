@@ -72,12 +72,15 @@ namespace LineNodes
                         {
                             this.logRecorder.AddDebugLog(this.nodeName, "获取返修模式失败：" + reStr);
                         }
+                        this.TxtLogRecorder.WriteLog("读取工装板成功：" +  this.rfidUID);
                         this.logRecorder.AddDebugLog(this.nodeName, "当前工位是否需要加工：" +needRepari+","+ reStr);
                         if(needRepari == false)//直接放行
                         {
+                            this.repairProcess.ReportToMesByProcessStationID(this.nodeID, this.rfidUID);
                             currentTaskPhase=3;
                             this.currentTask.TaskPhase = this.currentTaskPhase;
                             this.ctlTaskBll.Update(this.currentTask);
+                            this.TxtLogRecorder.WriteLog("工艺流程不要求工位加工，直接放行！");
                             break;
                         }
                         this.currentTask.TaskPhase = this.currentTaskPhase;
@@ -108,14 +111,20 @@ namespace LineNodes
                         Console.WriteLine("isAllComplete =" + isAllComplete.ToString());
                         if (isAllComplete == true)
                         {
-                            List<DBAccess.Model.BatteryModuleModel> modList2 = modBll.GetModelList(string.Format("palletID='{0}' and palletBinded=1", this.RfidUID));
+                            List<DBAccess.Model.BatteryModuleModel> modList2 = modBll.GetModelList(string.Format("palletID='{0}' ", this.RfidUID));
                             foreach (DBAccess.Model.BatteryModuleModel mod in modList2)
                             {
+                                if (CompleteDescRecord(mod, ref reStr) == false)
+                                {
+                                    logRecorder.AddDebugLog(nodeName, string.Format("焊接完成反馈数据处理失败:{0}", reStr));
+
+                                }
                                 mod.tag4 = "";
                                 modBll.Update(mod);
                             }
                       
                             currentTaskPhase++;
+                            this.TxtLogRecorder.WriteLog("焊接数据上传MES完成！");
                             this.currentTask.TaskPhase = this.currentTaskPhase;
                             this.ctlTaskBll.Update(this.currentTask);
                         }
@@ -128,6 +137,7 @@ namespace LineNodes
                       //  Thread.Sleep(10000);
                         db1ValsToSnd[2 + this.channelIndex - 1] = 3;
                         currentTaskDescribe = "流程完成";
+                        this.TxtLogRecorder.WriteLog("工位流程处理完毕！");
                         this.currentTask.TaskPhase = this.currentTaskPhase;
                         this.ctlTaskBll.Update(this.currentTask);
                         this.currentTask.TaskStatus = EnumTaskStatus.已完成.ToString();
@@ -224,13 +234,8 @@ namespace LineNodes
                             return;
                         }
                         Console.WriteLine("weld8");
-                        if (CompleteDescRecord(currWorkMod, ref reStr) == false)
-                        {
-                            logRecorder.AddDebugLog(nodeName, string.Format("焊接完成反馈数据处理失败:{0}", reStr));
-
-                        }
-                        Console.WriteLine("weld9");
-
+                     
+                      
                         Thread uploadMesThread = new Thread(new ParameterizedThreadStart(UploadBatteryModToMes));
                         uploadMesThread.IsBackground = true;
                         uploadMesThread.Start(currWorkMod);
@@ -263,7 +268,7 @@ namespace LineNodes
         }
         private bool IsAllModComplete( )
         {
-            List<DBAccess.Model.BatteryModuleModel> modList = modBll.GetModelList(string.Format("palletID='{0}'", this.rfidUID));
+            List<DBAccess.Model.BatteryModuleModel> modList = modBll.GetModelList(string.Format("palletID='{0}' and  palletBinded=1", this.rfidUID));
             bool isAllCmd = true;
             foreach(DBAccess.Model.BatteryModuleModel  mod in modList)
             {

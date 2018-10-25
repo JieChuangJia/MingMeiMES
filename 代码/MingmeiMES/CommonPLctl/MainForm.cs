@@ -24,7 +24,7 @@ namespace CommonPL
     {
          private delegate void DlgtAbortApp();
         #region 数据
-        private string version = "1.0.26 测试版 2018-5-2";
+        private string version = "1.0.27 测试版 2018-10-13";
 
         private int roleID = 3;
         private string userName = "";
@@ -151,7 +151,8 @@ namespace CommonPL
           
             List<CtlDevBaseModel> devModelList = nodeMonitorView.GetDevList();
             configView.SetDevList(devModelList);
-           
+            configView.SetNodeList(nodeMonitorView.GetCtlNodeList());
+
             List<string> logSrcList = new List<string>();
             //List<string> logSrcs = asrsCtlView.GetLogsrcList();
             //if(logSrcs != null)

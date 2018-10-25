@@ -85,6 +85,10 @@ namespace LineNodes
         {
             return this.devList;
         }
+        public List<CtlNodeBaseModel> GetCtlNodeList()
+        {
+            return this.nodeList;
+        }
         public IList<string> GetDevList()
         {
             IList<string> devNameList = new List<string>();

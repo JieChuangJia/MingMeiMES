@@ -60,9 +60,11 @@ namespace LineNodes
                         this.logRecorder.AddDebugLog(this.nodeName, "当前工位是否需要加工：" +needRepari+","+ reStr);
                         if (needRepari == false)//直接放行
                         {
+                           this.repairProcess. ReportToMesByProcessStationID(this.nodeID, this.rfidUID);
                             currentTaskPhase = 4;
                             this.currentTask.TaskPhase = this.currentTaskPhase;
                             this.ctlTaskBll.Update(this.currentTask);
+                            this.TxtLogRecorder.WriteLog("当前工位工艺流程不要加工，直接放行，工装板号：" +this.rfidUID);
                             break;
                         }
                         this.currentTask.TaskPhase = this.currentTaskPhase;
@@ -74,7 +76,7 @@ namespace LineNodes
                         }
                         currentTaskPhase++;
                         this.currentTask.TaskPhase = this.currentTaskPhase;
-                 
+                        this.TxtLogRecorder.WriteLog("工位开始加工！");
                         this.ctlTaskBll.Update(this.currentTask);
                         break;
                     }
@@ -84,6 +86,7 @@ namespace LineNodes
                         if (modList.Count() < 1) //空板直接放行
                         {
                             currentTaskPhase = 4;
+                            this.TxtLogRecorder.WriteLog("空板直接放行！");
                             break;
                         }
                         string cleanerSndFile = "";
@@ -131,7 +134,7 @@ namespace LineNodes
                         writter.Flush();
                         writter.Close();
                         logRecorder.AddDebugLog(nodeName, "写入清洗机:" + strBuild.ToString());
-                       
+                        this.TxtLogRecorder.WriteLog("写入清洗机:" + strBuild.ToString());
                         currentTaskPhase++;
                         this.currentTask.TaskPhase = this.currentTaskPhase;
                         this.ctlTaskBll.Update(this.currentTask);
@@ -185,6 +188,7 @@ namespace LineNodes
                                     string M_ITEMVALUE = "清洗功率:" + strArray[2] + ":W|速度:" + strArray[3]+":m/s|频率:" + strArray[4] + ":s/次";
                                     RootObject rObj = new RootObject();
                                     string strJson = "";
+                                    this.TxtLogRecorder.WriteLog("上传MES数据：" +M_ITEMVALUE);
                                     rObj = DevDataUpload(M_FLAG, M_DEVICE_SN, M_WORKSTATION_SN, M_SN, M_UNION_SN, M_CONTAINER_SN, M_LEVEL, M_ITEMVALUE,ref strJson);
                                     if (rObj.CONTROL_TYPE == "STOP" && rObj.RES == "OK")
                                     {
@@ -208,6 +212,7 @@ namespace LineNodes
                         this.currentTask.TaskPhase = this.currentTaskPhase;
                         this.ctlTaskBll.Update(this.currentTask);
                         this.currentTask.TaskStatus = EnumTaskStatus.已完成.ToString();
+                        this.TxtLogRecorder.WriteLog("当前工位流出处理完毕");
                         break;
                     }
                 default:

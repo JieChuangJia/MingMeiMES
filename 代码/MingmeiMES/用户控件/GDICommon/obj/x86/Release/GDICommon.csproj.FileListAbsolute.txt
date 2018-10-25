@@ -27,3 +27,8 @@ E:\JCJ\MingmeiMES\MingmeiMES\用户控件\GDICommon\bin\Release\GDICommon.pdb
 E:\JCJ\MingmeiMES\MingmeiMES\用户控件\GDICommon\obj\x86\Release\GDICommon.csprojResolveAssemblyReference.cache
 E:\JCJ\MingmeiMES\MingmeiMES\用户控件\GDICommon\obj\x86\Release\GDICommon.dll
 E:\JCJ\MingmeiMES\MingmeiMES\用户控件\GDICommon\obj\x86\Release\GDICommon.pdb
+E:\软件\MineProject\Projects\明美\明美\代码\MingmeiMES\用户控件\GDICommon\bin\Release\GDICommon.dll
+E:\软件\MineProject\Projects\明美\明美\代码\MingmeiMES\用户控件\GDICommon\bin\Release\GDICommon.pdb
+E:\软件\MineProject\Projects\明美\明美\代码\MingmeiMES\用户控件\GDICommon\obj\x86\Release\GDICommon.csprojResolveAssemblyReference.cache
+E:\软件\MineProject\Projects\明美\明美\代码\MingmeiMES\用户控件\GDICommon\obj\x86\Release\GDICommon.dll
+E:\软件\MineProject\Projects\明美\明美\代码\MingmeiMES\用户控件\GDICommon\obj\x86\Release\GDICommon.pdb

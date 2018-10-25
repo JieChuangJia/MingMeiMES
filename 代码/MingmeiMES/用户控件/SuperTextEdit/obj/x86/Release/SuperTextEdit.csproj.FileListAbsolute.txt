@@ -52,3 +52,12 @@ E:\JCJ\MingmeiMES\MingmeiMES\用户控件\SuperTextEdit\obj\x86\Release\SuperTex
 E:\JCJ\MingmeiMES\MingmeiMES\用户控件\SuperTextEdit\obj\x86\Release\SuperTextEdit.csproj.GenerateResource.Cache
 E:\JCJ\MingmeiMES\MingmeiMES\用户控件\SuperTextEdit\obj\x86\Release\SuperTextEdit.dll
 E:\JCJ\MingmeiMES\MingmeiMES\用户控件\SuperTextEdit\obj\x86\Release\SuperTextEdit.pdb
+E:\软件\MineProject\Projects\明美\明美\代码\MingmeiMES\用户控件\SuperTextEdit\bin\Release\SuperTextEdit.dll
+E:\软件\MineProject\Projects\明美\明美\代码\MingmeiMES\用户控件\SuperTextEdit\bin\Release\SuperTextEdit.pdb
+E:\软件\MineProject\Projects\明美\明美\代码\MingmeiMES\用户控件\SuperTextEdit\bin\Release\GDICommon.dll
+E:\软件\MineProject\Projects\明美\明美\代码\MingmeiMES\用户控件\SuperTextEdit\bin\Release\GDICommon.pdb
+E:\软件\MineProject\Projects\明美\明美\代码\MingmeiMES\用户控件\SuperTextEdit\obj\x86\Release\SuperTextEdit.csprojResolveAssemblyReference.cache
+E:\软件\MineProject\Projects\明美\明美\代码\MingmeiMES\用户控件\SuperTextEdit\obj\x86\Release\SuperTextEdit.SuperTextEdit.resources
+E:\软件\MineProject\Projects\明美\明美\代码\MingmeiMES\用户控件\SuperTextEdit\obj\x86\Release\SuperTextEdit.csproj.GenerateResource.Cache
+E:\软件\MineProject\Projects\明美\明美\代码\MingmeiMES\用户控件\SuperTextEdit\obj\x86\Release\SuperTextEdit.dll
+E:\软件\MineProject\Projects\明美\明美\代码\MingmeiMES\用户控件\SuperTextEdit\obj\x86\Release\SuperTextEdit.pdb

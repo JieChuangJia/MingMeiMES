@@ -22,11 +22,18 @@ namespace ConfigManage
     {
         OfflineDataBLL bllOfflineData = new OfflineDataBLL();
         QRCodeBLL bllQrCode = new QRCodeBLL();
+        private TestStandardDataSet testStandardDataSet = null;
+        private List<CtlNodeBaseModel> NodeList = new List<CtlNodeBaseModel>();
         public MesOfflineView(string captionText)
             : base(captionText)
         {
             InitializeComponent();
             this.Text = captionText;
+        }
+        public void SetNodeList(List<CtlNodeBaseModel> nodeList)
+        {
+            this.NodeList = nodeList;
+            this.testStandardDataSet = new TestStandardDataSet(this.NodeList);
         }
         private void MesOfflineView_Load(object sender, EventArgs e)
         {
@@ -162,6 +169,39 @@ namespace ConfigManage
                 MessageBox.Show("离线模式切换成功！");
             }
         }
+
+        private void bt_GetTestStandardData_Click(object sender, EventArgs e)
+        {
+            RootObject moduleObj = WShelper.GetTestStandardDataFromMES(4, "Y001", 2);
+            RootObject moduleGroupObj = WShelper.GetTestStandardDataFromMES(4, "M001", 2);
+            if(moduleObj==null)
+            {
+                MessageBox.Show("返回模块测试标准数据对象为空！");
+                return;
+            }
+            if (moduleGroupObj == null)
+            {
+                MessageBox.Show("返回模组测试标准数据对象为空！");
+                return;
+            }
+            StringBuilder sb = new StringBuilder();
+            sb.Append("模块测试标准数据：" + moduleObj.M_COMENT[0].M_ITEMVALUE+"\r\n");
+            sb.Append("模组测试标准数据：" + moduleGroupObj.M_COMENT[0].M_ITEMVALUE + "\r\n");
+
+            this.tb_TestStandardData.Text = sb.ToString();
+        }
+
+        private void bt_SetStandard_Click(object sender, EventArgs e)
+        {
+            StandardData sd = new StandardData();
+            if(this.testStandardDataSet == null)
+            {
+                MessageBox.Show("测试标准模块对象为空！");
+                return;
+            }
+            this.testStandardDataSet.SetStandardData(sd);
+        }
+ 
      
     }
 }

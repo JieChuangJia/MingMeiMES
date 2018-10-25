@@ -13,6 +13,7 @@ using DevInterface;
 using DevAccess;
 using LogInterface;
 using System.IO;
+using DBAccess.BLL;
 
 namespace PLProcessModel
 {
@@ -186,7 +187,9 @@ namespace PLProcessModel
         public string MesStopAddr { get; set; }
 
         public RepairProcessBase repairProcess = null;
-         
+        protected DBAccess.BLL.ModuleProcessBLL bllModuleProcess = new ModuleProcessBLL();
+        protected FTDataAccess.BLL.OfflineDataBLL bllOfflineData = new OfflineDataBLL();
+        protected TxtLogRecorder TxtLogRecorder = null;
         #endregion
         #region 公共数据
         public bool isWithMes = true;
@@ -205,6 +208,7 @@ namespace PLProcessModel
             onlineProductBll = new OnlineProductsBll();
 
             repairProcess = new RepairProcessBase(this);
+            this.TxtLogRecorder = new TxtLogRecorder(this);
            // mesDataOpt = new MesDataOperate();
         }
         public virtual bool ReadDB1()
@@ -453,7 +457,43 @@ namespace PLProcessModel
             this.currentStat.Status = statEnum;
             this.currentStat.StatDescribe = statDescribe;
         }
-       
+        /// <summary>
+        /// 等于2位NG，更新所有绑定模块NG状态，C线NG使用
+        /// </summary>
+        /// <param name="checkResult"></param>
+        public void UpdatePalletCheckResult(int checkResult)
+        {
+              List<DBAccess.Model.BatteryModuleModel> modList = modBll.GetModelList(string.Format("palletID='{0}' and palletBinded=1", this.rfidUID));
+              if (modList != null&& modList.Count() >= 0)
+              { 
+                foreach(DBAccess.Model.BatteryModuleModel mod in modList)
+                {
+                    mod.checkResult = checkResult;
+                    modBll.Update(mod);
+                }
+              }
+        }
+        /// <summary>
+        /// 当前绑定的电池模块是否有NG,C线NG使用
+        /// </summary>
+        /// <returns></returns>
+        public bool GetPalletCheckNg()
+        {
+
+            List<DBAccess.Model.BatteryModuleModel> modList = modBll.GetModelList(string.Format("palletID='{0}' and palletBinded=1", this.rfidUID));
+            if (modList != null && modList.Count() >= 0)
+            {
+                foreach (DBAccess.Model.BatteryModuleModel mod in modList)
+                {
+                   if(mod.checkResult==2)
+                   {
+                       return true;
+                   }
+                }
+            }
+            return false;
+        }
+          
         #endregion
         #region 虚接口
         protected virtual bool PreMech(IList<DBAccess.Model.BatteryModuleModel> modList,ref string reStr)
@@ -2700,6 +2740,8 @@ namespace PLProcessModel
             }
 
         }
+
+         
         #endregion
     }
 

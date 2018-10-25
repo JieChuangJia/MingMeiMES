@@ -57,6 +57,14 @@ namespace LineNodes
                         {
                             break;
                         }
+                        if(GetPalletCheckNg() ==true)//NG处理
+                        {
+                            db1ValsToSnd[0] = 5;//
+                            currentTaskPhase = 4;
+                            this.TxtLogRecorder.WriteLog("绑定数据有NG产品，线体服务器处理流程结束！直接放行！");
+                            this.logRecorder.AddDebugLog(this.nodeName, "绑定数据有NG产品，线体服务器处理流程结束！");
+                            break;
+                        }
                         barcodeFailCounter = 0;
                         this.readPackLabelCodeFailTimes = 0;
                         this.currentTask.TaskPhase = this.currentTaskPhase;
@@ -112,6 +120,7 @@ namespace LineNodes
                         this.currentTask.TaskPhase = this.currentTaskPhase;
                         this.ctlTaskBll.Update(this.currentTask);
                         this.currentTaskDescribe = "打码数据写入成功！";
+                        this.TxtLogRecorder.WriteLog("下发打码设备条码成功，条码：" + packBarcode);
                         break;
                     }
                 case 3:
@@ -219,9 +228,22 @@ namespace LineNodes
                         #endregion
 
                         this.db1ValsToSnd[2] = 2;
-                        
+                        int handleStatus = 0;
+                        if (this.plcRW2.ReadDB("D9200", ref handleStatus) == false)//NG处理
+                        {
+                            break;
+                        }
+                        if (handleStatus == 1)//NG
+                        {
+                            UpdatePalletCheckResult(2);
+                            db1ValsToSnd[0] = 5;
+                            //db1ValsToSnd[1] = 3;
+                            currentTaskPhase = 4;//流程完成
+                            break;
+                        }
 
                         RootObject obj = DevDataUpload(1, "", "M00100301", this.packBarcode, "", this.rfidUID, "", itemValue, ref reStr);
+                        this.TxtLogRecorder.WriteLog("上传MES数据，工作中心号：M00100301，工装板号：" + this.rfidUID + ",数据：" + itemValue);
                         if (obj.RES.ToUpper().Contains("OK") == true)
                         {
                             this.logRecorder.AddDebugLog(this.nodeName, "绑定上传MES成功！" + obj.RES);
@@ -229,6 +251,14 @@ namespace LineNodes
                         else if(obj.RES.ToUpper().Contains("NG") == true)
                         {
                             this.logRecorder.AddDebugLog(this.nodeName, "绑定上传MES成功，返回NG！" +obj.RES);
+                            db1ValsToSnd[0] = 5;
+                            
+                            currentTaskPhase = 4;//流程完成
+
+                            UpdatePalletCheckResult(2);
+                            this.logRecorder.AddDebugLog(this.nodeName, "MES分析数据NG，线体服务器处理流程结束！");
+                            break;
+
                         }
                         else
                         {
@@ -248,7 +278,7 @@ namespace LineNodes
                         this.currentTask.TaskPhase = this.currentTaskPhase;
                         this.currentTask.TaskStatus = EnumTaskStatus.已完成.ToString();
                         this.ctlTaskBll.Update(this.currentTask);
-                      
+                        this.TxtLogRecorder.WriteLog("工位流程处理完成！");
 
                         break;
                     }

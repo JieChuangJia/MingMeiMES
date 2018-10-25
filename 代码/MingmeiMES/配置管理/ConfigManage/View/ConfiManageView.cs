@@ -24,7 +24,9 @@ namespace ConfigManage
         private MesOfflineView mesOfflineView = null;
         private WorkerResView workerResView = null;
         private List<CtlDevBaseModel> DevList = new List<CtlDevBaseModel>();
+        private List<CtlNodeBaseModel> NodeList = new List<CtlNodeBaseModel>();
         private PLCSettingView plcSettingView = null;
+      
         #region 公共接口
         //public string CaptionText { get { return captionText; } set { captionText = value; this.Text = captionText; } }
         public ConfiManageView():base(string.Empty)
@@ -46,7 +48,12 @@ namespace ConfigManage
             this.sysSettignView.SetDevList(this.DevList);
            
         }
-        
+        public void SetNodeList(List<CtlNodeBaseModel> nodeList)
+        {
+            this.NodeList = nodeList;
+            this.mesOfflineView.SetNodeList(nodeList);
+          
+        }
         #endregion
        
         #region IModuleAttach接口实现

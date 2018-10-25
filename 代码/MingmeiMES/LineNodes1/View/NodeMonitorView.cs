@@ -34,6 +34,10 @@ namespace LineNodes
         {
             return this.LinePresenter.GetDevModelList();
         }
+        public List<CtlNodeBaseModel> GetCtlNodeList()
+        {
+            return this.LinePresenter.GetCtlNodeList();
+        }
         public LineMonitorPresenter LinePresenter { get { return lineMonitorPresenter; } }
         public NodeMonitorView(string captionText):base(captionText)
         {

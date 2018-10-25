@@ -30,3 +30,9 @@ E:\JieChuangJia\MingMei\代码\MingmeiMES\FTDataAccess\bin\Release\DBAccess.dll
 E:\JieChuangJia\MingMei\代码\MingmeiMES\FTDataAccess\bin\Release\DBAccess.pdb
 E:\JieChuangJia\MingMei\代码\MingmeiMES\FTDataAccess\obj\x86\Release\DBAccess.dll
 E:\JieChuangJia\MingMei\代码\MingmeiMES\FTDataAccess\obj\x86\Release\DBAccess.pdb
+E:\软件\MineProject\Projects\明美\明美\代码\MingmeiMES\FTDataAccess\bin\Release\DBAccess.dll
+E:\软件\MineProject\Projects\明美\明美\代码\MingmeiMES\FTDataAccess\bin\Release\DBAccess.pdb
+E:\软件\MineProject\Projects\明美\明美\代码\MingmeiMES\FTDataAccess\obj\x86\Release\DBAccess.csprojResolveAssemblyReference.cache
+E:\软件\MineProject\Projects\明美\明美\代码\MingmeiMES\FTDataAccess\obj\x86\Release\DBAccess.dll
+E:\软件\MineProject\Projects\明美\明美\代码\MingmeiMES\FTDataAccess\obj\x86\Release\DBAccess.pdb
+E:\JieChuangJia\MingMei\代码\MingmeiMES\FTDataAccess\obj\x86\Release\DBAccess.csprojResolveAssemblyReference.cache

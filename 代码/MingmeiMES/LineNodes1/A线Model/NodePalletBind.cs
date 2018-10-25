@@ -168,18 +168,18 @@ namespace LineNodes
         }
         protected bool ExeBindALine(ref string reStr)
         {
-            Console.WriteLine("bindA11");
+           
             
             if(!ExeBusinessAB(ref reStr))
             {
                 return false;
             }
-            Console.WriteLine("bindA12");
+          
             switch(currentTaskPhase)
             {
                 case 1:
                     {
-                        Console.WriteLine("repair 31");
+                        //Console.WriteLine("repair 31");
                        // Console.WriteLine("currentTaskPhase:" + 1);
                         currentTaskDescribe = "开始读RFID";
                         if(!RfidReadAB())
@@ -211,15 +211,16 @@ namespace LineNodes
                         logRecorder.AddDebugLog(nodeName, string.Format("读到RFID:{0}，开始绑定", this.rfidUID));
                         this.bindModeCt = modBll.GetRecordCount(string.Format("palletID='{0}' and palletBinded=1", this.rfidUID));
                         this.db1ValsToSnd[2] = (short)this.bindModeCt;
+                        this.TxtLogRecorder.WriteLog("读取工装板号成功：" + this.rfidUID + "，开始绑定！");
                         break;
                      
                     }
                 case 2:
                     {
-                        Console.WriteLine("repair 21");
+                        //Console.WriteLine("repair 21");
                         if(this.aLineRepairProcess ==null)
                         {
-                            Console.WriteLine("duixiang weik nulll ");
+                            Console.WriteLine("duixiang wei null ");
                         }
                         bool needRepair = false;
                         if (this.aLineRepairProcess.GetNeedRepair(ref needRepair, ref reStr) == false)
@@ -228,7 +229,7 @@ namespace LineNodes
                             break;
                         }
                         this.aLineRepairProcess.SetNeedRepair(needRepair);
-                        Console.WriteLine("repair 22");
+                        //Console.WriteLine("repair 22");
                         logRecorder.AddDebugLog(nodeName, "获取是否需要返修成功：" + needRepair);
                         if(needRepair == true)
                         {
@@ -252,6 +253,7 @@ namespace LineNodes
                                 currentTaskPhase++;
                                 this.currentTask.TaskPhase = this.currentTaskPhase;
                                 this.ctlTaskBll.Update(this.currentTask);
+                                this.TxtLogRecorder.WriteLog("电池数据绑定完成！");
                                 break;
                             }
                         }
@@ -341,6 +343,7 @@ namespace LineNodes
                 case 7:
                     {
                         currentTaskDescribe = "模组-工装板绑定流程完成";
+                        this.TxtLogRecorder.WriteLog("此工位流程处理完毕！");
                         break;
                     }
                 //case 3:
@@ -376,12 +379,12 @@ namespace LineNodes
         {
             try
             {
-                Console.WriteLine("BBL-001");
+                //Console.WriteLine("BBL-001");
                 if (db2Vals[3] != 1)
                 {
                     return false;
                 }
-                Console.WriteLine("BBL-002");
+                //Console.WriteLine("BBL-002");
                 //PLC请求读支架二维码和分档信息
                 string modBarcode = "";
                 string modGrade = "";
@@ -409,7 +412,7 @@ namespace LineNodes
                             logRecorder.AddDebugLog(nodeName, "发送PLC数据失败，db2Vals[5]" + reStr);
                             return false;
                         }
-                        Console.WriteLine("BBL-003");
+                        //Console.WriteLine("BBL-003");
                         return false;
                     }
                     else
@@ -467,7 +470,7 @@ namespace LineNodes
                         logRecorder.AddDebugLog(nodeName, "发送PLC数据失败，db2Vals[4]" + reStr);
                         return false;
                     } 
-                    Console.WriteLine("BBL-004");
+                    //Console.WriteLine("BBL-004");
                     return false;
                 }
                 else
@@ -500,21 +503,44 @@ namespace LineNodes
                 mod.batPackID = "";
                 mod.curProcessStage = nodeName;
                 mod.asmTime = System.DateTime.Now;
-                if(this.aLineRepairProcess.NeedRepair == true)
+
+                RepairProcessParam processParam = new RepairProcessParam();
+                //bool isAtALingBind = false;
+                if(this.aLineRepairProcess.GetRepairProcessParamByCode(mod.batModuleID, ref processParam, ref reStr)==false)
+                {
+                    this.logRecorder.AddDebugLog(this.nodeName, reStr);
+                    return false;
+                }
+               if( this.aLineRepairProcess.GetIsAtBindStation(ref isAtALineStation, ref reStr)==false)
+               {
+                   this.logRecorder.AddDebugLog(this.nodeName, reStr);
+                   return false;
+               }
+
+
+                if (this.aLineRepairProcess.NeedRepair == true )
                 {
                     if(old_mod == null)
                     {
                         Console.WriteLine(this.nodeName + ",返修流程在获取上一次加工数据数据时失败，没有[" + modBarcode + "]数据记录！");
                         return false;
                     }
-                    mod.checkResult = old_mod.checkResult;//返修时用到，上一次的检测结果
+                    if( isAtALineStation == true)//在A线绑定工位
+                    {
+
+                    }
+                    else//不在A线绑定
+                    {
+                        mod.checkResult = 1;//返修时用到，上一次的检测结果
+                    }
+                
                     mod.tag1 = old_mod.tag1;
                     mod.tag5 = old_mod.tag5;//分档数字放到tag5中np_added
-                    Console.WriteLine("BBL-005");
+                    //Console.WriteLine("BBL-005");
                 }
                 else
                 {
-                    Console.WriteLine("BBL-006");
+                    //Console.WriteLine("BBL-006");
                     mod.tag1 = modGrade.ToString();
                     mod.tag5 = modGradeNum.ToString();//分档数字放到tag5中np_added
 
@@ -541,6 +567,7 @@ namespace LineNodes
                 // mod.tag2 = (bindModeCt+1).ToString();
                 modBll.Add(mod);
                 //Console.WriteLine("modBll.Add(mod)");
+                this.TxtLogRecorder.WriteLog(string.Format("绑定，工装板:{0},模块条码:{1},档位:{2},极性检测：{3}", rfidUID, modBarcode, modGrade, mod.checkResult));
                 logRecorder.AddDebugLog(nodeName, string.Format("绑定，RFID:{0},模块条码:{1},档位:{2},极性检测：{3}", rfidUID, modBarcode, modGrade, mod.checkResult));
                 AddProcessRecord(mod.batModuleID, "模块", "追溯记录", string.Format("绑定，RFID:{0},模块条码:{1}", rfidUID, modBarcode), "");
                 //ProductTraceRecord();
@@ -556,7 +583,7 @@ namespace LineNodes
                 //  Console.WriteLine("db2Vals[3] = 2");
                 this.bindModeCt = modBll.GetRecordCount(string.Format("palletID='{0}' and curProcessStage = '{1}' and palletBinded=1", this.rfidUID, this.nodeName));
                 this.db1ValsToSnd[2] = (short)this.bindModeCt;
-                Console.WriteLine("BBL-007");
+                //Console.WriteLine("BBL-007");
                 return true;
             }
             catch (Exception ex)
@@ -627,12 +654,13 @@ namespace LineNodes
                     checkOK = false;
                  
                 }
-                //if(modelList[i].checkResult ==2)
-                //{
-                //    modelList[i].palletBinded = false;
-                //    modBll.Update(modelList[i]);
-                //    logRecorder.AddDebugLog(nodeName, "模块二维码：" + modelList[i].batModuleID + ",极性检测失败与工装板：" + this.RfidUID + "解绑！"); 
-                //}
+                if (modelList[i].checkResult == 2)
+                {
+                    modelList[i].palletBinded = false;
+                    modBll.Update(modelList[i]);
+                    logRecorder.AddDebugLog(nodeName, "模块二维码：" + modelList[i].batModuleID + ",极性检测失败与工装板：" + this.RfidUID + "解绑！");
+                }
+                
             }
             if(checkOK)
             {
@@ -1063,6 +1091,7 @@ namespace LineNodes
                         this.ctlTaskBll.Update(this.currentTask);
                         this.bindModeCt = modBll.GetRecordCount(string.Format("palletID='{0}' and palletBinded=1", this.rfidUID));
                         this.db1ValsToSnd[1] = (short)this.bindModeCt;
+                        this.TxtLogRecorder.WriteLog("开始绑定数据，工装板号：" + this.rfidUID);
                         break;
                     }
                 case 2:
@@ -1116,6 +1145,7 @@ namespace LineNodes
                                 currentTaskPhase = 6;
                                 this.currentTask.TaskPhase = this.currentTaskPhase;
                                 this.ctlTaskBll.Update(this.currentTask);
+                                this.TxtLogRecorder.WriteLog("工艺流程当前工位不需要加工，直接放行，工装板号：" + this.rfidUID);
                                 break;
                             }
                             currentTaskPhase++;
@@ -1200,10 +1230,12 @@ namespace LineNodes
                             }
                             mod.palletID = this.rfidUID;
                             mod.palletBinded = true;
+                            mod.checkResult = null;
                             mod.curProcessStage = nodeName;
                             mod.tag2 = (bindModeCt + 1).ToString();
                             modBll.Update(mod);
                             logRecorder.AddDebugLog(nodeName, string.Format("绑定，RFID:{0},模块条码:{1}", rfidUID, modBarcode));
+                            this.TxtLogRecorder.WriteLog(string.Format("绑定，工装板:{0},模块条码:{1}", rfidUID, modBarcode));
                             // AddProcessRecord(mod.batModuleID, this.nodeName, "");
                             AddProcessRecord(mod.batModuleID, "模块", "追溯记录", string.Format("绑定，RFID:{0},模块条码:{1}", rfidUID, modBarcode), "");
 
@@ -1244,6 +1276,7 @@ namespace LineNodes
                         }
                         db1ValsToSnd[2] = 2;
                         currentTaskDescribe = "流程完成";
+                        this.TxtLogRecorder.WriteLog("工位流程处理完成，工装板号：" + this.rfidUID + ",数据绑定完成！");
                         this.currentTask.TaskPhase = this.currentTaskPhase;
                         this.ctlTaskBll.Update(this.currentTask);
                         this.currentTask.TaskStatus = EnumTaskStatus.已完成.ToString();

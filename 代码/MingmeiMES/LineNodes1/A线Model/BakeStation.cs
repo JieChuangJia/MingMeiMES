@@ -42,8 +42,7 @@ namespace LineNodes
             {
                 return false;
             }
-
-          
+           
             switch (this.currentTaskPhase)
             {
                 case 1:
@@ -86,7 +85,9 @@ namespace LineNodes
                     this.currentTaskDescribe = "读取数据成功；上报MES数据成功！";
                     SetReadStatus(2);//读取成功
                     this.currentTaskPhase++;
-                    this.LogRecorder.AddDebugLog(this.nodeName, "读取数据成功；上报MES数据成功！数据" + bakeData);
+                    string logStr = "烘烤数据上报MES成功：工作中心编号Y00101201,上报数据："+bakeData;
+                    this.LogRecorder.AddDebugLog(this.nodeName, logStr);
+                    this.TxtLogRecorder.WriteLog(logStr);
                     break;
                 case 2:
                     
@@ -95,7 +96,7 @@ namespace LineNodes
                     this.currentTask.TaskType =(int)EnumTaskStatus.已完成;
                     this.ctlTaskBll.Update(this.currentTask);
                     this.currentTaskDescribe = "流程完成！";
-                   
+                    this.TxtLogRecorder.WriteLog("流程处理完毕！");
                     break;
 
                 default:
