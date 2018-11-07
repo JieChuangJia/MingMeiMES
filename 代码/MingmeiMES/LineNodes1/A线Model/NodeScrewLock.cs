@@ -661,12 +661,12 @@ namespace LineNodes
                 case 3:
                     {
 
-                        List<DBAccess.Model.BatteryModuleModel> modList = modBll.GetModelList(string.Format("palletID='{0}' and palletBinded=1", this.rfidUID));
+                        List<DBAccess.Model.BatteryModuleModel> modList = modBll.GetModelList(string.Format("palletID='{0}' ", this.rfidUID));
                         foreach(DBAccess.Model.BatteryModuleModel battery in modList)
                         {
                             battery.palletID = "";
                             battery.palletBinded = false;
-                            battery.checkResult = null;
+                            battery.checkResult = 1;
                             modBll.Update(battery);
                         }
                         db1ValsToSnd[1] = 3;

@@ -70,13 +70,21 @@ namespace LineNodes
                         //    break;
                         //}
                         List<DBAccess.Model.BatteryModuleModel> workModList = modBll.GetModelList(string.Format("palletID='{0}' ", this.rfidUID));
-
+                       
                         if (!SendCheckResult(workModList, ref reStr))
                         {
                             Console.WriteLine(string.Format("{0},{1}", nodeName, reStr));
                             break;
                         }
-                        
+                        foreach (DBAccess.Model.BatteryModuleModel mod in workModList)
+                        {
+                            if (mod.checkResult == 2)//NG就要解绑
+                            {
+                                mod.palletBinded = false;
+                                mod.palletID = "";
+                                modBll.Update(mod);
+                            }
+                        }
                         currentTaskPhase++;
                         this.currentTask.TaskPhase = this.currentTaskPhase;
                         this.ctlTaskBll.Update(this.currentTask);

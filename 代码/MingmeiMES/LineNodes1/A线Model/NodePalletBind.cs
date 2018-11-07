@@ -1230,7 +1230,7 @@ namespace LineNodes
                             }
                             mod.palletID = this.rfidUID;
                             mod.palletBinded = true;
-                            mod.checkResult = null;
+                            mod.checkResult = 1;
                             mod.curProcessStage = nodeName;
                             mod.tag2 = (bindModeCt + 1).ToString();
                             modBll.Update(mod);
