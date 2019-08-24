@@ -90,7 +90,7 @@ namespace LineNodes
                         {
                             break;
                         }
-                        if(!TryUnbind(this.rfidUID,ref reStr))
+                        if (!Unbind(this.rfidUID, ref reStr))
                         {
                             break;
                         }
@@ -118,7 +118,31 @@ namespace LineNodes
             }
             return true;
         }
+        private  bool Unbind(string rfidCode, ref string reStr)
+        {
+            try
+            {
 
+                List<DBAccess.Model.BatteryModuleModel> modBinds = modBll.GetModelList(string.Format("palletID='{0}'  ", rfidCode));
+                if (modBinds != null && modBinds.Count() > 0)
+                {
+                    foreach (DBAccess.Model.BatteryModuleModel mod in modBinds)
+                    {
+                        mod.palletBinded = false;
+                        mod.palletID = "";
+
+                        modBll.Update(mod);
+                        logRecorder.AddDebugLog(nodeName, string.Format("解绑,工装板RFID:{0},模块:{1}", rfidCode, mod.batModuleID));
+                    }
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                reStr = ex.ToString();
+                return false;
+            }
+        }
         public int UploadMesData(string rfid,ref string reStr)
         {
             string M_AREA = "Y001";

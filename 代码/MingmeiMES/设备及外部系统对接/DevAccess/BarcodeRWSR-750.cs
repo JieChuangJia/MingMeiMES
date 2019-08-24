@@ -224,9 +224,10 @@ namespace DevAccess
                         return string.Empty;
                     }
                 }
-                catch
+                catch(Exception ex)
                 {
                     CloseScan();
+                    Console.WriteLine(ex.StackTrace.ToString());
                     return string.Empty;
                 }
             }

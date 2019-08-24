@@ -157,6 +157,7 @@ namespace LineNodes
                         //break;
                         #endregion
                         this.currentTaskDescribe = "开始扫码！";
+                        Console.WriteLine("900");
                         if(this.db2Vals[1]!= 2)
                         {
                             break;
@@ -169,7 +170,9 @@ namespace LineNodes
                         }
                         else
                         {
+                            Console.WriteLine("901");
                             packBarcodeNew = barcodeRW.ReadBarcode();
+                            Console.WriteLine("902");
                         }
 
                         if (string.IsNullOrWhiteSpace(packBarcodeNew) && this.readPackLabelCodeFailTimes<6)//读取6次不成功就任务失败
@@ -179,7 +182,7 @@ namespace LineNodes
                             Console.WriteLine(this.nodeName +":扫码数据为空！扫码失败！"+ "已经第"+ this.readPackLabelCodeFailTimes+"次扫码失败！");
                             break;
                         }
-                         
+                        Console.WriteLine("903");
                         #region 如果所发下去的码和打完之后的码不匹配就要重新发送
 
                         if (this.packBarcode != packBarcodeNew && this.barcodeFailCounter < 2&&this.readPackLabelCodeFailTimes<6)//如果不相等两次启动打码
@@ -187,14 +190,14 @@ namespace LineNodes
                             //packLabelStatus = false;
                             this.barcodeFailCounter++;
                             this.db1ValsToSnd[2] = 3;
-                           
 
+                            Console.WriteLine("904");
                             string qrCodeFile = string.Format(@"\\{0}\加工文件\打码内容.txt", qrCodeIP);
                             //清空文件
                             System.IO.StreamWriter writter = new System.IO.StreamWriter(qrCodeFile, false);
                             StringBuilder strBuild = new StringBuilder();
                             strBuild.Append(packBarcode);
-
+                            Console.WriteLine("905");
                             writter.Write(strBuild.ToString());
                             writter.Flush();
                             writter.Close();
@@ -203,7 +206,7 @@ namespace LineNodes
                             {
                                 break;
                             }
-
+                            Console.WriteLine("906");
                             break;
                         }
                        
@@ -225,14 +228,19 @@ namespace LineNodes
                         {
                             itemValue = "扫码结果:NG:";
                         }
+                        Console.WriteLine("908");
                         #endregion
-
+                        Console.WriteLine("920");
                         this.db1ValsToSnd[2] = 2;
+                        Console.WriteLine("921");
                         int handleStatus = 0;
+                        Console.WriteLine("922");
                         if (this.plcRW2.ReadDB("D9200", ref handleStatus) == false)//NG处理
                         {
+                            Console.WriteLine("923");
                             break;
                         }
+                        Console.WriteLine("909");
                         if (handleStatus == 1)//NG
                         {
                             UpdatePalletCheckResult(2);
@@ -241,8 +249,9 @@ namespace LineNodes
                             currentTaskPhase = 4;//流程完成
                             break;
                         }
-
+                        Console.WriteLine("910");
                         RootObject obj = DevDataUpload(1, "", "M00100301", this.packBarcode, "", this.rfidUID, "", itemValue, ref reStr);
+                        Console.WriteLine("901");
                         this.TxtLogRecorder.WriteLog("上传MES数据，工作中心号：M00100301，工装板号：" + this.rfidUID + ",数据：" + itemValue);
                         if (obj.RES.ToUpper().Contains("OK") == true)
                         {
@@ -252,7 +261,7 @@ namespace LineNodes
                         {
                             this.logRecorder.AddDebugLog(this.nodeName, "绑定上传MES成功，返回NG！" +obj.RES);
                             db1ValsToSnd[0] = 5;
-                            
+                            Console.WriteLine("912");
                             currentTaskPhase = 4;//流程完成
 
                             UpdatePalletCheckResult(2);
